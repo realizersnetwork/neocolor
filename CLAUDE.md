@@ -14,14 +14,24 @@
 ## 기본 구조
 - 빌드 없는 정적 사이트. 파일은 전부 `public/` 안
 - 강의·카테고리 추가/수정은 `public/assets/data.js`만 고치면 메뉴와 목록에 자동 반영
-- 메인 비주얼: `media/hero.mp4`(소유자가 준 계곡 영상, 무음 반복) + `media/rooftop.*`(옥상 사진), 메시지 "땀 흘린 만큼, 즐기면서 살자."
-- 동영상은 H.264 540x960, 소리 없음, 메타데이터 제거. Cloudflare Pages 파일당 25MB 제한 주의
+- 메인 비주얼: `media/hero.mp4`(소유자가 준 계곡 영상, 무음 자동재생 + '소리 켜기' 버튼) + `media/rooftop.*`(옥상 사진), 메시지 "땀 흘린 만큼, 즐기면서 살자."
+- 로고: NEO + 색이 흐르는 COLOR 워드마크(`.wordmark`, `.wm-color`). 소유자가 좋아하는 로고라 유지
+- 동영상은 H.264 540x960 + AAC 소리, 메타데이터 제거. Cloudflare Pages 파일당 25MB 제한 주의
 - 폰트: Pretendard(jsdelivr CDN), 없으면 시스템 폰트
 
 ## 배포
 - Cloudflare Pages + GitHub 연동: `main` = 실서비스(neocolor.net), 그 외 브랜치 = 미리보기 주소
 - 설정값: Build command `exit 0`, Build output directory `public`, 프로젝트 이름 `neocolor` (neocolor.pages.dev)
 - 도메인과 Pages 프로젝트는 지인(형님)의 Cloudflare 계정에 있고, 소유자는 Administrator 멤버로 접근한다
+
+## 버전 기록·백업 (누가 고치든 전부 남긴다)
+- 이 사이트는 소유자(realizers)와 형님이 각자 클로드로 고친다. 최종 버전은 항상 `main` = neocolor.net
+- 커밋 하나가 '그 순간의 사이트 전체' 백업이다. GitHub 커밋 기록과 Cloudflare 배포 기록(버전마다 별도 주소) 두 곳에 남는다
+- 커밋 메시지 맨 앞에 요청한 사람을 적는다: `[realizers]` 또는 `[형님]` (작성자가 Claude로 찍히므로 메시지로 구분)
+- 기록을 지우거나 덮어쓰지 않는다: force push 금지, 이미 올린 커밋을 rebase·amend로 고치지 않기, 브랜치·태그 삭제 금지
+- 되돌릴 때는 예전 커밋을 지우지 말고 `git revert`(되돌리는 새 커밋)로 한다. 급하면 Cloudflare Deployments에서 예전 배포로 롤백한 뒤 revert 커밋으로 정리
+- 형님 세션은 브랜치에 올린 뒤 PR로 `main`에 합친다. 합칠 때는 기본값 'Create a merge commit'으로 기록을 그대로 남긴다
+- 작업 시작 전에 항상 최신 `main`을 받아서 시작한다 (둘이 번갈아 고치므로)
 
 ## 작업 방식
 - 작은 수정은 `main`에 바로 올린다
