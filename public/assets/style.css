@@ -378,7 +378,7 @@ section[id] { scroll-margin-top: 120px; }
 
 /* ---------- 공종 바로가기 ---------- */
 .quick { padding: 26px 0 6px; }
-.quick-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.quick-grid { display: grid; grid-template-columns: repeat(var(--cols-m, 5), minmax(0, 1fr)); gap: 6px; }
 .quick-item {
   display: flex;
   flex-direction: column;
@@ -641,7 +641,7 @@ section[id] { scroll-margin-top: 120px; }
   .hero-photo strong { font-size: 18px; }
   .lead { font-size: 18px; }
 
-  .quick-grid { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; }
+  .quick-grid { grid-template-columns: repeat(var(--cols-d, 10), minmax(0, 1fr)); gap: 8px; }
   .quick-item { font-size: 13px; }
   .quick-icon { width: 56px; height: 56px; font-size: 17px; }
 

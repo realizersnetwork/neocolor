@@ -69,6 +69,11 @@
       </button>`
     )
     .join("");
+  // 바로가기 칸 수를 카테고리 개수에 맞춤: 휴대폰은 마지막 줄 빈칸이 적은 쪽(5칸/4칸), PC는 한 줄(12개 넘으면 두 줄)
+  const catCount = categories.length;
+  const emptyCells = (cols) => (cols - (catCount % cols)) % cols;
+  $("#quickGrid").style.setProperty("--cols-m", emptyCells(4) < emptyCells(5) ? 4 : 5);
+  $("#quickGrid").style.setProperty("--cols-d", catCount <= 12 ? catCount : Math.ceil(catCount / 2));
   $("#footCats").innerHTML = categories
     .map((c) => `<li><button type="button" data-cat="${c.id}">${esc(c.name)}</button></li>`)
     .join("");
