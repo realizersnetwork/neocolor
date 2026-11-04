@@ -273,9 +273,38 @@
 
   /* ---------- 메인 동영상 ---------- */
   const video = $("#heroVideo");
-  if (video && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const soundBtn = $("#soundBtn");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (video && reducedMotion) {
     video.removeAttribute("autoplay");
     video.pause();
+  }
+
+  // 브라우저는 소리 있는 자동재생을 막기 때문에, 무음으로 시작하고 버튼을 누르면 소리를 켠다
+  if (video && soundBtn) {
+    const label = soundBtn.querySelector("span");
+    soundBtn.addEventListener("click", () => {
+      const turnOn = video.muted;
+      video.muted = !turnOn;
+      if (turnOn) {
+        video.volume = 1;
+        video.play().catch(() => {});
+      }
+      soundBtn.classList.toggle("on", turnOn);
+      soundBtn.setAttribute("aria-pressed", String(turnOn));
+      soundBtn.setAttribute("aria-label", turnOn ? "동영상 소리 끄기" : "동영상 소리 켜기");
+      label.textContent = turnOn ? "소리 끄기" : "소리 켜기";
+    });
+
+    // 화면에서 영상이 안 보이면 멈추고, 다시 보이면 이어서 재생 (소리가 계속 나는 것 방지)
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) video.pause();
+          else if (!reducedMotion || !video.muted) video.play().catch(() => {});
+        });
+      }, { threshold: 0.15 }).observe(video);
+    }
   }
 
   /* ---------- 시작 ---------- */

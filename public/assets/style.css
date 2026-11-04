@@ -290,6 +290,43 @@ section[id] { scroll-margin-top: 120px; }
   background: linear-gradient(180deg, rgba(11, 13, 18, 0.12) 0%, rgba(11, 13, 18, 0.2) 40%, rgba(11, 13, 18, 0.9) 100%);
 }
 .hero-copy { position: relative; z-index: 1; width: 100%; padding: 0 16px 28px; }
+
+/* 동영상 소리 버튼 */
+.sound-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 14px 0 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(11, 13, 18, 0.55);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+.sound-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sound-btn .ic-on { display: none; }
+.sound-btn.on .ic-on { display: block; }
+.sound-btn.on .ic-off { display: none; }
+.sound-btn:not(.on) { animation: sound-pulse 2.4s ease-in-out infinite; }
+@keyframes sound-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); }
+  50% { box-shadow: 0 0 0 7px rgba(255, 255, 255, 0); }
+}
 .wordmark-xl { font-size: clamp(46px, 14vw, 84px); color: #fff; line-height: 0.92; }
 .brand-sub {
   display: flex;
