@@ -16,7 +16,9 @@ window.NEO = {
     { id: "exterior", name: "창호·외장",      color: "#7a4dff", desc: "창과 외벽, 지붕을 마감하는 기술",              subs: ["샷시·창호", "단열", "징크·지붕"] },
     { id: "wood",     name: "목공·인테리어",  color: "#bf6a36", desc: "문틀부터 천장까지, 실내를 짓는 손",           subs: ["문틀·문", "가벽·천장", "몰딩", "주방가구"] },
     { id: "tile",     name: "타일·석재",      color: "#e03a7a", desc: "줄 하나에 실력이 보이는 마감",                 subs: ["타일", "실내 석재", "외장 석재"] },
-    { id: "finish",   name: "도장·도배·마감", color: "#f26a10", desc: "마지막 손길이 집의 인상을 바꾼다",            subs: ["도장", "도배", "바닥재", "실리콘·코킹"] }
+    { id: "finish",   name: "도장·도배·마감", color: "#f26a10", desc: "마지막 손길이 집의 인상을 바꾼다",            subs: ["도장", "도배", "바닥재", "실리콘·코킹"] },
+    // 인력사무소: 공종이 아니라 현장에 들어가는 길 (첫 출근, 일당, 기공 되기, 사무소 창업)
+    { id: "labor",    name: "인력사무소",     color: "#6b8e23", desc: "현장 일의 첫 문, 첫 출근부터 사무소 창업까지", subs: ["첫 출근 준비", "현장 용어", "일당·정산", "기공 되기", "창업·운영"] }
   ],
 
   courses: [
@@ -86,9 +88,18 @@ window.NEO = {
     { id: "n2", cat: "finish", sub: "도배",        title: "도배 기능 입문",               desc: "초배부터 정배까지",                                hours: 40, level: "입문", format: "현장실습",        gov: true, voucher: true },
     { id: "n3", cat: "finish", sub: "도배",        title: "셀프 도배·페인트",             desc: "우리 집 직접 바꿔보기",                            hours: 6,  level: "입문", format: "온라인",          voucher: true },
     { id: "n4", cat: "finish", sub: "바닥재",      title: "마루·장판 시공 실무",          desc: "바닥재 종류별 시공 순서",                          hours: 12, level: "입문", format: "온라인+현장실습" },
-    { id: "n5", cat: "finish", sub: "실리콘·코킹", title: "실리콘·코킹 마감",             desc: "욕실·창호 실리콘 한 줄 깔끔하게",                  hours: 4,  level: "입문", format: "온라인+현장실습", voucher: true }
+    { id: "n5", cat: "finish", sub: "실리콘·코킹", title: "실리콘·코킹 마감",             desc: "욕실·창호 실리콘 한 줄 깔끔하게",                  hours: 4,  level: "입문", format: "온라인+현장실습", voucher: true },
+
+    // 인력사무소
+    { id: "h1", cat: "labor", sub: "첫 출근 준비", title: "인력사무소 첫 출근 가이드",     desc: "새벽 출근부터 현장 배정, 하루 일과까지 미리 보기",          hours: 3,  level: "입문", format: "온라인" },
+    { id: "h2", cat: "labor", sub: "첫 출근 준비", title: "안전교육 이수증과 준비물",      desc: "기초안전보건교육 이수증 받는 법, 안전화·장갑·작업복 고르기", hours: 2,  level: "입문", format: "온라인" },
+    { id: "h3", cat: "labor", sub: "현장 용어",    title: "현장 용어·눈치 속성",           desc: "곰방·시마이·데모도, 처음 듣는 현장 말 바로 알아듣기",       hours: 2,  level: "입문", format: "온라인" },
+    { id: "h4", cat: "labor", sub: "일당·정산",    title: "일당·수수료·세금 정리",        desc: "손에 쥐는 돈이 얼마인지, 정산 구조 이해하기",              hours: 2,  level: "입문", format: "온라인" },
+    { id: "h5", cat: "labor", sub: "일당·정산",    title: "산재보험·퇴직공제 챙기기",      desc: "일용직도 받는 산재 보상, 일한 날만큼 쌓이는 퇴직공제",       hours: 2,  level: "입문", format: "온라인" },
+    { id: "h6", cat: "labor", sub: "기공 되기",    title: "잡부에서 기공까지 로드맵",      desc: "조공·준기공·기공, 공종 고르고 단가 올리는 길",              hours: 4,  level: "입문", format: "온라인" },
+    { id: "h7", cat: "labor", sub: "창업·운영",    title: "인력사무소 창업·운영 실무",     desc: "직업소개사업 등록부터 구인처 영업, 일당 정산 관리까지",      hours: 10, level: "실무", format: "온라인" }
   ],
 
   // 메인 화면 '처음이라면 여기서 시작' 줄에 보여줄 강의
-  starter: ["m1", "n2", "t1", "k1", "e1", "f1", "p5", "n5"]
+  starter: ["h1", "m1", "n2", "t1", "k1", "e1", "f1", "p5", "n5"]
 };
