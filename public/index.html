@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NEOCOLOR</title>
+  <meta name="description" content="NEOCOLOR — 사이트 준비 중입니다.">
+  <meta name="theme-color" content="#f5f4f0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e0e10" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://neocolor.net/">
+  <meta property="og:title" content="NEOCOLOR">
+  <meta property="og:description" content="사이트 준비 중입니다.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --bg: #f5f4f0;
+      --fg: #141416;
+      --muted: #6b6b70;
+      --line: rgba(20, 20, 22, 0.12);
+      --c1: #00b3c7;
+      --c2: #2f6bff;
+      --c3: #7a4dff;
+      --c4: #ff3d8b;
+      --c5: #ff7a1a;
+      --c6: #ffc21a;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e0e10;
+        --fg: #f2f2f0;
+        --muted: #9a9aa0;
+        --line: rgba(242, 242, 240, 0.14);
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR",
+        "Malgun Gothic", "Segoe UI", Roboto, sans-serif;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 24px clamp(16px, 5vw, 56px);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header, footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+    }
+
+    main {
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      gap: 28px;
+      text-align: center;
+      padding: 48px 0;
+    }
+
+    h1 {
+      font-size: clamp(44px, 13vw, 148px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 0.9;
+    }
+
+    h1 .color {
+      background: linear-gradient(90deg, var(--c1), var(--c2), var(--c3), var(--c4), var(--c5), var(--c6), var(--c1));
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      animation: flow 12s linear infinite;
+    }
+
+    @keyframes flow {
+      from { background-position: 0% 0; }
+      to { background-position: 150% 0; }
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chips span {
+      display: block;
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      animation: rise 3.6s ease-in-out infinite;
+    }
+
+    .chips span:nth-child(1) { background: var(--c1); animation-delay: 0s; }
+    .chips span:nth-child(2) { background: var(--c2); animation-delay: 0.15s; }
+    .chips span:nth-child(3) { background: var(--c3); animation-delay: 0.3s; }
+    .chips span:nth-child(4) { background: var(--c4); animation-delay: 0.45s; }
+    .chips span:nth-child(5) { background: var(--c5); animation-delay: 0.6s; }
+    .chips span:nth-child(6) { background: var(--c6); animation-delay: 0.75s; }
+
+    @keyframes rise {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .status {
+      display: grid;
+      gap: 8px;
+    }
+
+    .status .ko {
+      font-size: clamp(17px, 2.4vw, 22px);
+      font-weight: 600;
+    }
+
+    .status .en {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      h1 .color, .chips span { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>neocolor.net</span>
+  </header>
+
+  <main>
+    <h1>NEO<span class="color">COLOR</span></h1>
+    <div class="chips" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="status">
+      <p class="ko">사이트 준비 중입니다</p>
+      <p class="en">Coming soon</p>
+    </div>
+  </main>
+
+  <footer>
+    <span>© 2026 NEOCOLOR</span>
+    <span>neocolor.net</span>
+  </footer>
+</body>
+</html>
