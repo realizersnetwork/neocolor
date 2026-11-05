@@ -17,7 +17,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="assets/style.css?v=11">
+  <link rel="stylesheet" href="assets/style.css?v=12">
 </head>
 <body data-mode="student" data-view="home">
   <a class="skip" href="#main" data-i18n="skip">본문으로 건너뛰기</a>
@@ -308,6 +308,20 @@
           </div>
           <div class="os-list" id="osList" role="list" aria-label="나라별 전기 기술자 월 수입" data-i18n-attr="aria-label:os.listAria"></div>
           <p class="source" data-i18n="os.note">월 환산 기준</p>
+
+          <!-- 지금 건설이 뜨는 개발도상국: 최저임금과 월 구독료 (data.js boom) -->
+          <div class="boom">
+            <h3 class="boom-title" data-i18n="os.boomTitle">지금 건설이 뜨는 나라들</h3>
+            <p class="boom-sub" data-i18n="os.boomSub">개발도상국은 그 나라 AI 구독료 수준으로 받아요.</p>
+            <div class="boom-grid" id="boomList" role="list"></div>
+            <p class="boom-kr" id="boomKr"></p>
+            <div class="boom-eps">
+              <span data-i18n="os.eps">한국 현장에서 일하려는 분은 현장 용어 사전부터 보세요.</span>
+              <a class="btn btn-ghost" href="#/community/terms" data-i18n="os.epsBtn">현장 용어 사전</a>
+            </div>
+            <p class="source" data-i18n="os.boomNote">출처</p>
+            <a class="link-more" href="#/plans/countries" data-i18n="os.priceLink">나라별 구독료 전체 보기 →</a>
+          </div>
         </div>
       </section>
 
@@ -514,6 +528,12 @@
           <p data-i18n="plans.lead">한 번 결제로 모든 강의를 마음껏.</p>
         </div>
         <div class="plans-grid" id="plansGrid"></div>
+        <section class="price-table" id="priceTable" aria-labelledby="ptTitle">
+          <h2 class="sub-title" id="ptTitle" data-i18n="plans.tableTitle">나라별 월 구독료</h2>
+          <p class="sub-lead" data-i18n="plans.tableSub">그 나라 사람들이 이미 내는 AI 구독료만큼만 받아요.</p>
+          <div class="pt-groups" id="ptGroups"></div>
+          <p class="source" data-i18n="plans.tableNote">가격 기준</p>
+        </section>
         <div class="pick">
           <h2 class="sub-title" data-i18n="plans.pickTitle">어떤 걸 고를까요?</h2>
           <ul class="pick-list" id="pickList"></ul>
@@ -736,8 +756,8 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <noscript><p class="noscript">이 사이트는 자바스크립트를 켜야 강의 목록이 보여요.</p></noscript>
-  <script src="assets/i18n.js?v=11"></script>
-  <script src="assets/data.js?v=11"></script>
-  <script src="assets/app.js?v=11"></script>
+  <script src="assets/i18n.js?v=12"></script>
+  <script src="assets/data.js?v=12"></script>
+  <script src="assets/app.js?v=12"></script>
 </body>
 </html>

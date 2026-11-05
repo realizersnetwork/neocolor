@@ -107,18 +107,34 @@
   const icon = (name, cls) => SV(ICON[name] || "", cls);
 
   /* ---------- 상태 ---------- */
+  const hasPrice = (id) => D.pricing.some((p) => p.id === id);
   function detectCountry() {
     const s = store.get("neo.country", null);
-    if (D.pricing.some((p) => p.id === s)) return s;
-    const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""]).map((x) => String(x).toLowerCase());
+    if (hasPrice(s)) return s;
+    // 접속 나라는 시작 후 /cdn-cgi/trace 로 다시 맞춘다(applyTraceCountry). 그 전엔 브라우저 언어로 짐작
+    const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""]).map((x) => String(x));
     for (const l of langs) {
-      if (l.startsWith("ko")) return "KR";
-      if (l === "hi" || l.startsWith("hi-") || l.endsWith("-in")) return "IN";
-      if (l === "id" || l.startsWith("id-")) return "ID";
-      if (l.startsWith("vi")) return "VN";
-      if (l.startsWith("fil") || l.startsWith("tl") || l.endsWith("-ph")) return "PH";
+      const region = (l.split("-")[1] || "").toUpperCase();
+      if (/^[A-Z]{2}$/.test(region) && hasPrice(region)) return region;
+      const base = l.slice(0, 2).toLowerCase();
+      const byLang = { ko: "KR", ja: "JP", vi: "VN", id: "ID", hi: "IN", th: "TH", ms: "MY", tl: "PH", fil: "PH", tr: "TR", pl: "PL", de: "DE", fr: "FR", it: "IT", nl: "NL", sv: "SE", da: "DK", nb: "NO", he: "IL", ur: "PK" }[base];
+      if (byLang) return byLang;
     }
     return "KR";
+  }
+  // 같은 사이트의 /cdn-cgi/trace 에서 접속 나라를 한 번만 읽는다 (방문자 통계와 나라별 요금이 같이 씀)
+  let tracePromise = null;
+  function traceCountry() {
+    if (!tracePromise) {
+      tracePromise = (async () => {
+        if (!/^https:$/.test(location.protocol)) return null;
+        try {
+          const txt = await (await fetch("/cdn-cgi/trace", { cache: "no-store" })).text();
+          return (txt.match(/^loc=([A-Z0-9]{2})$/m) || [])[1] || null;
+        } catch (_) { return null; }
+      })();
+    }
+    return tracePromise;
   }
   const savedRaw = store.get("neo.saved", []);
   let saved = new Set((Array.isArray(savedRaw) ? savedRaw : []).filter((id) => courseById[id]));
@@ -299,7 +315,19 @@
     }).join("");
   }
 
-  const priceFor = (id) => { const p = D.pricing.find((x) => x.id === id) || D.pricing[0]; return typeof p.price === "string" ? p.price : L(p.price); };
+  const priceItem = (id) => D.pricing.find((x) => x.id === id) || D.pricing[0];
+  const priceFor = (id) => { const p = priceItem(id); return typeof p.price === "string" ? p.price : L(p.price); };
+  function countryNamer() {
+    let dn = null;
+    try { dn = new Intl.DisplayNames([LOCALE[lang]], { type: "region" }); } catch (_) { /* 오래된 브라우저 */ }
+    return (code) => { try { return (dn && dn.of(code)) || code; } catch (_) { return code; } };
+  }
+  // 달러 → 보는 사람 언어의 돈 (한국어: 원, 영어: 달러, 일본어: 엔), 대략
+  function approxMoney(usd) {
+    if (lang === "ko") return `약 ${fmt(Math.round((usd * D.fx.KRW) / 100) * 100)}원`;
+    if (lang === "ja") return `約${fmt(Math.round((usd * D.fx.JPY) / 10) * 10)}円`;
+    return `≈ $${fmt(usd, 2)}`;
+  }
   function renderPlanTeaser() {
     const items = [
       { name: t("plan.gov.name"), price: t("plan.gov.price"), sub: t("plan.gov.sub"), badge: t("plan.gov.badge") },
@@ -601,7 +629,8 @@
   /* ---------- 수강권 ---------- */
   function renderPlans() {
     const li = (key, hl) => `<li${hl ? ' class="hl"' : ""}>${icon("check")}<span>${esc(t(key))}</span></li>`;
-    const pr = D.pricing.find((x) => x.id === state.country) || D.pricing[0];
+    const pr = priceItem(state.country);
+    const cname = countryNamer();
     $("#plansGrid").innerHTML = `
       <article class="plan">
         <div class="plan-top"><span class="pill pill-gov">${esc(t("plan.gov.badge"))}</span><span class="country-label">${esc(t("plan.koreaOnly"))}</span></div>
@@ -626,12 +655,42 @@
         <p class="plan-price">${esc(priceFor(pr.id))}<small>${esc(t("plan.monthly.unit"))}</small></p>
         ${pr.perDay ? `<p class="plan-perday">${esc(t("plan.monthly.perDay"))}</p>` : ""}
         <p class="plan-sub">${esc(t("plan.monthly.sub"))}</p>
-        <div><p class="country-label">${esc(t("plan.country"))}</p>
-          <div class="country-chips">${D.pricing.map((p) => `<button type="button" data-country="${p.id}" aria-pressed="${p.id === pr.id}">${esc(L(p.name))}</button>`).join("")}</div></div>
+        <label class="country-pick"><span class="country-label">${esc(t("plan.country"))}</span>
+          <select id="countrySelect">${["plus", "go"].map((tier) => `<optgroup label="${esc(t("plans.group." + tier))}">${D.pricing.filter((x) => x.tier === tier).map((x) => `<option value="${x.id}"${x.id === pr.id ? " selected" : ""}>${esc(cname(x.id))} · ${esc(priceFor(x.id))}</option>`).join("")}</optgroup>`).join("")}</select>
+          <small>${esc(t("plan.basis." + pr.tier))}</small></label>
         <ul>${li("plan.monthly.b1")}${li("plan.monthly.b2", true)}${li("plan.monthly.b3")}${li("plan.monthly.b4")}</ul>
         <button class="btn btn-dark" type="button" data-soon>${esc(t("plan.monthly.btn"))}</button>
       </article>`;
     $("#pickList").innerHTML = [1, 2, 3].map((i) => `<li><span>${esc(t(`plans.pick${i}.c`))}</span><strong>${esc(t(`plans.pick${i}.r`))}</strong></li>`).join("");
+    renderPriceTable();
+  }
+  function renderPriceTable() {
+    const cname = countryNamer();
+    $("#ptGroups").innerHTML = ["plus", "go"].map((tier) => `
+      <div class="pt-group">
+        <h3>${esc(t("plans.group." + tier))}</h3>
+        <ul class="pt-list">${D.pricing.filter((x) => x.tier === tier).map((x) => `
+          <li class="${x.id === state.country ? "is-you" : ""}"><button type="button" data-country="${x.id}" aria-pressed="${x.id === state.country}">
+            <span class="pt-name">${esc(cname(x.id))}${x.id === state.country ? `<em>${esc(t("plans.you"))}</em>` : ""}</span>
+            <span class="pt-price">${esc(priceFor(x.id))}</span>
+            <span class="pt-approx">${x.id === "KR" && lang === "ko" ? "" : esc(approxMoney(x.usd))}</span>
+          </button></li>`).join("")}</ul>
+      </div>`).join("");
+  }
+  function renderBoom() {
+    const cname = countryNamer();
+    $("#boomList").innerHTML = D.boom.map((b) => {
+      const wageLocal = approxMoney(b.wageUsd);
+      return `<article class="boom-card" role="listitem">
+        <div class="boom-top"><strong>${esc(cname(b.id))}</strong><span class="boom-price">${esc(t("os.boomPrice", { p: priceFor(b.id) }))}</span></div>
+        <p class="boom-why">${esc(L(b.why))}</p>
+        <p class="boom-wage">${esc(L(b.wage))} <span>(${esc(t(b.per === "day" ? "os.boomDay" : "os.boomMonth", { v: wageLocal }))})</span></p>
+        <p class="boom-hours">${esc(t("os.boomHours", { n: fmt(b.hours, 1) }))}</p>
+        <p class="boom-src">${esc(L(b.src))}</p>
+      </article>`;
+    }).join("");
+    const krHours = Math.round((29000 / D.krMinWage) * 10) / 10;
+    $("#boomKr").textContent = t("os.boomKr", { w: fmt(D.krMinWage), n: fmt(krHours, 1) });
   }
 
   /* ---------- 베테랑 스튜디오 ---------- */
@@ -712,11 +771,7 @@
     try {
       let seen = store.get(SEEN, false) === true || session.get(SEEN) === "1";
       if (!seen) {
-        let cc = "XX";
-        try {
-          const txt = await (await fetch("/cdn-cgi/trace", { cache: "no-store" })).text();
-          cc = (txt.match(/^loc=([A-Z]{2})$/m) || [])[1] || "XX";
-        } catch (_) { /* 나라를 모르면 '알 수 없음' */ }
+        const cc = (await traceCountry()) || "XX";
         const key = cc === "XX" || cc === "T1" ? "XX" : STAT_COUNTRIES.includes(cc) ? cc : "OT";
         if ((await counterFetch("hit", "c-" + key)).ok) { seen = true; store.set(SEEN, true); session.set(SEEN, "1"); }
       }
@@ -994,6 +1049,7 @@
     let target = null;
     if (r.view === "roadmaps" && rmById[r.a]) target = document.getElementById("rm-" + r.a);
     if (r.view === "veteran" && ["upload", "payout", "guide"].includes(r.a)) target = document.getElementById("vet-" + r.a);
+    if (r.view === "plans" && r.a === "countries") target = document.getElementById("priceTable");
     if (target) {
       if (prev !== r.view) jumpTop();
       requestAnimationFrame(() => {
@@ -1057,7 +1113,7 @@
       renderWageDetail();
       return;
     }
-    if (ds.country) { state.country = ds.country; store.set("neo.country", ds.country); renderPlans(); renderPlanTeaser(); return; }
+    if (ds.country) { setCountry(ds.country, true); return; }
     if (el.hasAttribute("data-dlg-close")) { closeDialog(el.closest("dialog")); return; }
     if (ds.mega) { go(coursesHash({ cat: ds.mega })); }
   }
@@ -1141,6 +1197,24 @@
   }
   sizeBtn.addEventListener("click", () => setBig(!document.documentElement.classList.contains("big-text")));
 
+  /* ---------- 나라 바꾸기 (요금) ---------- */
+  function setCountry(id, byUser) {
+    if (!hasPrice(id)) return;
+    state.country = id;
+    if (byUser) store.set("neo.country", id);
+    renderPlans();
+    renderPlanTeaser();
+  }
+  document.addEventListener("change", (e) => {
+    if (e.target && e.target.id === "countrySelect") keepFocus(() => setCountry(e.target.value, true));
+  });
+  // 직접 고른 적이 없으면 실제 접속 나라로 맞춘다
+  async function applyTraceCountry() {
+    if (hasPrice(store.get("neo.country", null))) return;
+    const cc = await traceCountry();
+    if (cc && hasPrice(cc) && cc !== state.country) setCountry(cc, false);
+  }
+
   /* ---------- 언어 바꾸기 ---------- */
   function setLang(l) {
     if (!LANGS.includes(l) || l === lang) return;
@@ -1167,6 +1241,7 @@
     renderCommTeaser();
     renderJobsTeaser();
     renderOverseas();
+    renderBoom();
     renderRow("#rowDiy", D.courses.filter((c) => c.diy));
     $("#faqHome").innerHTML = faqHTML();
     $("#faqPlans").innerHTML = faqHTML();
@@ -1192,6 +1267,7 @@
   applyStatic();
   renderAll();
   visitDone = countVisit();
+  applyTraceCountry();
   handleRoute();
   window.addEventListener("hashchange", handleRoute);
 })();
