@@ -108,9 +108,8 @@
 
   /* ---------- 상태 ---------- */
   const hasPrice = (id) => D.pricing.some((p) => p.id === id);
+  try { localStorage.removeItem("neo.country"); } catch (_) { /* 예전에 저장한 나라 지우기 */ }
   function detectCountry() {
-    const s = store.get("neo.country", null);
-    if (hasPrice(s)) return s;
     // 접속 나라는 시작 후 /cdn-cgi/trace 로 다시 맞춘다(applyTraceCountry). 그 전엔 브라우저 언어로 짐작
     const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""]).map((x) => String(x));
     for (const l of langs) {
@@ -149,7 +148,8 @@
     lastStudent: "#/",
     wage: D.wages.items[0].id,
     homeLevel: "beginner",
-    country: detectCountry(),
+    homeCountry: detectCountry(),
+    country: null,
     quiz: { step: 0, answers: [] },
     course: null,
     stats: null
@@ -332,7 +332,7 @@
     const items = [
       { name: t("plan.gov.name"), price: t("plan.gov.price"), sub: t("plan.gov.sub"), badge: t("plan.gov.badge") },
       { name: t("plan.voucher.name"), price: t("plan.voucher.price"), sub: t("plan.voucher.sub"), badge: t("plan.voucher.badge"), featured: true },
-      { name: t("plan.monthly.name"), price: `${priceFor(state.country)} ${t("plan.monthly.unit")}`, sub: t("plan.monthly.sub"), badge: t("plan.monthly.badge") }
+      { name: t("plan.monthly.name"), price: `${priceFor(state.homeCountry)} ${t("plan.monthly.unit")}`, sub: t("plan.monthly.sub"), badge: t("plan.monthly.badge") }
     ];
     $("#planTeaser").innerHTML = items.map((p) =>
       `<a class="plan-mini${p.featured ? " featured" : ""}" href="#/plans"><span class="pm-top"><span class="pm-name">${esc(p.name)}</span><span class="pill${p.featured ? " pill-dark" : ""}">${esc(p.badge)}</span></span><span class="pm-price">${esc(p.price)}</span><span class="pm-sub">${esc(p.sub)}</span></a>`
@@ -629,7 +629,7 @@
   /* ---------- 수강권 ---------- */
   function renderPlans() {
     const li = (key, hl) => `<li${hl ? ' class="hl"' : ""}>${icon("check")}<span>${esc(t(key))}</span></li>`;
-    const pr = priceItem(state.country);
+    const pr = priceItem(state.country || state.homeCountry);
     const cname = countryNamer();
     $("#plansGrid").innerHTML = `
       <article class="plan">
@@ -656,26 +656,32 @@
         ${pr.perDay ? `<p class="plan-perday">${esc(t("plan.monthly.perDay"))}</p>` : ""}
         <p class="plan-sub">${esc(t("plan.monthly.sub"))}</p>
         <label class="country-pick"><span class="country-label">${esc(t("plan.country"))}</span>
-          <select id="countrySelect">${["plus", "go"].map((tier) => `<optgroup label="${esc(t("plans.group." + tier))}">${D.pricing.filter((x) => x.tier === tier).map((x) => `<option value="${x.id}"${x.id === pr.id ? " selected" : ""}>${esc(cname(x.id))} · ${esc(priceFor(x.id))}</option>`).join("")}</optgroup>`).join("")}</select>
-          <small>${esc(t("plan.basis." + pr.tier))}</small></label>
+          <select id="countrySelect">${sortedPricing(cname).map((x) => `<option value="${x.id}"${x.id === pr.id ? " selected" : ""}>${esc(cname(x.id))} · ${esc(priceFor(x.id))}</option>`).join("")}</select></label>
         <ul>${li("plan.monthly.b1")}${li("plan.monthly.b2", true)}${li("plan.monthly.b3")}${li("plan.monthly.b4")}</ul>
         <button class="btn btn-dark" type="button" data-soon>${esc(t("plan.monthly.btn"))}</button>
       </article>`;
     $("#pickList").innerHTML = [1, 2, 3].map((i) => `<li><span>${esc(t(`plans.pick${i}.c`))}</span><strong>${esc(t(`plans.pick${i}.r`))}</strong></li>`).join("");
     renderPriceTable();
   }
+  // 대한민국 먼저, 나머지는 보는 언어의 이름 순서대로
+  function sortedPricing(cname) {
+    let coll = null;
+    try { coll = new Intl.Collator(LOCALE[lang]); } catch (_) { /* 무시 */ }
+    const rest = D.pricing.filter((x) => x.id !== "KR")
+      .sort((a, b) => (coll ? coll.compare(cname(a.id), cname(b.id)) : cname(a.id) < cname(b.id) ? -1 : 1));
+    return [D.pricing.find((x) => x.id === "KR"), ...rest];
+  }
   function renderPriceTable() {
     const cname = countryNamer();
-    $("#ptGroups").innerHTML = ["plus", "go"].map((tier) => `
+    $("#ptGroups").innerHTML = `
       <div class="pt-group">
-        <h3>${esc(t("plans.group." + tier))}</h3>
-        <ul class="pt-list">${D.pricing.filter((x) => x.tier === tier).map((x) => `
-          <li class="${x.id === state.country ? "is-you" : ""}"><button type="button" data-country="${x.id}" aria-pressed="${x.id === state.country}">
-            <span class="pt-name">${esc(cname(x.id))}${x.id === state.country ? `<em>${esc(t("plans.you"))}</em>` : ""}</span>
+        <ul class="pt-list">${sortedPricing(cname).map((x) => `
+          <li class="pt-row${x.id === state.homeCountry ? " is-you" : ""}">
+            <span class="pt-name">${esc(cname(x.id))}</span>
             <span class="pt-price">${esc(priceFor(x.id))}</span>
             <span class="pt-approx">${x.id === "KR" && lang === "ko" ? "" : esc(approxMoney(x.usd))}</span>
-          </button></li>`).join("")}</ul>
-      </div>`).join("");
+          </li>`).join("")}</ul>
+      </div>`;
   }
   function renderBoom() {
     const cname = countryNamer();
@@ -689,8 +695,6 @@
         <p class="boom-src">${esc(L(b.src))}</p>
       </article>`;
     }).join("");
-    const krHours = Math.round((29000 / D.krMinWage) * 10) / 10;
-    $("#boomKr").textContent = t("os.boomKr", { w: fmt(D.krMinWage), n: fmt(krHours, 1) });
   }
 
   /* ---------- 베테랑 스튜디오 ---------- */
@@ -1070,7 +1074,7 @@
   const CLICK_SEL = [
     "[data-save]", "[data-course]", "[data-cat]", "[data-search]", "[data-soon]", "button[data-mode]", "[data-lang]",
     "[data-go]", "[data-quiz]", "[data-q-opt]", "[data-q-back]", "[data-q-retry]", "[data-filter]", "[data-tab]", "[data-ctab]",
-    "[data-term-cat]", "[data-level-tab]", "[data-wage]", "[data-country]", "[data-dlg-close]", "[data-mega]"
+    "[data-term-cat]", "[data-level-tab]", "[data-wage]", "[data-dlg-close]", "[data-mega]"
   ].join(",");
   document.addEventListener("click", (e) => keepFocus(() => onClick(e)));
   function onClick(e) {
@@ -1113,7 +1117,6 @@
       renderWageDetail();
       return;
     }
-    if (ds.country) { setCountry(ds.country, true); return; }
     if (el.hasAttribute("data-dlg-close")) { closeDialog(el.closest("dialog")); return; }
     if (ds.mega) { go(coursesHash({ cat: ds.mega })); }
   }
@@ -1198,21 +1201,20 @@
   sizeBtn.addEventListener("click", () => setBig(!document.documentElement.classList.contains("big-text")));
 
   /* ---------- 나라 바꾸기 (요금) ---------- */
-  function setCountry(id, byUser) {
-    if (!hasPrice(id)) return;
-    state.country = id;
-    if (byUser) store.set("neo.country", id);
-    renderPlans();
-    renderPlanTeaser();
-  }
   document.addEventListener("change", (e) => {
-    if (e.target && e.target.id === "countrySelect") keepFocus(() => setCountry(e.target.value, true));
+    if (e.target && e.target.id === "countrySelect" && hasPrice(e.target.value)) {
+      state.country = e.target.value; // 저장하지 않는다 (다른 나라 요금을 잠깐 보는 것뿐)
+      keepFocus(renderPlans);
+    }
   });
-  // 직접 고른 적이 없으면 실제 접속 나라로 맞춘다
+  // 홈·수강권의 기본 요금은 실제로 접속한 나라로 (모르면 브라우저 언어로 짐작한 나라, 한국어면 한국)
   async function applyTraceCountry() {
-    if (hasPrice(store.get("neo.country", null))) return;
     const cc = await traceCountry();
-    if (cc && hasPrice(cc) && cc !== state.country) setCountry(cc, false);
+    if (cc && hasPrice(cc) && cc !== state.homeCountry) {
+      state.homeCountry = cc;
+      renderPlans();
+      renderPlanTeaser();
+    }
   }
 
   /* ---------- 언어 바꾸기 ---------- */
