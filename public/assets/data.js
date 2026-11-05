@@ -859,7 +859,7 @@ window.NEO = {
     { q: { ko: "언제부터 들을 수 있나요?", en: "When can I start learning?", ja: "いつから受講できますか?" },
       a: { ko: "지금은 정식 오픈을 준비하고 있어요. 강의는 공종별로 순서대로 열려요.", en: "We're preparing for launch. Courses will open trade by trade.", ja: "現在、正式オープンの準備中です。講座は工種ごとに順次公開します。" } },
     { q: { ko: "NEO PASS는 뭐예요?", en: "What is NEO PASS?", ja: "NEO PASSとは?" },
-      a: { ko: "모든 강의와 인력사무소를 함께 쓰는 수강권이에요. 월 29,000원 월 구독, 또는 평생교육이용권 35만원으로 6개월 동안 이용할 수 있어요. 평생교육이용권은 사용기관 등록을 마친 뒤 쓸 수 있어요.", en: "It's the pass for every course plus the Job Center: a monthly plan at ₩29,000, or 6 months with a ₩350,000 Lifelong Education Voucher. The voucher works once our provider registration is complete.", ja: "全講座と人材センターを使える受講プランです。月額29,000ウォン、または生涯教育利用券35万ウォンで6か月。利用券は利用機関登録の完了後に使えます。" } },
+      a: { ko: "모든 강의와 인력사무소를 함께 쓰는 수강권이에요. 월 29,000원 월 구독, 또는 평생교육이용권 35만원으로 1년 6개월 동안 이용할 수 있어요. 평생교육이용권은 사용기관 등록을 마친 뒤 쓸 수 있어요.", en: "It's the pass for every course plus the Job Center: a monthly plan at ₩29,000, or 18 months with a ₩350,000 Lifelong Education Voucher. The voucher works once our provider registration is complete.", ja: "全講座と人材センターを使える受講プランです。月額29,000ウォン、または生涯教育利用券35万ウォンで1年6か月。利用券は利用機関登録の完了後に使えます。" } },
     { q: { ko: "내일배움카드(국비)로 들을 수 있나요?", en: "Can I use the Tomorrow Learning Card?", ja: "明日学びカード(国費)は使えますか?" },
       a: { ko: "국비지원 직업훈련 과정 승인을 준비하고 있어요. 승인된 과정은 '국비지원'으로 표시할게요.", en: "We're preparing for government training approval. Approved courses will be labeled.", ja: "国費支援の職業訓練講座の承認を準備中です。承認講座は「国費支援」と表示します。" } },
     { q: { ko: "인력사무소는 누가 쓸 수 있나요?", en: "Who can use the Job Center?", ja: "人材センターは誰が使えますか?" },

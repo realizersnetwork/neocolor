@@ -906,13 +906,16 @@
     if (location.hash === hash) handleRoute();
     else location.hash = hash;
   }
-  function jumpTop() {
+  // 부드러운 스크롤(CSS) 없이 바로 이동. 진행 중이던 부드러운 스크롤도 여기서 끊는다
+  function instantly(fn) {
     const html = document.documentElement;
     const prev = html.style.scrollBehavior;
     html.style.scrollBehavior = "auto";
-    window.scrollTo(0, 0);
+    void html.offsetHeight; // 모드가 바뀌어 머리글 높이가 달라진 것을 먼저 반영
+    fn();
     html.style.scrollBehavior = prev;
   }
+  const jumpTop = () => instantly(() => window.scrollTo(0, 0));
   // 목록을 다시 그려도 키보드 초점이 같은 버튼에 남도록
   function keepFocus(render) {
     const a = document.activeElement;
@@ -976,7 +979,8 @@
     if (target) {
       if (prev !== r.view) jumpTop();
       requestAnimationFrame(() => {
-        target.scrollIntoView({ behavior: prev === r.view ? "smooth" : "auto", block: "start" });
+        if (prev === r.view) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        else instantly(() => target.scrollIntoView({ block: "start" }));
         if (target.classList.contains("rm-full")) { target.classList.remove("flash"); void target.offsetWidth; target.classList.add("flash"); }
       });
     } else if (prev !== r.view) {
