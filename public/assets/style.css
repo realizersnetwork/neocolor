@@ -1137,25 +1137,6 @@ html:lang(en) .wage-name { font-size: 13px; }
 .brand-sub [data-i18n="hero.tag"] { flex-basis: 100%; font-size: 14px; font-weight: 700; letter-spacing: 0.01em; color: rgba(255, 255, 255, 0.92); }
 @media (min-width: 720px) { .brand-sub [data-i18n="hero.tag"] { font-size: 16px; } }
 
-/* ---------- 지금 건설이 뜨는 나라들 (홈 해외 섹션, 어두운 배경) ---------- */
-.boom { margin-top: 34px; padding-top: 26px; border-top: 1px solid rgba(255, 255, 255, 0.12); }
-.boom-title { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
-.boom-sub { margin-top: 6px; font-size: 14px; line-height: 1.6; color: rgba(255, 255, 255, 0.7); }
-.boom-grid { display: grid; gap: 10px; margin-top: 16px; }
-.boom-card { display: grid; gap: 6px; align-content: start; padding: 16px; border-radius: 16px; background: var(--dark-2); border: 1px solid rgba(255, 255, 255, 0.08); }
-.boom-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 10px; }
-.boom-top strong { font-size: 17px; font-weight: 800; }
-.boom-price { font-size: 13px; font-weight: 800; color: #8fb0ff; }
-.boom-why { font-size: 14px; line-height: 1.5; color: rgba(255, 255, 255, 0.86); }
-.boom-wage { font-size: 13px; line-height: 1.5; color: rgba(255, 255, 255, 0.75); }
-.boom-wage span { color: rgba(255, 255, 255, 0.5); }
-.boom-hours { justify-self: start; padding: 3px 9px; border-radius: 999px; background: rgba(143, 176, 255, 0.16); color: #b9ccff; font-size: 12px; font-weight: 800; }
-.boom-src { font-size: 11px; color: rgba(255, 255, 255, 0.42); }
-.boom-kr { margin-top: 12px; font-size: 13px; color: rgba(255, 255, 255, 0.7); }
-.boom-eps { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; margin-top: 14px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.06); font-size: 14px; line-height: 1.55; color: rgba(255, 255, 255, 0.85); }
-.boom-eps .btn { min-height: 40px; }
-.boom .link-more { display: inline-block; margin-top: 6px; }
-
 /* ---------- 나라별 월 구독료 표 (수강권) ---------- */
 .price-table { margin-top: 30px; scroll-margin-top: 90px; }
 .pt-groups { display: grid; gap: 18px; }
@@ -1177,8 +1158,6 @@ html:lang(en) .wage-name { font-size: 13px; }
 .country-pick small { font-size: 12px; color: var(--ink-3); }
 
 @media (min-width: 720px) {
-  .boom-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pt-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 }
-@media (min-width: 960px) { .boom-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 1120px) { .pt-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

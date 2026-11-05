@@ -683,19 +683,6 @@
           </li>`).join("")}</ul>
       </div>`;
   }
-  function renderBoom() {
-    const cname = countryNamer();
-    $("#boomList").innerHTML = D.boom.map((b) => {
-      const wageLocal = approxMoney(b.wageUsd);
-      return `<article class="boom-card" role="listitem">
-        <div class="boom-top"><strong>${esc(cname(b.id))}</strong><span class="boom-price">${esc(t("os.boomPrice", { p: priceFor(b.id) }))}</span></div>
-        <p class="boom-why">${esc(L(b.why))}</p>
-        <p class="boom-wage">${esc(L(b.wage))} <span>(${esc(t(b.per === "day" ? "os.boomDay" : "os.boomMonth", { v: wageLocal }))})</span></p>
-        <p class="boom-hours">${esc(t("os.boomHours", { n: fmt(b.hours, 1) }))}</p>
-        <p class="boom-src">${esc(L(b.src))}</p>
-      </article>`;
-    }).join("");
-  }
 
   /* ---------- 베테랑 스튜디오 ---------- */
   function renderVeteran() {
@@ -1243,7 +1230,6 @@
     renderCommTeaser();
     renderJobsTeaser();
     renderOverseas();
-    renderBoom();
     renderRow("#rowDiy", D.courses.filter((c) => c.diy));
     $("#faqHome").innerHTML = faqHTML();
     $("#faqPlans").innerHTML = faqHTML();

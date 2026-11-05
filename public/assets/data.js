@@ -678,38 +678,6 @@ window.NEO = {
   ],
   // 환산용 환율 (ECB 기준 2026-11-02): 1달러 = 1,342.9원 = 157.9엔
   fx: { KRW: 1342.9, JPY: 157.9 },
-  // 한국 최저시급 (2026년): 29,000원 ≈ 2.8시간치
-  krMinWage: 10320,
-
-  /* 지금 건설이 뜨는 개발도상국: 최저임금과 NEOCOLOR 월 구독료(그 나라 ChatGPT Go 수준) 비교
-   * - wageUsd: 최저임금 달러 환산(참고용), per: month|day
-   * - hours: 월 구독료가 그 나라 최저임금으로 몇 시간치인지 (월급은 208시간, 일당은 8시간으로 나눔) */
-  boom: [
-    { id: "VN", wageUsd: 205.97, per: "month", hours: 5.2,
-      why: { ko: "남북 고속철도·롱탄 국제공항 같은 대형 인프라 공사가 이어지는 나라", en: "Big infrastructure keeps coming: the North–South high-speed railway, Long Thanh International Airport", ja: "南北高速鉄道やロンタイン国際空港など、大型インフラ工事が続く国" },
-      wage: { ko: "최저임금(1지역) 월 5,310,000동", en: "Minimum wage (Region I): VND 5,310,000/month", ja: "最低賃金(第1地域) 月531万ドン" },
-      src: { ko: "베트남 시행령 293/2025/ND-CP (2026년 1월)", en: "Vietnam Decree 293/2025/ND-CP (Jan 2026)", ja: "ベトナム政令293/2025/ND-CP(2026年1月)" } },
-    { id: "ID", wageUsd: 315.74, per: "month", hours: 2.7,
-      why: { ko: "새 수도 누산타라를 짓고 있는 나라", en: "Building a whole new capital city, Nusantara", ja: "新首都ヌサンタラを建設中の国" },
-      wage: { ko: "자카르타 최저임금 월 572만 루피아", en: "Jakarta minimum wage: about IDR 5.72 million/month", ja: "ジャカルタの最低賃金 月約572万ルピア" },
-      src: { ko: "자카르타 주정부 2026년 최저임금(UMP), 2025년 12월 발표", en: "Jakarta 2026 provincial minimum wage (UMP), announced Dec 2025", ja: "ジャカルタ州2026年最低賃金(UMP)、2025年12月発表" } },
-    { id: "PH", wageUsd: 11.88, per: "day", hours: 3.2,
-      why: { ko: "정부 인프라 계획 'Build Better More'로 도로·철도 공사가 많은 나라", en: "Roads and railways under the government's Build Better More program", ja: "政府のインフラ計画「Build Better More」で道路・鉄道工事が多い国" },
-      wage: { ko: "마닐라 최저임금 하루 ₱755", en: "Metro Manila minimum wage: ₱755/day", ja: "マニラ首都圏の最低賃金 日額755ペソ" },
-      src: { ko: "필리핀 Wage Order NCR-28 (2026년 9월)", en: "Philippines Wage Order NCR-28 (Sep 2026)", ja: "フィリピン賃金命令NCR-28(2026年9月)" } },
-    { id: "IN", wageUsd: 8.88, per: "day", hours: 3.8,
-      why: { ko: "고속도로·철도·신도시에 정부가 큰돈을 쓰는 세계 최대급 건설 시장", en: "One of the world's biggest construction markets, with heavy public spending on highways, rail and new cities", ja: "高速道路・鉄道・新都市に政府が巨額を投じる世界最大級の建設市場" },
-      wage: { ko: "건설 최저임금(대도시) 하루 비숙련 ₹840 · 숙련 ₹1,024", en: "Construction minimum wage (big cities): ₹840/day unskilled, ₹1,024 skilled", ja: "建設の最低賃金(大都市) 日額 未熟練840ルピー・熟練1,024ルピー" },
-      src: { ko: "인도 노동고용부 중앙정부 건설 최저임금 (2026년 10월)", en: "India Ministry of Labour, central-sphere construction minimum wages (Oct 2026)", ja: "インド労働雇用省 中央政府の建設最低賃金(2026年10月)" } },
-    { id: "MY", wageUsd: 418.1, per: "month", hours: 2.9,
-      why: { ko: "조호르를 중심으로 데이터센터 건설이 붐인 나라", en: "A data-center construction boom, centered on Johor", ja: "ジョホールを中心にデータセンター建設が急増中の国" },
-      wage: { ko: "최저임금 월 RM1,700 (2027년 6월부터 RM2,000)", en: "Minimum wage: RM1,700/month (RM2,000 from June 2027)", ja: "最低賃金 月1,700リンギット(2027年6月から2,000リンギット)" },
-      src: { ko: "말레이시아 인적자원부 발표 (2026년 10월)", en: "Malaysia Ministry of Human Resources (Oct 2026)", ja: "マレーシア人的資源省の発表(2026年10月)" } },
-    { id: "EG", wageUsd: 142.4, per: "month", hours: 6.5,
-      why: { ko: "신행정수도 같은 대형 신도시를 짓는 나라", en: "Building giant new cities like the New Administrative Capital", ja: "新行政首都など大型の新都市を建設中の国" },
-      wage: { ko: "최저임금 월 EGP 8,000", en: "Minimum wage: EGP 8,000/month", ja: "最低賃金 月8,000エジプトポンド" },
-      src: { ko: "이집트 최저임금 인상 (2026년 7월, WageIndicator)", en: "Egypt minimum wage increase (Jul 2026, WageIndicator)", ja: "エジプト最低賃金の引き上げ(2026年7月、WageIndicator)" } }
-  ],
 
   /* ---------- 지역 ---------- */
   regions: [
