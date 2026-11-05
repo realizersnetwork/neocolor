@@ -67,7 +67,7 @@
   const wageById = byId(D.wages.items);
   const topicById = byId(D.topicBoards);
   const subName = (c) => (catById[c.cat].subs.find((s) => s.id === c.sub) || {}).name;
-  // 10시간 이상 긴 과정은 국비 전용 (단품 결제 가능, 구독 회원은 첫 2강 맛보기)
+  // 국비 전문과정 = 한 분야를 처음부터 끝까지 배우는 과정 (판단 기준: 짧은 클립 제외, 10시간 이상). 단품 결제 가능, 구독 회원은 첫 2강 맛보기
   const GOV_ONLY_HOURS = 10;
   const govOnly = (c) => c.kind !== "clip" && c.hours >= GOV_ONLY_HOURS;
   const lengthText = (c) => (c.kind === "clip" ? t("card.min", { n: c.min }) : t("card.hours", { n: c.hours }));
@@ -1132,6 +1132,7 @@
         </dl>
         ${w ? `<div class="cm-sec"><h3>${esc(t("cm.wage"))}</h3><div class="cm-wage"><strong>${esc(money(w.daily))}</strong><span>${esc(L(w.name))}</span><small>${esc(t("cm.wageSrc"))}</small></div></div>` : ""}
         <div class="cm-sec"><h3>${esc(t("cm.how"))}</h3><ul class="dots">${(govOnly(c) ? ["cm.howGov", "cm.howSingle", "cm.howTaste"] : ["cm.how1"]).map((k) => `<li>${esc(t(k))}</li>`).join("")}</ul>${govOnly(c) ? `<button class="text-link" type="button" data-go="#/plans">${esc(t("cm.howPlans"))}</button>` : ""}</div>
+        ${govOnly(c) ? `<div class="cm-sec"><h3>${esc(t("cm.copay"))}</h3><div class="cm-wage"><strong>${esc(t("cm.copayV"))}</strong><span>${esc(t("cm.copayD"))}</span><small>${esc(t("cm.copaySrc"))}</small></div></div>` : ""}
         ${c.format !== "online" ? `<div class="cm-sec"><h3>${esc(t("cm.practice"))}</h3><div class="cm-practice">${esc(t("cm.practiceDesc"))} <button class="text-link" type="button" data-go="#/jobs/trainee">${esc(t("cm.practiceLink"))}</button></div></div>` : ""}
         <div class="cm-sec"><h3>${esc(t("cm.tools"))}</h3><div class="tool-list">${cat.tools.map((x) => `<span>${esc(L(x))}</span>`).join("")}</div></div>
         ${cat.certs.length ? `<div class="cm-sec"><h3>${esc(t("cm.certs"))}</h3><div class="chip-row">${cat.certs.map((x) => `<span class="cert">${esc(L(D.certs[x]))}</span>`).join("")}</div></div>` : ""}
