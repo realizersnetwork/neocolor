@@ -373,7 +373,7 @@ body[data-mode="student"] .vet-badge { display: none !important; }
   display: grid; gap: 6px; padding: 18px; border-radius: 16px; border: 1px solid var(--line); background: #fff;
 }
 .plan-mini:hover { border-color: var(--ink-3); }
-.plan-mini .pm-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.plan-mini .pm-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 8px; }
 .plan-mini .pm-name { font-size: 15px; font-weight: 800; }
 .plan-mini .pm-price { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
 .plan-mini .pm-sub { font-size: 13px; color: var(--ink-3); }
@@ -1130,3 +1130,7 @@ dialog.sheet[open] { animation: sheet-in 0.22s ease-out; }
   .ads-places { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stat-row { grid-template-columns: 11em minmax(0, 1fr) auto; }
 }
+
+/* 영어는 단어가 길어서 일당 차트 이름 칸을 넓힘 */
+html:lang(en) .wage-row { grid-template-columns: 7.4em minmax(0, 1fr) auto; }
+html:lang(en) .wage-name { font-size: 13px; }
