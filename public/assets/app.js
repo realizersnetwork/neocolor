@@ -716,7 +716,7 @@
   }
   function updateCalc() {
     const lenSel = $("#inLen");
-    const cur = lenSel.value || D.payRates[0].id;
+    const cur = lenSel.value || "long"; // 처음엔 20분 이상(편당 400원)으로 보여준다 (소유자 요청: 50편 · 100명 · 20분 이상)
     lenSel.innerHTML = D.payRates.map((r) => `<option value="${r.id}">${esc(t("vet.len." + r.id))} · ${esc(t("vet.len.each", { p: money(r.price) }))}</option>`).join("");
     lenSel.value = cur;
     const v = Number($("#inVideos").value);
