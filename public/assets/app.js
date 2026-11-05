@@ -104,7 +104,9 @@
     camera: '<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.5-2h5L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/>',
     star: '<path d="m12 4 2.4 5 5.4.7-4 3.7 1 5.4L12 16.2 7.2 18.8l1-5.4-4-3.7 5.4-.7z"/>',
     coin: '<circle cx="12" cy="12" r="8.5"/><path d="M8 9l1.6 6L12 10l2.4 5L16 9M7.5 12h9"/>',
-    smile: '<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4 4 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/>'
+    smile: '<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4 4 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/>',
+    mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4 7 8 6 8-6"/>',
+    phone: '<path d="M6.5 4h3l1.5 4-2 1.5a10 10 0 0 0 5.5 5.5l1.5-2 4 1.5v3a2 2 0 0 1-2 2A15.5 15.5 0 0 1 4.5 6a2 2 0 0 1 2-2z"/>'
   };
   const catIcon = (id, cls) => SV(CAT_ICON[id] || CAT_ICON.labor, cls);
   const icon = (name, cls) => SV(ICON[name] || "", cls);
@@ -416,6 +418,7 @@
         <a href="#/jobs" data-close>${esc(t("nav.jobs"))} <span class="pass-chip">PASS</span></a>
         <a href="#/plans" data-close>${esc(t("nav.plans"))}</a>
         <a href="#/courses?saved=1" data-close>${esc(t("nav.saved"))}</a>
+        <a href="#/contact" data-close>${esc(t("nav.contact"))}</a>
       </div>
       <div class="drawer-auth">${authUser
         ? `<span class="drawer-user">${esc(t("auth.welcome", { name: userLabel(authUser) }))}</span><button type="button" data-auth="logout">${esc(t("auth.logout"))}</button>`
@@ -428,6 +431,54 @@
   }
   function renderFooter() {
     $("#footCats").innerHTML = D.categories.map((c) => `<li><button type="button" data-cat="${c.id}">${esc(L(c.name))}</button></li>`).join("");
+    $("#footContact").innerHTML = `<span class="fc-label">${esc(t("contact.footLabel"))}</span>${contactLine()}`;
+    $("#adsContact").innerHTML = contactLine();
+  }
+
+  /* ---------- 문의하기 (고객센터) ----------
+   * 정식 오픈 전에도 광고·제휴·단체교육·베테랑 신청 문의를 받는다. 연락처는 data.js 의 contact
+   * 한국어 화면은 010 번호를 크게, 영어·일본어 화면은 국제번호(+82)를 크게 */
+  const CONTACT_TOPICS = ["ads", "partner", "group", "veteran", "etc"];
+  const C = D.contact;
+  const mainPhone = () => (lang === "ko" ? C.phone : C.intl);
+  const subPhone = () => t(lang === "ko" ? "contact.intlNote" : "contact.krNote", { n: lang === "ko" ? C.intl : C.phone });
+  function contactMail(topic) {
+    const subject = `[NEOCOLOR] ${t("contact.topic." + topic)}`;
+    const body = topic === "etc" ? "" : t("contact.body." + topic);
+    return `mailto:${C.email}?subject=${encodeURIComponent(subject)}${body ? "&body=" + encodeURIComponent(body) : ""}`;
+  }
+  // 한 줄짜리 연락처 (푸터·광고 안내)
+  function contactLine() {
+    return `<a href="mailto:${C.email}">${icon("mail", "ci")}<span class="email-text">${esc(C.email)}</span></a>`
+      + `<a href="tel:${C.tel}">${icon("phone", "ci")}${esc(mainPhone())}</a>`
+      + `<span class="fc-intl">${esc(subPhone())}</span>`;
+  }
+  function renderContact() {
+    const tp = state.contactTopic || "etc";
+    $("#contactTopics").innerHTML = CONTACT_TOPICS.map((id) =>
+      `<button type="button" class="chip" data-topic="${id}" aria-pressed="${id === tp}">${esc(t("contact.topic." + id))}</button>`).join("");
+    $("#contactCards").innerHTML = `
+      <div class="contact-card">
+        <span class="cc-ic">${icon("mail")}</span>
+        <div class="cc-body"><span class="cc-label">${esc(t("contact.email"))}</span><a class="cc-value email-text" href="${contactMail(tp)}">${esc(C.email)}</a></div>
+        <div class="cc-actions"><a class="btn btn-dark" href="${contactMail(tp)}">${esc(t("contact.mailBtn"))}</a><button class="btn btn-line" type="button" data-copy="${esc(C.email)}">${esc(t("contact.copy"))}</button></div>
+      </div>
+      <div class="contact-card">
+        <span class="cc-ic">${icon("phone")}</span>
+        <div class="cc-body"><span class="cc-label">${esc(t("contact.phone"))}</span><a class="cc-value" href="tel:${C.tel}">${esc(mainPhone())}</a><span class="cc-sub">${esc(subPhone())}</span></div>
+        <div class="cc-actions"><a class="btn btn-dark" href="tel:${C.tel}">${esc(t("contact.callBtn"))}</a><button class="btn btn-line" type="button" data-copy="${esc(mainPhone())}">${esc(t("contact.copy"))}</button></div>
+      </div>
+      <p class="info-note contact-note">${esc(t("contact.note." + tp))}</p>`;
+  }
+  async function copyText(text) {
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {
+      try {
+        const ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select(); ok = document.execCommand("copy"); ta.remove();
+      } catch (_) { ok = false; }
+    }
+    toast(ok ? t("contact.copied", { v: text }) : text);
   }
   const openMega = () => { megaEl.hidden = false; menuBtn.setAttribute("aria-expanded", "true"); };
   const closeMega = () => { megaEl.hidden = true; menuBtn.setAttribute("aria-expanded", "false"); };
@@ -1237,7 +1288,7 @@
   }
 
   /* ---------- 주소(라우팅) ---------- */
-  const VIEWS = ["home", "courses", "roadmaps", "community", "jobs", "plans", "veteran", "ads", "stats"];
+  const VIEWS = ["home", "courses", "roadmaps", "community", "jobs", "plans", "veteran", "ads", "stats", "contact"];
   function parseRoute() {
     const raw = (location.hash || "#/").slice(1);
     const legacy = raw.match(/^cat=([\w-]+)/);
@@ -1313,6 +1364,10 @@
       renderCommunity();
     } else if (r.view === "stats") {
       loadStats();
+    } else if (r.view === "contact") {
+      const tp = r.params.get("topic");
+      state.contactTopic = CONTACT_TOPICS.includes(tp) ? tp : "etc";
+      renderContact();
     }
 
     requestAnimationFrame(() => fillAd(r.view));
@@ -1345,7 +1400,7 @@
   const CLICK_SEL = [
     "[data-save]", "[data-course]", "[data-cat]", "[data-search]", "[data-soon]", "[data-auth]", "button[data-mode]", "[data-lang]",
     "[data-go]", "[data-quiz]", "[data-q-opt]", "[data-q-back]", "[data-q-retry]", "[data-filter]", "[data-tab]", "[data-ctab]",
-    "[data-term-cat]", "[data-level-tab]", "[data-wage]", "[data-dlg-close]", "[data-mega]"
+    "[data-term-cat]", "[data-level-tab]", "[data-wage]", "[data-dlg-close]", "[data-mega]", "[data-copy]", "[data-topic]"
   ].join(",");
   document.addEventListener("click", (e) => keepFocus(() => onClick(e)));
   function onClick(e) {
@@ -1374,6 +1429,13 @@
       return;
     }
     if (el.matches("button[data-mode]")) { goMode(ds.mode); return; }
+    if (ds.copy) { copyText(ds.copy); return; }
+    if (ds.topic && state.view === "contact") {
+      state.contactTopic = ds.topic;
+      history.replaceState(null, "", "#/contact?topic=" + ds.topic);
+      keepFocus(renderContact);
+      return;
+    }
     if (ds.lang) { setLang(ds.lang); return; }
     if (ds.go) { closeAllDialogs(); go(ds.go); return; }
     if (el.hasAttribute("data-quiz")) { openQuiz(); return; }
@@ -1538,6 +1600,7 @@
     renderVeteran();
     renderCourses();
     renderStats();
+    renderContact();
     updateSavedCount();
     updateSoundLabel();
     if (courseDlg.open) renderCourseDialog();

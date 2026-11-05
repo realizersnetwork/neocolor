@@ -17,7 +17,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="assets/style.css?v=23">
+  <link rel="stylesheet" href="assets/style.css?v=24">
 </head>
 <body data-mode="student" data-view="home">
   <a class="skip" href="#main" data-i18n="skip">본문으로 건너뛰기</a>
@@ -346,6 +346,10 @@
         <div class="wrap wrap-narrow">
           <div class="head"><h2 id="faqTitle" data-i18n="faq.title">자주 묻는 질문</h2></div>
           <div class="faq" id="faqHome"></div>
+          <div class="cta-card home-contact">
+            <div><strong data-i18n="contact.homeTitle">정식 오픈 전에도 편하게 연락 주세요</strong><span data-i18n="contact.homeSub">광고·기관 제휴·단체교육·베테랑 사전 신청 문의를 받고 있어요.</span></div>
+            <a class="btn btn-dark" href="#/contact" data-i18n="nav.contact">문의하기</a>
+          </div>
         </div>
       </section>
       <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
@@ -502,7 +506,7 @@
           <div class="region-grid" id="regionGrid"></div>
           <div class="cta-card cta-card-dark">
             <div><strong data-i18n="jobs.tr.ctaTitle">직업학교·인력사무소를 운영하세요?</strong><span data-i18n="jobs.tr.ctaDesc">우리 지역 실습생과 일자리를 함께 연결해요.</span></div>
-            <button class="btn btn-primary" type="button" data-soon data-i18n="jobs.tr.ctaBtn">기관 제휴 문의</button>
+            <a class="btn btn-primary" href="#/contact?topic=partner" data-i18n="jobs.tr.ctaBtn">기관 제휴 문의</a>
           </div>
         </div>
         <p class="empty" id="jobsEmpty" hidden data-i18n="jobs.empty">조건에 맞는 예시가 없어요.</p>
@@ -542,7 +546,7 @@
         </div>
         <div class="cta-card">
           <div><strong data-i18n="plans.groupTitle">현장·기업 단체교육</strong><span data-i18n="plans.groupDesc">협력업체 신입 교육, 공종별 실무 교육을 현장에 맞춰 준비해드려요.</span></div>
-          <button class="btn btn-dark" type="button" data-soon data-i18n="plans.groupBtn">단체교육 문의</button>
+          <a class="btn btn-dark" href="#/contact?topic=group" data-i18n="plans.groupBtn">단체교육 문의</a>
         </div>
         <div class="sub-block wrap-narrow-left">
           <h2 class="sub-title" data-i18n="faq.title">자주 묻는 질문</h2>
@@ -652,7 +656,7 @@
         <section class="block-tight">
           <div class="vet-apply">
             <div><strong data-i18n="vet.applyTitle">먼저 베테랑으로 신청하세요</strong><span data-i18n="vet.applyDesc">반장님, 소장님, 기능사 분들의 노하우를 기다려요.</span></div>
-            <button class="btn btn-primary" type="button" data-soon data-i18n="vet.applyBtn">베테랑 사전 신청</button>
+            <a class="btn btn-primary" href="#/contact?topic=veteran" data-i18n="vet.applyBtn">베테랑 사전 신청</a>
           </div>
         </section>
       </div>
@@ -668,9 +672,10 @@
           <p class="ads-lead" data-i18n="ads.lead">기술을 배우고, 묻고, 일을 찾는 현장 사람들이 모이는 곳이에요. 장비·공구·안전용품·자재 브랜드를 소개해 보세요.</p>
           <p class="ads-sample" data-i18n="ads.sample">방금 보신 GRAVIK 광고는 예시예요. 그 자리에 여러분의 브랜드가 들어갑니다.</p>
           <div class="cta">
-            <button class="btn btn-primary" type="button" data-soon data-i18n="ads.btn">광고 문의하기</button>
+            <a class="btn btn-primary" href="#/contact?topic=ads" data-i18n="ads.btn">광고 문의하기</a>
             <a class="btn btn-ghost" href="#/stats" data-i18n="ads.statsBtn">방문자 통계 보기</a>
           </div>
+          <p class="ads-contact" id="adsContact"></p>
         </div>
 
         <h2 class="sub-title" data-i18n="ads.whyTitle">왜 NEOCOLOR에 광고하나요</h2>
@@ -704,6 +709,18 @@
       </div>
       <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
     </section>
+    <!-- ===================== 문의하기 (고객센터) ===================== -->
+    <section class="view" data-view="contact" hidden>
+      <div class="wrap wrap-narrow page">
+        <div class="page-head">
+          <p class="kicker" data-i18n="contact.kicker">고객센터</p>
+          <h1 data-i18n="contact.title">문의하기</h1>
+          <p data-i18n="contact.lead">광고, 기관 제휴, 단체교육, 베테랑 사전 신청 등 무엇이든 편하게 연락 주세요.</p>
+        </div>
+        <div class="contact-topics" id="contactTopics" role="group" aria-label="문의 종류" data-i18n-attr="aria-label:contact.topicAria"></div>
+        <div id="contactCards"></div>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -720,10 +737,11 @@
         <li data-i18n="foot.l2">이용약관</li>
         <li><a class="foot-privacy" href="/privacy" data-privacy data-i18n="foot.l3">개인정보처리방침</a></li>
         <li data-i18n="foot.l4">취소·환불 정책</li>
-        <li data-i18n="foot.l5">고객센터</li>
+        <li><a href="#/contact" data-i18n="foot.l5">고객센터</a></li>
         <li><a href="#/ads" data-i18n="foot.ads">광고 안내</a></li>
         <li><a href="#/stats" data-i18n="foot.stats">방문자 통계</a></li>
       </ul>
+      <p class="foot-contact" id="footContact"></p>
       <p class="foot-copy" data-i18n="foot.copy">© 2026 NEOCOLOR · neocolor.net · 정식 오픈 준비 중입니다.</p>
     </div>
   </footer>
@@ -769,9 +787,9 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <noscript><p class="noscript">이 사이트는 자바스크립트를 켜야 강의 목록이 보여요.</p></noscript>
-  <script src="assets/i18n.js?v=23"></script>
-  <script src="assets/data.js?v=23"></script>
-  <script src="assets/config.js?v=23"></script>
-  <script src="assets/app.js?v=23"></script>
+  <script src="assets/i18n.js?v=24"></script>
+  <script src="assets/data.js?v=24"></script>
+  <script src="assets/config.js?v=24"></script>
+  <script src="assets/app.js?v=24"></script>
 </body>
 </html>

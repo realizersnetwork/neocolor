@@ -1227,3 +1227,34 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 .auth-check input { flex: none; width: 18px; height: 18px; margin: 2px 0 0; accent-color: #d92d20; }
 .btn.auth-danger { background: #d92d20; color: #fff; }
 .btn.auth-danger:hover { background: #b42318; }
+
+/* 문의하기 (고객센터) */
+.contact-topics { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 16px; }
+.contact-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; padding: 18px; border: 1px solid var(--line); border-radius: 16px; margin-bottom: 12px; background: #fff; }
+.cc-ic { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; background: var(--bg-soft); color: var(--ink); }
+.cc-ic svg, .ci { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.cc-ic svg { width: 24px; height: 24px; }
+.ci { width: 16px; height: 16px; flex: none; }
+.cc-body { display: flex; flex-direction: column; min-width: 0; }
+.cc-label { font-size: 13px; color: var(--ink-3); }
+.cc-value { font-size: 21px; font-weight: 800; letter-spacing: -0.01em; color: var(--ink); overflow-wrap: anywhere; }
+.cc-sub { margin-top: 2px; font-size: 13.5px; color: var(--ink-2); }
+.cc-actions { grid-column: 1 / -1; display: flex; gap: 8px; }
+.cc-actions .btn { flex: 1; min-height: 48px; }
+.cc-actions .btn-line { flex: none; }
+.contact-note { margin-top: 6px; }
+@media (min-width: 720px) {
+  .contact-card { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .cc-actions { grid-column: auto; }
+  .cc-actions .btn { flex: none; }
+}
+.home-contact { margin: 22px 0 0; background: #fff; }
+/* 푸터·광고 안내의 한 줄 연락처 */
+.foot-contact, .ads-contact { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; }
+.foot-contact { margin-top: 18px; font-size: 14px; }
+.foot-contact a, .ads-contact a { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: #fff; text-decoration: none; }
+.fc-label { font-weight: 800; color: rgba(255, 255, 255, 0.55); }
+.fc-intl { font-size: 12.5px; color: rgba(255, 255, 255, 0.6); }
+.ads-contact { position: relative; z-index: 1; margin-top: 16px; font-size: 15px; }
+/* 이메일 주소: 소문자 l 과 대문자 I 가 똑같이 보이지 않게 구분되는 글꼴로 (lkysakana) */
+.email-text { font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Roboto Mono", "Noto Sans Mono", "DejaVu Sans Mono", monospace; letter-spacing: -0.02em; }
