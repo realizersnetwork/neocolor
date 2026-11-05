@@ -676,6 +676,14 @@ window.NEO = {
     { id: "CO", tier: "go", price: "COP 24,900", usd: 7.91 },
     { id: "AR", tier: "go", price: "$5.99", usd: 5.99 }
   ],
+  /* 베테랑 정산 예시 단가 (영상 1편을 수강생 1명이 처음 끝까지 볼 때, 원)
+   * 최악의 경우(가장 싼 이용권 회원이 한 달 30편을 모두 20분 이상 영상으로 끝까지 보고, 재생도 60시간 꽉 채움)에도
+   * 플랫폼에 순매출의 20%가 남도록 계산한 값. 30% 이상 시청은 절반, 그 미만·다시 보기는 0. 3분 미만은 정산 제외 */
+  payRates: [
+    { id: "short", price: 145 },
+    { id: "mid", price: 218 },
+    { id: "long", price: 290 }
+  ],
   // 환산용 환율 (ECB 기준 2026-11-02): 1달러 = 1,342.9원 = 157.9엔
   fx: { KRW: 1342.9, JPY: 157.9 },
 
@@ -907,7 +915,7 @@ window.NEO = {
     { q: { ko: "실습은 어디서 하나요?", en: "Where does hands-on practice happen?", ja: "実習はどこで行いますか?" },
       a: { ko: "NEOCOLOR가 직접 운영하지 않고, 각 지역 직업학교·인력사무소·현장 베테랑과 연계해 진행해요. 지역별 연계 기관은 정해지는 대로 알려드릴게요.", en: "We don't run it ourselves. Practice happens with local vocational schools, staffing offices, and veterans. We'll announce partners by region.", ja: "NEOCOLORは直接運営せず、各地域の職業学校・人材事務所・現場のベテランと提携して行います。地域ごとの提携先は決まり次第お知らせします。" } },
     { q: { ko: "베테랑은 어떻게 정산받나요?", en: "How do veterans get paid?", ja: "ベテランはどう精算されますか?" },
-      a: { ko: "베테랑 모드에서 영상을 올리면 수강생이 들은 시간만큼 매달 정산받아요. 배분율과 정산일은 정식 오픈 때 알려드릴게요.", en: "Upload in Veteran mode and get paid each month by watch time. Revenue share and payout dates will be announced at launch.", ja: "ベテランモードで動画をアップすると、受講時間に応じて毎月精算されます。配分率と精算日は正式オープン時にお知らせします。" } },
+      a: { ko: "영상을 올리면, 수강생이 처음 끝까지 볼 때마다 영상 길이별 단가로 매달 정산받아요. 30% 이상 보면 절반, 그 전에 끄거나 다시 보는 건 0원이에요. 단가와 정산일은 정식 오픈 때 확정해요.", en: "Upload your videos and get paid each month at a per-video rate by length, every time a learner finishes one for the first time. Watching 30%+ earns half; stopping earlier or rewatching earns nothing. Rates and payout dates will be set at launch.", ja: "動画をアップすると、受講生が初めて最後まで見るたびに、長さ別の単価で毎月精算されます。30%以上なら半額、それより前にやめた場合や見直しは0円です。単価と精算日は正式オープン時に確定します。" } },
     { q: { ko: "나이가 많아도 베테랑이 될 수 있나요?", en: "Is there an age limit for veterans?", ja: "年齢が高くてもベテランになれますか?" },
       a: { ko: "나이 제한은 없어요. 오래 일한 경험이 곧 실력이에요. 맨 위 '글자 크게' 버튼으로 화면을 크게 볼 수 있어요.", en: "No age limit. Years on the job are what count. Use the 'Larger text' button at the top for bigger text.", ja: "年齢制限はありません。長年の経験こそが実力です。上の「文字を大きく」ボタンで画面を大きくできます。" } },
     { q: { ko: "경력자도 배울 게 있나요?", en: "Is there anything for experienced pros?", ja: "経験者にも学ぶことはありますか?" },

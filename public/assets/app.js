@@ -712,19 +712,23 @@
     updateCalc();
   }
   function updateCalc() {
-    const s = Number($("#inStudents").value);
-    const h = Number($("#inHours").value);
-    const r = Number($("#inRate").value);
-    $("#outStudents").textContent = t("unit.people", { n: fmt(s) });
-    $("#outHours").textContent = t("unit.hours", { n: fmt(h, h % 1 ? 1 : 0) });
-    $("#outRate").textContent = money(r);
-    const month = s * h * r;
+    const lenSel = $("#inLen");
+    const cur = lenSel.value || D.payRates[0].id;
+    lenSel.innerHTML = D.payRates.map((r) => `<option value="${r.id}">${esc(t("vet.len." + r.id))} · ${esc(t("vet.len.each", { p: money(r.price) }))}</option>`).join("");
+    lenSel.value = cur;
+    const v = Number($("#inVideos").value);
+    const w = Number($("#inViewers").value);
+    const rate = (D.payRates.find((r) => r.id === lenSel.value) || D.payRates[0]).price;
+    $("#outVideos").textContent = t("unit.videos", { n: fmt(v) });
+    $("#outViewers").textContent = t("unit.people", { n: fmt(w) });
+    const month = v * w * rate;
     $("#calcMonth").textContent = money(month);
     $("#calcYear").textContent = money(month * 12);
   }
 
   // 영상 올리기는 로그인 후에만 (지금은 화면에 파일 선택 칸이 없음)
-  ["#inStudents", "#inHours", "#inRate"].forEach((sel) => $(sel).addEventListener("input", updateCalc));
+  ["#inVideos", "#inViewers"].forEach((sel) => $(sel).addEventListener("input", updateCalc));
+  $("#inLen").addEventListener("change", updateCalc);
 
   /* ---------- 로그인·회원가입 (수퍼베이스) ----------
    * 설정값(config.js)이 있을 때만 켜진다. 없으면 버튼을 눌러도 '곧 열려요' 알림만
@@ -733,7 +737,7 @@
    */
   const CFG = window.NEO_CONFIG || {};
   const authOn = /^https:\/\/[\w.-]+$/.test(CFG.supabaseUrl || "") && String(CFG.supabaseAnonKey || "").length > 20;
-  const SB_SRC = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
+  const SB_SRC = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"; // 새 공개 키(sb_publishable_)도 쓰려고 최신 2.x
   let sb = null;
   let authUser = null;
   let authMode = "login";

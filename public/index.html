@@ -17,7 +17,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="assets/style.css?v=15">
+  <link rel="stylesheet" href="assets/style.css?v=16">
 </head>
 <body data-mode="student" data-view="home">
   <a class="skip" href="#main" data-i18n="skip">본문으로 건너뛰기</a>
@@ -613,9 +613,9 @@
             <h3 data-i18n="vet.calcTitle">정산 계산기 (예시)</h3>
             <div class="calc-grid">
               <div class="calc-inputs">
-                <label><span><span data-i18n="vet.calc.students">한 달 수강생</span><output id="outStudents"></output></span><input type="range" id="inStudents" min="10" max="2000" step="10" value="200"></label>
-                <label><span><span data-i18n="vet.calc.hours">1명당 평균 수강 시간</span><output id="outHours"></output></span><input type="range" id="inHours" min="0.5" max="20" step="0.5" value="3"></label>
-                <label><span><span data-i18n="vet.calc.rate">시간당 정산 단가 (예시)</span><output id="outRate"></output></span><input type="range" id="inRate" min="500" max="3000" step="100" value="1000"></label>
+                <label><span><span data-i18n="vet.calc.videos">올린 영상 수</span><output id="outVideos"></output></span><input type="range" id="inVideos" min="1" max="200" step="1" value="30"></label>
+                <label><span><span data-i18n="vet.calc.viewers">영상 1편을 끝까지 본 수강생 (한 달)</span><output id="outViewers"></output></span><input type="range" id="inViewers" min="1" max="500" step="1" value="40"></label>
+                <label class="calc-len"><span data-i18n="vet.calc.len">영상 길이</span><select id="inLen"></select></label>
               </div>
               <div class="calc-result">
                 <span data-i18n="vet.calc.month">한 달 예상</span>
@@ -764,9 +764,9 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <noscript><p class="noscript">이 사이트는 자바스크립트를 켜야 강의 목록이 보여요.</p></noscript>
-  <script src="assets/i18n.js?v=15"></script>
-  <script src="assets/data.js?v=15"></script>
-  <script src="assets/config.js?v=15"></script>
-  <script src="assets/app.js?v=15"></script>
+  <script src="assets/i18n.js?v=16"></script>
+  <script src="assets/data.js?v=16"></script>
+  <script src="assets/config.js?v=16"></script>
+  <script src="assets/app.js?v=16"></script>
 </body>
 </html>

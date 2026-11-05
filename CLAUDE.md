@@ -45,11 +45,20 @@
 
 ## 로그인·회원가입 (수퍼베이스)
 - 이메일·비밀번호, 구글, 카카오. 코드는 `app.js`의 '로그인·회원가입', 설정값은 `public/assets/config.js`
+- 수퍼베이스 라이브러리는 jsdelivr의 `@supabase/supabase-js@2` (새 공개 키 sb_publishable_도 되도록 최신 2.x)
 - `config.js`의 `supabaseUrl`, `supabaseAnonKey`가 비어 있으면 꺼진 상태 (버튼을 누르면 '로그인은 곧 열려요')
 - anon 키는 공개용이라 config.js에 넣어도 된다. **service_role 키는 절대 넣지 않는다**
 - 수퍼베이스 설정: Authentication → URL Configuration에 Site URL `https://neocolor.net`, Redirect URLs `https://neocolor.net/**`, `https://www.neocolor.net/**`, `https://neocolor.pages.dev/**`
 - 구글·카카오는 수퍼베이스 Authentication → Providers에서 켠다. 콜백 주소는 `https://<프로젝트>.supabase.co/auth/v1/callback`. 카카오 이메일 동의는 비즈 앱이어야 해서, 아니면 'Allow users without an email'을 켠다
 - 개인정보처리방침 페이지가 아직 없다. 회원가입을 실제로 열기 전에 꼭 만들어야 한다
+
+## 베테랑 정산 방식 (2026-11-06 소유자가 정함)
+- 시간 단위 정산은 하지 않는다 (영상을 쓸데없이 길게 찍게 되므로). **영상 수 기준, 영상 길이 구간별로 편당 단가 고정**
+- 수강생이 처음 끝까지(90% 이상) 보면 100%, 30% 이상 보면 50%, 30% 전에 끄면 0, 다시 보기는 0, 3분 미만 영상은 정산 제외
+- 예시 단가(`data.js` `payRates`): 3~10분 145원, 10~20분 218원, 20분 이상 290원
+  - 근거: 가장 싼 이용권 회원(월 순매출 16,950원)이 한 달 30편을 모두 20분 이상 영상으로 끝까지 보고 재생 60시간을 꽉 채워도 플랫폼에 순매출 20%가 남는 최대치
+  - 1인 한 달 정산 인정 편수를 줄이면 단가를 올릴 수 있다: 20편 218/327/436원, 15편 290/436/581원
+- 안전장치(내부): 수강생 1명당 한 달 정산 인정 30편, 재생 한도 한 달 60시간. 화면에는 쓰지 않는다
 
 ## 아직 일부러 안 만든 것
 - **베테랑 영상 올리기·정산**: 로그인해도 '서비스 준비 중'으로 막아둠 (2026-11-06 소유자). 파일 선택 칸 없음
@@ -68,7 +77,7 @@
 ## 광고
 - 홈 가운데 광고 한 칸(커뮤니티와 인력사무소 소개 사이). 지금은 가상 브랜드 GRAVIK 레이저 수평기 예시이고 '광고 · 예시 · 가상 브랜드' 표시
 - 광고를 누르면 `#/ads`(광고 안내)로 간다. 광고는 늘 '광고'라고 표시하고, 베테랑 강의 영상 안에는 넣지 않는다
-- 구글 애드센스: 화면마다 맨 아래 한 칸 (`.ad-g`). `config.js`의 `adsenseClient`(ca-pub-…)·`adsenseSlot`(숫자)이 있어야 보인다. 화면이 처음 보일 때 채움
+- 구글 애드센스: **보류** (2026-11-06 소유자). 코드만 있고 꺼져 있음. 화면마다 맨 아래 한 칸 (`.ad-g`). `config.js`의 `adsenseClient`(ca-pub-…)·`adsenseSlot`(숫자)이 있어야 보인다. 화면이 처음 보일 때 채움
   - ID를 받으면 `public/ads.txt`(google.com, pub-…, DIRECT, f08c47fec0942fa0)와 `<meta name="google-adsense-account">`도 같이 넣는다
 
 ## 기본 구조
