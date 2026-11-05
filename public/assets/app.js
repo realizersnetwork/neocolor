@@ -413,7 +413,9 @@
         <a href="#/plans" data-close>${esc(t("nav.plans"))}</a>
         <a href="#/courses?saved=1" data-close>${esc(t("nav.saved"))}</a>
       </div>
-      <div class="drawer-auth"><button type="button" data-soon>${esc(t("auth.login"))}</button><button type="button" data-soon>${esc(t("auth.signup"))}</button></div>
+      <div class="drawer-auth">${authUser
+        ? `<span class="drawer-user">${esc(t("auth.welcome", { name: userLabel(authUser) }))}</span><button type="button" data-auth="logout">${esc(t("auth.logout"))}</button>`
+        : `<button type="button" data-auth="login">${esc(t("auth.login"))}</button><button type="button" data-auth="signup">${esc(t("auth.signup"))}</button>`}</div>
       ${D.categories.map((c) => `<div class="drawer-cat">
         <button type="button" data-cat="${c.id}"><span class="dot" style="--c:${c.color}"></span>${esc(L(c.name))}</button>
         <div class="drawer-subs">${c.subs.map((s) => `<button type="button" data-cat="${c.id}" data-sub="${s.id}">${esc(L(s.name))}</button>`).join("")}</div>
@@ -724,6 +726,239 @@
   // 영상 올리기는 로그인 후에만 (지금은 화면에 파일 선택 칸이 없음)
   ["#inStudents", "#inHours", "#inRate"].forEach((sel) => $(sel).addEventListener("input", updateCalc));
 
+  /* ---------- 로그인·회원가입 (수퍼베이스) ----------
+   * 설정값(config.js)이 있을 때만 켜진다. 없으면 버튼을 눌러도 '곧 열려요' 알림만
+   * - 이메일·비밀번호, 구글, 카카오 / 비밀번호 찾기(메일 링크) → 돌아오면 새 비밀번호 정하기
+   * - 로그인해도 베테랑 영상 올리기·정산은 계속 '서비스 준비 중'
+   */
+  const CFG = window.NEO_CONFIG || {};
+  const authOn = /^https:\/\/[\w.-]+$/.test(CFG.supabaseUrl || "") && String(CFG.supabaseAnonKey || "").length > 20;
+  const SB_SRC = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
+  let sb = null;
+  let authUser = null;
+  let authMode = "login";
+  let authMsg = null; // { type: "ok"|"err", text }
+  let authBusy = false;
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const el = document.createElement("script");
+      el.src = src; el.async = true;
+      el.onload = resolve; el.onerror = () => reject(new Error("load " + src));
+      document.head.appendChild(el);
+    });
+  }
+  const userLabel = (u) => {
+    const m = (u && u.user_metadata) || {};
+    return m.name || m.full_name || m.nickname || m.preferred_username || (u && u.email ? u.email.split("@")[0] : "");
+  };
+  function renderUser() {
+    const on = !!authUser;
+    $$(".auth-btn").forEach((b) => { b.hidden = on; });
+    $("#userWrap").hidden = !on;
+    if (on) {
+      const name = userLabel(authUser);
+      $("#userName").textContent = name;
+      $("#userAva").textContent = (name || "?").slice(0, 1).toUpperCase();
+      $("#userEmail").textContent = authUser.email || "";
+      $("#userBtn").setAttribute("aria-label", t("auth.menu"));
+    } else {
+      $("#userMenu").hidden = true;
+    }
+    renderDrawer();
+  }
+  const authErr = (e) => {
+    const m = String((e && (e.message || e.error_description)) || "").toLowerCase();
+    if (m.includes("invalid login")) return t("auth.err.invalid");
+    if (m.includes("already registered") || m.includes("already been registered")) return t("auth.err.exists");
+    if (m.includes("not confirmed")) return t("auth.err.unconfirmed");
+    if (m.includes("password") && (m.includes("least") || m.includes("short"))) return t("auth.err.short");
+    if (m.includes("email") && (m.includes("invalid") || m.includes("valid"))) return t("auth.err.email");
+    if (m.includes("rate") || m.includes("security purposes") || m.includes("too many")) return t("auth.err.rate");
+    return t("auth.err.generic");
+  };
+  const G_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.2-4 1.2-3.1 0-5.7-2.1-6.6-4.9H1.4v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.4 14.4a7.2 7.2 0 0 1 0-4.7V6.6H1.4a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.7 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.4 6.6l4 3.1C6.3 6.9 8.9 4.8 12 4.8z"/></svg>';
+  const K_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#191919" d="M12 3C6.5 3 2 6.5 2 10.8c0 2.8 1.9 5.2 4.7 6.6l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.5.1 1 .1 1.5.1 5.5 0 10-3.5 10-7.9S17.5 3 12 3z"/></svg>';
+  function renderAuth() {
+    const box = $("#authBody");
+    const msg = authMsg ? `<p class="auth-msg ${authMsg.type === "ok" ? "is-ok" : "is-err"}" role="${authMsg.type === "ok" ? "status" : "alert"}">${esc(authMsg.text)}</p>` : "";
+    const busy = authBusy ? " disabled" : "";
+    const submit = (key) => `<button class="btn btn-dark auth-submit" type="submit"${busy}>${esc(authBusy ? t("auth.wait") : t(key))}</button>`;
+    const social = `
+      <div class="auth-social">
+        <button class="auth-google" type="button" data-auth="google"${busy}>${G_LOGO}<span>${esc(t("auth.google"))}</span></button>
+        <button class="auth-kakao" type="button" data-auth="kakao"${busy}>${K_LOGO}<span>${esc(t("auth.kakao"))}</span></button>
+      </div>
+      <p class="auth-or"><span>${esc(t("auth.or"))}</span></p>`;
+    const field = (id, type, label, auto, extra = "") =>
+      `<label class="auth-field"><span>${esc(label)}</span><input id="${id}" type="${type}" autocomplete="${auto}" required${extra}></label>`;
+    let html = "";
+    if (authMode === "login") {
+      html = `<h2 id="authTitle">${esc(t("auth.title.login"))}</h2>${social}
+        <form class="auth-form" id="authForm" novalidate>
+          ${field("authEmail", "email", t("auth.email"), "email")}
+          ${field("authPw", "password", t("auth.password"), "current-password")}
+          ${msg}${submit("auth.submit.login")}
+        </form>
+        <div class="auth-links"><button type="button" data-auth="forgot">${esc(t("auth.forgot"))}</button><button type="button" data-auth="signup">${esc(t("auth.toSignup"))}</button></div>`;
+    } else if (authMode === "signup") {
+      html = `<h2 id="authTitle">${esc(t("auth.title.signup"))}</h2>${social}
+        <form class="auth-form" id="authForm" novalidate>
+          ${field("authName", "text", t("auth.name"), "nickname", ' maxlength="30"')}
+          ${field("authEmail", "email", t("auth.email"), "email")}
+          ${field("authPw", "password", `${t("auth.password")} (${t("auth.passwordHint")})`, "new-password", ' minlength="8"')}
+          ${msg}${submit("auth.submit.signup")}
+          <p class="auth-note">${esc(t("auth.note"))}</p>
+        </form>
+        <div class="auth-links"><button type="button" data-auth="login">${esc(t("auth.toLogin"))}</button></div>`;
+    } else if (authMode === "forgot") {
+      html = `<h2 id="authTitle">${esc(t("auth.title.forgot"))}</h2>
+        <p class="auth-sub">${esc(t("auth.forgotSub"))}</p>
+        <form class="auth-form" id="authForm" novalidate>
+          ${field("authEmail", "email", t("auth.email"), "email")}
+          ${msg}${submit("auth.submit.forgot")}
+        </form>
+        <div class="auth-links"><button type="button" data-auth="login">${esc(t("auth.toLogin"))}</button></div>`;
+    } else {
+      html = `<h2 id="authTitle">${esc(t("auth.title.reset"))}</h2>
+        <form class="auth-form" id="authForm" novalidate>
+          ${field("authPw", "password", t("auth.newPassword"), "new-password", ' minlength="8"')}
+          ${msg}${submit("auth.submit.reset")}
+        </form>`;
+    }
+    // 다시 그려도 입력한 값은 남긴다
+    const keep = {};
+    $$("#authBody input").forEach((i) => { keep[i.id] = i.value; });
+    box.innerHTML = html;
+    Object.keys(keep).forEach((id) => { const i = document.getElementById(id); if (i && id !== "authPw") i.value = keep[id]; });
+  }
+  function openAuth(mode) {
+    if (!authOn || !sb) { toast(t("auth.notReady")); return; }
+    authMode = mode; authMsg = null; authBusy = false;
+    renderAuth();
+    showDialog(authDlg);
+    const first = $("#authBody input");
+    if (first) setTimeout(() => first.focus(), 50);
+  }
+  const homeUrl = () => location.origin + location.pathname + (lang === "ko" ? "" : "?lang=" + lang);
+  async function authSocial(provider) {
+    if (!sb) return;
+    session.set("neo.afterLogin", location.hash || "#/");
+    authBusy = true; renderAuth();
+    const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: homeUrl() } });
+    if (error) { authBusy = false; authMsg = { type: "err", text: authErr(error) }; renderAuth(); return; }
+    // 보통은 바로 구글·카카오 화면으로 넘어간다. 안 넘어가면 몇 초 뒤 버튼을 다시 살린다
+    setTimeout(() => { if (authBusy) { authBusy = false; if (authDlg.open) renderAuth(); } }, 6000);
+  }
+  // 구글·카카오 화면에서 '뒤로'로 돌아왔을 때 버튼이 잠긴 채 남지 않게
+  window.addEventListener("pageshow", (e) => { if (e.persisted && authBusy) { authBusy = false; if (authDlg.open) renderAuth(); } });
+  async function submitAuth() {
+    if (!sb || authBusy) return;
+    const v = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
+    const email = v("authEmail");
+    const pw = (document.getElementById("authPw") || {}).value || "";
+    if (authMode !== "reset" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { authMsg = { type: "err", text: t("auth.err.email") }; renderAuth(); return; }
+    if ((authMode === "signup" || authMode === "reset") && pw.length < 8) { authMsg = { type: "err", text: t("auth.err.short") }; renderAuth(); return; }
+    authBusy = true; authMsg = null; renderAuth();
+    let error = null;
+    let done = null;
+    try {
+      if (authMode === "login") {
+        ({ error } = await sb.auth.signInWithPassword({ email, password: pw }));
+        if (!error) done = "close";
+      } else if (authMode === "signup") {
+        const r = await sb.auth.signUp({ email, password: pw, options: { data: { name: v("authName") }, emailRedirectTo: homeUrl() } });
+        error = r.error;
+        if (!error) done = r.data && r.data.session ? "close" : "checkMail";
+      } else if (authMode === "forgot") {
+        ({ error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: homeUrl() }));
+        if (!error) done = "sentReset";
+      } else {
+        ({ error } = await sb.auth.updateUser({ password: pw }));
+        if (!error) done = "pwChanged";
+      }
+    } catch (e) { error = e; }
+    authBusy = false;
+    if (error) { authMsg = { type: "err", text: authErr(error) }; renderAuth(); return; }
+    if (done === "close") { closeDialog(authDlg); toast(t("auth.welcome", { name: userLabel(authUser) || email.split("@")[0] })); return; }
+    if (done === "pwChanged") { closeDialog(authDlg); toast(t("auth.pwChanged")); return; }
+    authMsg = { type: "ok", text: t(done === "checkMail" ? "auth.checkMail" : "auth.sentReset") };
+    renderAuth();
+  }
+  async function initAuth() {
+    if (!authOn) return;
+    try {
+      await loadScript(SB_SRC);
+      sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, {
+        auth: { flowType: "pkce", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+      });
+      sb.auth.onAuthStateChange((event, sess) => {
+        const before = authUser;
+        authUser = sess ? sess.user : null;
+        renderUser();
+        if (event === "PASSWORD_RECOVERY") { authMode = "reset"; authMsg = null; renderAuth(); showDialog(authDlg); }
+        if (event === "SIGNED_IN" && !before && authUser) {
+          const back = session.get("neo.afterLogin");
+          if (back) {
+            session.set("neo.afterLogin", "");
+            toast(t("auth.welcome", { name: userLabel(authUser) }));
+            if (back !== location.hash) go(back);
+          }
+        }
+        if (event === "SIGNED_OUT" && before) toast(t("auth.loggedOut"));
+      });
+      const { data } = await sb.auth.getSession();
+      authUser = data && data.session ? data.session.user : null;
+      renderUser();
+      // 소셜 로그인·메일 링크로 돌아오면 주소에 남는 code 등을 지운다 (화면 주소는 그대로)
+      const u = new URL(location.href);
+      if (["code", "error", "error_code", "error_description"].some((k) => u.searchParams.has(k))) {
+        ["code", "error", "error_code", "error_description"].forEach((k) => u.searchParams.delete(k));
+        history.replaceState(null, "", u.pathname + u.search + u.hash);
+      }
+    } catch (_) {
+      sb = null; // 불러오기 실패 → 버튼은 '곧 열려요'
+    }
+  }
+  function toggleUserMenu(open) {
+    const menu = $("#userMenu");
+    const show = open == null ? menu.hidden : open;
+    menu.hidden = !show;
+    $("#userBtn").setAttribute("aria-expanded", String(show));
+  }
+  $("#userBtn").addEventListener("click", (e) => { e.stopPropagation(); toggleUserMenu(); });
+  document.addEventListener("click", (e) => { if (!$("#userMenu").hidden && !e.target.closest("#userWrap")) toggleUserMenu(false); });
+  document.addEventListener("submit", (e) => {
+    if (e.target && e.target.id === "authForm") { e.preventDefault(); submitAuth(); }
+  });
+
+  /* ---------- 구글 애드센스 (config.js 값이 있을 때만) ----------
+   * 화면마다 맨 아래 한 칸. 화면이 처음 보일 때 채운다 (숨겨진 칸에는 광고가 안 들어가서) */
+  const adsOn = /^ca-pub-\d{10,20}$/.test(CFG.adsenseClient || "") && /^\d{6,12}$/.test(String(CFG.adsenseSlot || ""));
+  let adsLoaded = false;
+  function fillAd(view) {
+    if (!adsOn) return;
+    const box = $(`.view[data-view="${view}"] .ad-g`);
+    if (!box || box.dataset.filled) return;
+    if (!adsLoaded) {
+      adsLoaded = true;
+      const el = document.createElement("script");
+      el.async = true; el.crossOrigin = "anonymous";
+      el.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${CFG.adsenseClient}`;
+      document.head.appendChild(el);
+    }
+    box.hidden = false;
+    box.dataset.filled = "1";
+    const ins = document.createElement("ins");
+    ins.className = "adsbygoogle";
+    ins.style.display = "block";
+    ins.setAttribute("data-ad-client", CFG.adsenseClient);
+    ins.setAttribute("data-ad-slot", String(CFG.adsenseSlot));
+    ins.setAttribute("data-ad-format", "auto");
+    ins.setAttribute("data-full-width-responsive", "true");
+    box.appendChild(ins);
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (_) { /* 광고가 안 나와도 화면은 그대로 */ }
+  }
+
   /* ---------- 방문자 통계 ----------
    * 따로 설정할 필요 없는 무료 카운터(Abacus · abacus.jasoncameron.dev)에 나라별 숫자만 올린다
    * - 나라: Cloudflare가 알려주는 접속 나라 (/cdn-cgi/trace 의 loc 값)
@@ -830,6 +1065,7 @@
   /* ---------- 강의 상세 창 · 기술 찾기 창 ---------- */
   const courseDlg = $("#courseDlg");
   const quizDlg = $("#quizDlg");
+  const authDlg = $("#authDlg");
   function showDialog(dlg) {
     if (dlg.open) return;
     if (typeof dlg.showModal === "function") dlg.showModal();
@@ -842,7 +1078,7 @@
     else { dlg.removeAttribute("open"); dlg.dispatchEvent(new Event("close")); }
   }
   const closeAllDialogs = () => $$("dialog[open]").forEach(closeDialog);
-  [courseDlg, quizDlg].forEach((dlg) => {
+  [courseDlg, quizDlg, authDlg].forEach((dlg) => {
     dlg.addEventListener("close", () => {
       if (!$$("dialog[open]").length && drawer.hidden) document.documentElement.classList.remove("modal-open");
     });
@@ -1032,6 +1268,7 @@
       loadStats();
     }
 
+    requestAnimationFrame(() => fillAd(r.view));
     if (video) {
       if (r.view === "home") { if (!reducedMotion) video.play().catch(() => {}); }
       else video.pause();
@@ -1059,7 +1296,7 @@
 
   /* ---------- 클릭 처리 (한곳에서) ---------- */
   const CLICK_SEL = [
-    "[data-save]", "[data-course]", "[data-cat]", "[data-search]", "[data-soon]", "button[data-mode]", "[data-lang]",
+    "[data-save]", "[data-course]", "[data-cat]", "[data-search]", "[data-soon]", "[data-auth]", "button[data-mode]", "[data-lang]",
     "[data-go]", "[data-quiz]", "[data-q-opt]", "[data-q-back]", "[data-q-retry]", "[data-filter]", "[data-tab]", "[data-ctab]",
     "[data-term-cat]", "[data-level-tab]", "[data-wage]", "[data-dlg-close]", "[data-mega]"
   ].join(",");
@@ -1079,6 +1316,14 @@
     }
     if (ds.search != null && el.hasAttribute("data-search")) { go(coursesHash({ q: ds.search })); return; }
     if (el.hasAttribute("data-soon")) { toast(t("toast.soon")); return; }
+    if (ds.auth) {
+      const a = ds.auth;
+      if (a === "logout") { toggleUserMenu(false); closeMenus(); if (sb) sb.auth.signOut(); return; }
+      if (a === "google" || a === "kakao") { authSocial(a); return; }
+      if (authDlg.open && (a === "login" || a === "signup" || a === "forgot")) { authMode = a; authMsg = null; renderAuth(); return; }
+      closeMenus(); openAuth(a);
+      return;
+    }
     if (el.matches("button[data-mode]")) { goMode(ds.mode); return; }
     if (ds.lang) { setLang(ds.lang); return; }
     if (ds.go) { closeAllDialogs(); go(ds.go); return; }
@@ -1248,6 +1493,7 @@
     updateSoundLabel();
     if (courseDlg.open) renderCourseDialog();
     if (quizDlg.open) renderQuiz();
+    if (authDlg.open) renderAuth();
   }
 
   /* ---------- 시작 ---------- */
@@ -1255,6 +1501,7 @@
   applyStatic();
   renderAll();
   visitDone = countVisit();
+  initAuth();
   applyTraceCountry();
   handleRoute();
   window.addEventListener("hashchange", handleRoute);

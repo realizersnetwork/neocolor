@@ -1161,3 +1161,43 @@ html:lang(en) .wage-name { font-size: 13px; }
   .pt-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 }
 @media (min-width: 1120px) { .pt-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* ---------- 로그인 · 회원가입 ---------- */
+.user-wrap { position: relative; }
+@media (max-width: 959px) { .user-wrap { display: none; } }
+.user-btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px 0 5px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-size: 14px; font-weight: 700; max-width: 180px; }
+.user-ava { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: var(--grad); color: #fff; font-size: 13px; font-weight: 800; }
+.user-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 80; min-width: 220px; padding: 12px; border-radius: 14px; background: #fff; border: 1px solid var(--line); box-shadow: 0 12px 30px rgba(17, 19, 24, 0.14); }
+.user-email { margin-bottom: 8px; font-size: 13px; color: var(--ink-3); word-break: break-all; }
+.user-menu button { width: 100%; min-height: 40px; border-radius: 10px; background: var(--bg-soft); font-size: 14px; font-weight: 700; }
+body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.25); color: #fff; }
+.drawer-user { flex: 1; display: flex; align-items: center; min-height: 42px; font-size: 14px; font-weight: 700; }
+
+#authBody h2 { margin: 4px 36px 16px 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.auth-sub { margin: -8px 0 14px; font-size: 14px; color: var(--ink-3); line-height: 1.55; }
+.auth-social { display: grid; gap: 8px; }
+.auth-social button { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; }
+.auth-social svg { width: 20px; height: 20px; }
+.auth-google { background: #fff; border: 1px solid #dadce0; color: #1f1f1f; }
+.auth-kakao { background: #fee500; color: rgba(0, 0, 0, 0.85); }
+.auth-social button:disabled, .auth-submit:disabled { opacity: 0.6; cursor: default; }
+.auth-or { display: flex; align-items: center; gap: 10px; margin: 16px 0 12px; font-size: 12px; color: var(--ink-3); }
+.auth-or::before, .auth-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.auth-form { display: grid; gap: 10px; }
+.auth-field { display: grid; gap: 6px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.auth-field input { height: 48px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font-size: 16px; -webkit-appearance: none; appearance: none; }
+.auth-field input:focus { outline: none; border-color: var(--ink); }
+.auth-submit { width: 100%; margin-top: 4px; }
+.auth-msg { padding: 10px 12px; border-radius: 10px; font-size: 14px; line-height: 1.5; }
+.auth-msg.is-err { background: #fff0f0; color: #b42318; }
+.auth-msg.is-ok { background: #eaf7f1; color: var(--ok); }
+.auth-note { font-size: 12px; color: var(--ink-3); text-align: center; }
+.auth-links { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-top: 14px; }
+.auth-links button { padding: 6px 0; font-size: 14px; font-weight: 700; color: var(--brand); }
+
+/* ---------- 구글 애드센스 칸 (설정값이 있을 때만 보임) ---------- */
+.ad-g { max-width: 970px; margin: 8px auto 32px; }
+.ad-g-label { display: block; margin-bottom: 4px; font-size: 11px; color: var(--ink-3); }
+#authBody { padding: 22px 22px 24px; }
+@media (min-width: 720px) { #authBody { padding: 28px 30px 30px; } }

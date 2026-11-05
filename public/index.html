@@ -17,7 +17,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="assets/style.css?v=14">
+  <link rel="stylesheet" href="assets/style.css?v=15">
 </head>
 <body data-mode="student" data-view="home">
   <a class="skip" href="#main" data-i18n="skip">본문으로 건너뛰기</a>
@@ -83,8 +83,15 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
           <span class="count" id="savedCount" hidden>0</span>
         </a>
-        <button class="btn-text auth-btn" type="button" data-soon data-i18n="auth.login">로그인</button>
-        <button class="btn-solid auth-btn" type="button" data-soon data-i18n="auth.signup">회원가입</button>
+        <button class="btn-text auth-btn" type="button" data-auth="login" data-i18n="auth.login">로그인</button>
+        <button class="btn-solid auth-btn" type="button" data-auth="signup" data-i18n="auth.signup">회원가입</button>
+        <div class="user-wrap" id="userWrap" hidden>
+          <button class="user-btn" id="userBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="userMenu"><span class="user-ava" id="userAva" aria-hidden="true"></span><span class="user-name" id="userName"></span></button>
+          <div class="user-menu" id="userMenu" hidden>
+            <p class="user-email" id="userEmail"></p>
+            <button type="button" data-auth="logout" data-i18n="auth.logout">로그아웃</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -340,6 +347,7 @@
           <div class="faq" id="faqHome"></div>
         </div>
       </section>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
     </section>
 
     <!-- ===================== 전체 강의 ===================== -->
@@ -360,6 +368,7 @@
         <div class="more-wrap" id="moreWrap" hidden><button class="btn-more" id="moreBtn" type="button"></button></div>
         <p class="empty" id="emptyText" hidden></p>
       </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
     </section>
 
     <!-- ===================== 로드맵 ===================== -->
@@ -379,6 +388,7 @@
         <div class="rm-list" id="rmList"></div>
         <p class="source" data-i18n="rm.certNote">자격증은 한국 국가기술자격이에요.</p>
       </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
     </section>
 
     <!-- ===================== 커뮤니티 ===================== -->
@@ -418,6 +428,7 @@
           <p class="source" data-i18n="comm.terms.more">용어는 계속 추가하고 있어요.</p>
         </div>
       </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
     </section>
 
     <!-- ===================== 인력사무소 ===================== -->
@@ -503,6 +514,7 @@
           <div class="scroller" id="rowLabor"></div>
         </section>
       </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
     </section>
 
     <!-- ===================== 수강권 ===================== -->
@@ -532,6 +544,7 @@
           <div class="faq" id="faqPlans"></div>
         </div>
       </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
     </section>
 
     <!-- ===================== 베테랑 스튜디오 ===================== -->
@@ -638,6 +651,7 @@
           </div>
         </section>
       </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
     </section>
 
     <!-- ===================== 광고 안내 ===================== -->
@@ -670,6 +684,7 @@
         </ol>
         <p class="info-note ads-rule" data-i18n="ads.rule">광고는 언제나 '광고'로 표시하고, 베테랑의 강의 영상 안에는 넣지 않아요. 광고 가격과 조건은 정식 오픈 때 안내해요.</p>
       </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
     </section>
 
     <!-- ===================== 방문자 통계 (무료 카운터 Abacus, app.js 참고) ===================== -->
@@ -682,6 +697,7 @@
         <div id="statsBody" aria-live="polite"></div>
         <p class="source" data-i18n="stats.privacy">IP 주소는 저장하지 않아요. 나라별 숫자만 무료 카운터 서비스(Abacus)에 저장돼요.</p>
       </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
     </section>
   </main>
 
@@ -738,11 +754,19 @@
     </div>
   </dialog>
 
+  <dialog class="sheet sheet-sm" id="authDlg" aria-labelledby="authTitle">
+    <div class="sheet-inner">
+      <button class="icon-btn sheet-close" type="button" data-dlg-close aria-label="닫기" data-i18n-attr="aria-label:common.close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div id="authBody"></div>
+    </div>
+  </dialog>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <noscript><p class="noscript">이 사이트는 자바스크립트를 켜야 강의 목록이 보여요.</p></noscript>
-  <script src="assets/i18n.js?v=14"></script>
-  <script src="assets/data.js?v=14"></script>
-  <script src="assets/app.js?v=14"></script>
+  <script src="assets/i18n.js?v=15"></script>
+  <script src="assets/data.js?v=15"></script>
+  <script src="assets/config.js?v=15"></script>
+  <script src="assets/app.js?v=15"></script>
 </body>
 </html>
