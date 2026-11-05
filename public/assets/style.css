@@ -1125,3 +1125,14 @@ html:lang(en) .wage-name { font-size: 13px; }
 .up-form fieldset { display: grid; gap: 12px; min-width: 0; margin: 0; padding: 0; border: 0; }
 .up-form.is-locked fieldset { opacity: 0.5; }
 .up-form fieldset:disabled input, .up-form fieldset:disabled select, .up-form fieldset:disabled .btn { cursor: not-allowed; }
+
+/* 서비스 준비 중 표시 (베테랑 영상 올리기·정산) */
+.prep-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; background: #fff4e0; color: var(--warn); font-size: 13px; font-weight: 800; white-space: nowrap; }
+.prep-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.dropzone.is-locked .prep-badge { margin-top: 6px; }
+.prep-note { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 14px; padding: 12px 14px; border-radius: 14px; background: #fffaf0; border: 1px solid #f6e2bd; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+
+/* 슬로건: 색 칩 아래 한 줄로 (영어 슬로건이 길어서) */
+.brand-sub { flex-wrap: wrap; row-gap: 8px; }
+.brand-sub [data-i18n="hero.tag"] { flex-basis: 100%; font-size: 14px; font-weight: 700; letter-spacing: 0.01em; color: rgba(255, 255, 255, 0.92); }
+@media (min-width: 720px) { .brand-sub [data-i18n="hero.tag"] { font-size: 16px; } }
