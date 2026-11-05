@@ -171,6 +171,7 @@
   /* ---------- 고정 문구 번역 ---------- */
   function applyStatic() {
     document.documentElement.lang = lang;
+    $$("[data-privacy]").forEach((a) => { a.href = `/privacy?lang=${lang}`; });
     $$("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
     $$("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
     $$("[data-i18n-attr]").forEach((el) => {
@@ -794,6 +795,8 @@
         <button class="auth-google" type="button" data-auth="google"${busy}>${G_LOGO}<span>${esc(t("auth.google"))}</span></button>
       </div>
       <p class="auth-or"><span>${esc(t("auth.or"))}</span></p>`;
+    // 개인정보처리방침 (따로 떨어진 페이지, 새 창)
+    const privacy = `<a class="auth-privacy" href="/privacy?lang=${lang}" target="_blank" rel="noopener">${esc(t("auth.privacy"))}</a>`;
     const field = (id, type, label, auto, extra = "") =>
       `<label class="auth-field"><span>${esc(label)}</span><input id="${id}" type="${type}" autocomplete="${auto}" required${extra}></label>`;
     let html = "";
@@ -803,6 +806,7 @@
           ${field("authEmail", "email", t("auth.email"), "email")}
           ${field("authPw", "password", t("auth.password"), "current-password")}
           ${msg}${submit("auth.submit.login")}
+          <p class="auth-note">${privacy}</p>
         </form>
         <div class="auth-links"><button type="button" data-auth="forgot">${esc(t("auth.forgot"))}</button><button type="button" data-auth="signup">${esc(t("auth.toSignup"))}</button></div>`;
     } else if (authMode === "signup") {
@@ -812,7 +816,7 @@
           ${field("authEmail", "email", t("auth.email"), "email")}
           ${field("authPw", "password", `${t("auth.password")} (${t("auth.passwordHint")})`, "new-password", ' minlength="8"')}
           ${msg}${submit("auth.submit.signup")}
-          <p class="auth-note">${esc(t("auth.note"))}</p>
+          <p class="auth-note">${esc(t("auth.note"))} ${privacy}</p>
         </form>
         <div class="auth-links"><button type="button" data-auth="login">${esc(t("auth.toLogin"))}</button></div>`;
     } else if (authMode === "forgot") {

@@ -482,7 +482,7 @@ window.NEO_I18N = {
     "auth.toLogin": "이미 계정이 있어요. 로그인",
     "auth.forgot": "비밀번호를 잊었어요",
     "auth.forgotSub": "가입한 이메일로 비밀번호를 바꾸는 링크를 보내드려요.",
-    "auth.note": "가입하면 이메일과 이름만 저장해요.",
+    "auth.note": "가입하면 이메일과 이름을 저장해요.",
     "auth.wait": "잠시만요…",
     "auth.checkMail": "가입 확인 메일을 보냈어요. 메일의 링크를 누르면 가입이 끝나요.",
     "auth.sentReset": "메일을 보냈어요. 메일의 링크를 눌러 새 비밀번호를 정하세요.",
@@ -524,6 +524,7 @@ window.NEO_I18N = {
     "cm.copayV": "보통 수강료의 10%",
     "cm.copayD": "나머지는 내일배움카드에서 지원돼요",
     "cm.copaySrc": "2026년 기준 · 과정과 대상에 따라 다를 수 있어요",
+    "auth.privacy": "개인정보처리방침",
   },
 
   en: {
@@ -1003,7 +1004,7 @@ window.NEO_I18N = {
     "auth.toLogin": "Already have an account? Log in",
     "auth.forgot": "Forgot your password?",
     "auth.forgotSub": "We'll email you a link to change your password.",
-    "auth.note": "We only store your email and name.",
+    "auth.note": "We store your email and name.",
     "auth.wait": "One moment…",
     "auth.checkMail": "We sent a confirmation email. Click the link in it to finish signing up.",
     "auth.sentReset": "Email sent. Click the link in it to set a new password.",
@@ -1045,6 +1046,7 @@ window.NEO_I18N = {
     "cm.copayV": "Usually 10% of the fee",
     "cm.copayD": "The Tomorrow Learning Card covers the rest",
     "cm.copaySrc": "As of 2026 · may vary by course and learner",
+    "auth.privacy": "Privacy policy",
   },
 
   ja: {
@@ -1524,7 +1526,7 @@ window.NEO_I18N = {
     "auth.toLogin": "アカウントをお持ちの方はログイン",
     "auth.forgot": "パスワードを忘れた",
     "auth.forgotSub": "登録したメールアドレスに、パスワード変更用のリンクを送ります。",
-    "auth.note": "登録で保存するのはメールアドレスと名前だけです。",
+    "auth.note": "登録するとメールアドレスと名前を保存します。",
     "auth.wait": "少々お待ちください…",
     "auth.checkMail": "確認メールを送りました。メールのリンクを押すと登録が完了します。",
     "auth.sentReset": "メールを送りました。リンクを押して新しいパスワードを設定してください。",
@@ -1566,5 +1568,6 @@ window.NEO_I18N = {
     "cm.copayV": "通常、受講料の10%",
     "cm.copayD": "残りは明日学びカードで支援されます",
     "cm.copaySrc": "2026年基準・講座や対象者により異なる場合があります",
+    "auth.privacy": "個人情報処理方針",
   }
 };

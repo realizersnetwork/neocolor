@@ -58,7 +58,10 @@
 - anon 키는 공개용이라 config.js에 넣어도 된다. **service_role 키는 절대 넣지 않는다**
 - 수퍼베이스 설정: Authentication → URL Configuration에 Site URL `https://neocolor.net`, Redirect URLs `https://neocolor.net/**`, `https://www.neocolor.net/**`, `https://neocolor.pages.dev/**`
 - 구글은 수퍼베이스 Authentication → Providers → Google에서 켠다 (구글 클라우드 콘솔의 OAuth 클라이언트 ID·비밀번호 필요). 콜백 주소는 `https://imlxvwvfqbyznetkgtmv.supabase.co/auth/v1/callback`
-- 개인정보처리방침 페이지가 아직 없다. 회원가입을 실제로 열기 전에 꼭 만들어야 한다
+- 개인정보처리방침: `public/privacy.html` → https://neocolor.net/privacy (한국어·English·日本語 한 장, 언어는 사이트와 같은 순서로 고름). 푸터·가입 창에 링크
+  - 개인정보 보호책임자: NEOCOLOR 운영팀, 이메일 lkysakana@naver.com (2026-11-06 소유자가 정함)
+  - 위탁·국외 이전: Supabase(회원 정보·로그인), Cloudflare(사이트 전송). 새 서비스(결제, 애드센스 등)를 붙이면 이 페이지도 같이 고친다
+  - 구글 OAuth 게시에 필요: 브랜딩의 홈페이지 `https://neocolor.net`, 개인정보처리방침 `https://neocolor.net/privacy`
 
 ## 베테랑 정산 방식 (2026-11-06 소유자가 정함)
 - 시간 단위 정산은 하지 않는다 (영상을 쓸데없이 길게 찍게 되므로). **영상 수 기준, 영상 길이 구간별로 편당 단가 고정**
@@ -95,6 +98,7 @@
 - 로고: NEO + 색이 흐르는 COLOR 워드마크(`.wordmark`, `.wm-color`). 소유자가 좋아하는 로고라 유지
 - 동영상은 H.264 540x960 + AAC 소리, 메타데이터 제거. Cloudflare Pages 파일당 25MB 제한 주의
 - 폰트: Pretendard(jsdelivr CDN), 일본어는 일본어 글꼴 우선, 없으면 시스템 폰트
+- 휴대폰 머리줄은 한 줄 유지: 영어·일본어는 학생/베테랑 버튼을 좁히고, '글자 크게'일 때 머리줄만 원래 크기(`zoom: 0.87`)
 - '글자 크게' 버튼(나이 드신 분들용), 관심 강의 저장(이 기기에만 저장)
 
 ## 배포

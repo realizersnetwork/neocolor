@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>개인정보처리방침 · NEOCOLOR</title>
+  <meta name="description" content="NEOCOLOR 개인정보처리방침">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <style>
+    /* 개인정보처리방침 (따로 떨어진 한 장짜리 페이지. 사이트 본문과 같은 색·글꼴) */
+    :root { --ink: #111318; --ink-2: #454b57; --ink-3: #7c8290; --line: #e6e8ee; --bg-soft: #f5f6f8; --blue: #2f6bff; }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    html.big-text body { zoom: 1.15; }
+    body {
+      margin: 0; background: #fff; color: var(--ink);
+      font-family: "Pretendard Variable", Pretendard, system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      font-size: 16px; line-height: 1.75; word-break: keep-all; overflow-wrap: anywhere;
+    }
+    :lang(ja) { font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", Meiryo, system-ui, sans-serif; word-break: normal; }
+    .wrap { width: min(760px, calc(100% - 32px)); margin-inline: auto; }
+    .top { position: sticky; top: 0; z-index: 5; background: rgba(255, 255, 255, 0.97); border-bottom: 1px solid var(--line); }
+    .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 58px; }
+    .logo { font-size: 21px; font-weight: 800; letter-spacing: -0.04em; color: var(--ink); text-decoration: none; white-space: nowrap; font-family: "Pretendard Variable", Pretendard, system-ui, sans-serif; }
+    .wm {
+      background: linear-gradient(90deg, #00b3c7, #2f6bff, #7a4dff, #ff3d8b, #ff7a1a, #ffc21a, #00b3c7);
+      background-size: 300% 100%; -webkit-background-clip: text; background-clip: text;
+      color: transparent; -webkit-text-fill-color: transparent; animation: flow 12s linear infinite;
+    }
+    @keyframes flow { to { background-position: 300% 0; } }
+    @media (prefers-reduced-motion: reduce) { .wm { animation: none; } }
+    .langs { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--bg-soft); border: 1px solid var(--line); }
+    .langs button {
+      height: 30px; padding: 0 10px; border: 0; border-radius: 999px; background: none; cursor: pointer;
+      font: inherit; font-size: 13px; font-weight: 700; color: var(--ink-3); white-space: nowrap;
+    }
+    .langs button[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(17, 19, 24, 0.16); }
+    main { padding: 34px 0 20px; }
+    h1 { margin: 0; font-size: 30px; line-height: 1.3; letter-spacing: -0.02em; }
+    .meta { margin: 8px 0 0; font-size: 14px; color: var(--ink-3); }
+    .lead { margin: 18px 0 0; color: var(--ink-2); }
+    h2 { margin: 36px 0 10px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 19px; line-height: 1.4; letter-spacing: -0.01em; }
+    h3 { margin: 0 0 6px; font-size: 16px; }
+    p { margin: 8px 0; }
+    ul { margin: 8px 0; padding-left: 20px; }
+    li { margin: 4px 0; }
+    li::marker { color: var(--ink-3); }
+    .note { font-size: 14px; color: var(--ink-2); }
+    .cards { display: grid; gap: 10px; margin: 12px 0; }
+    .card { padding: 16px; border-radius: 14px; background: var(--bg-soft); }
+    .card dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 0; font-size: 14.5px; }
+    .card dt { color: var(--ink-3); }
+    .card dd { margin: 0; }
+    .contact { padding: 18px; border-radius: 14px; border: 1px solid var(--line); }
+    .contact strong { font-size: 17px; }
+    a { color: var(--blue); text-underline-offset: 3px; }
+    .foot { padding: 28px 0 48px; border-top: 1px solid var(--line); margin-top: 32px; font-size: 14px; }
+    .foot a { color: var(--ink-2); }
+    @media (max-width: 420px) {
+      h1 { font-size: 26px; }
+      .card dl { grid-template-columns: 1fr; gap: 0; }
+      .card dt { margin-top: 6px; }
+      .card dt:first-child { margin-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="logo" href="/" aria-label="NEOCOLOR">NEO<span class="wm">COLOR</span></a>
+      <div class="langs" role="group" aria-label="언어 선택">
+        <button type="button" data-l="ko" aria-pressed="true">한국어</button>
+        <button type="button" data-l="en" aria-pressed="false">English</button>
+        <button type="button" data-l="ja" aria-pressed="false">日本語</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ========== 한국어 ========== -->
+    <article lang="ko" data-lang="ko">
+      <h1>개인정보처리방침</h1>
+      <p class="meta">시행일: 2026년 11월 6일</p>
+      <p class="lead">NEOCOLOR(neocolor.net, 이하 'NEOCOLOR')는 「개인정보 보호법」에 따라 이용자의 개인정보를 보호하고, 관련 문의와 고충을 빠르게 처리하기 위해 다음과 같이 개인정보처리방침을 정합니다.</p>
+
+      <h2>1. 처리하는 개인정보 항목</h2>
+      <ul>
+        <li><b>이메일로 회원가입</b>: 이메일, 비밀번호, 이름(닉네임)</li>
+        <li><b>구글 계정으로 가입·로그인</b>: 구글이 전달하는 이메일, 이름, 프로필 사진 주소</li>
+        <li><b>서비스를 이용할 때 자동으로 생기는 정보</b>: 로그인 기록(일시, 접속 IP, 브라우저 정보)</li>
+      </ul>
+      <p class="note">비밀번호는 암호화해서 저장하므로 NEOCOLOR도 알 수 없습니다.</p>
+
+      <h2>2. 개인정보를 처리하는 목적</h2>
+      <ul>
+        <li>회원 확인, 회원가입·로그인, 비밀번호 찾기</li>
+        <li>강의·커뮤니티·인력사무소 등 서비스 제공과 공지 전달</li>
+        <li>문의 응대, 부정 이용 방지와 보안</li>
+      </ul>
+
+      <h2>3. 보유·이용 기간</h2>
+      <ul>
+        <li>회원 정보는 <b>회원 탈퇴 때까지</b> 보관하고, 탈퇴하면 지체 없이 파기합니다.</li>
+        <li>법령에 따라 보관해야 하는 정보는 그 기간 동안만 보관합니다. 예) 로그인 기록: 3개월(통신비밀보호법)</li>
+      </ul>
+
+      <h2>4. 파기 절차와 방법</h2>
+      <p>보유 기간이 끝나거나 처리 목적을 이루면 지체 없이 파기합니다. 전자 파일은 다시 살릴 수 없는 방법으로 지웁니다.</p>
+
+      <h2>5. 제3자 제공</h2>
+      <p>이용자가 동의하거나 법률에 특별한 규정이 있는 경우를 빼고는 개인정보를 다른 곳에 제공하지 않습니다.</p>
+
+      <h2>6. 처리 위탁과 국외 이전</h2>
+      <p>서비스 운영을 위해 아래 회사에 개인정보 처리를 맡기고 있으며, 이 회사들은 국외에 있습니다.</p>
+      <div class="cards">
+        <div class="card">
+          <h3>Supabase, Inc. (미국)</h3>
+          <dl>
+            <dt>맡기는 일</dt><dd>회원 정보 저장, 로그인 처리</dd>
+            <dt>이전 항목</dt><dd>1번의 회원 정보와 로그인 기록</dd>
+            <dt>이전 시기·방법</dt><dd>회원가입·로그인할 때 암호화된 네트워크로 전송</dd>
+            <dt>보유 기간</dt><dd>회원 탈퇴 또는 위탁 계약이 끝날 때까지</dd>
+            <dt>연락처</dt><dd><a href="https://supabase.com/privacy" rel="noopener">supabase.com/privacy</a></dd>
+          </dl>
+        </div>
+        <div class="card">
+          <h3>Cloudflare, Inc. (미국)</h3>
+          <dl>
+            <dt>맡기는 일</dt><dd>웹사이트 전송과 보안</dd>
+            <dt>이전 항목</dt><dd>접속 IP, 브라우저 정보</dd>
+            <dt>이전 시기·방법</dt><dd>사이트에 접속할 때 암호화된 네트워크로 전송</dd>
+            <dt>보유 기간</dt><dd>전송 처리에 필요한 기간 (해당 회사 방침에 따름)</dd>
+            <dt>연락처</dt><dd><a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">cloudflare.com/privacypolicy</a></dd>
+          </dl>
+        </div>
+      </div>
+      <p class="note">국외 이전을 원하지 않으시면 회원가입을 하지 않거나 탈퇴하시면 됩니다. 이 경우 로그인이 필요한 서비스는 이용할 수 없습니다.</p>
+
+      <h2>7. 브라우저 저장소와 방문자 통계</h2>
+      <ul>
+        <li>로그인 유지, 언어·글자 크기 설정, 관심 강의, 방문 표시는 이용자 기기의 브라우저 저장소(로컬 스토리지)에 저장합니다.</li>
+        <li>방문자 수는 접속한 나라(예: KR)별 숫자만 셉니다. 이 통계에 IP나 기기 정보는 저장하지 않습니다. 숫자는 외부 카운터 서비스(Abacus)에 기록됩니다.</li>
+        <li>광고나 추적을 위한 쿠키는 쓰지 않습니다.</li>
+        <li>브라우저 설정에서 사이트 데이터를 지우면 저장된 내용이 모두 지워집니다. 이 경우 로그아웃되고 설정이 처음으로 돌아갑니다.</li>
+      </ul>
+
+      <h2>8. 이용자의 권리와 행사 방법</h2>
+      <ul>
+        <li>이용자는 언제든지 자신의 개인정보 열람, 정정, 삭제, 처리정지와 회원 탈퇴를 요구할 수 있습니다.</li>
+        <li>아래 이메일로 요청하시면 지체 없이 처리합니다. 법정대리인이나 위임받은 사람을 통해서도 요청할 수 있습니다.</li>
+      </ul>
+
+      <h2>9. 만 14세 미만 아동</h2>
+      <p>NEOCOLOR는 만 14세 미만 아동의 회원가입을 받지 않습니다.</p>
+
+      <h2>10. 안전성 확보 조치</h2>
+      <ul>
+        <li>비밀번호 암호화 저장</li>
+        <li>모든 통신 암호화(HTTPS)</li>
+        <li>개인정보에 접근할 수 있는 사람과 권한 최소화</li>
+      </ul>
+
+      <h2>11. 개인정보 보호책임자</h2>
+      <div class="contact">
+        <p><strong>NEOCOLOR 운영팀</strong></p>
+        <p>이메일: <a href="mailto:lkysakana@naver.com">lkysakana@naver.com</a></p>
+      </div>
+      <p class="note">개인정보와 관련한 문의, 불만, 피해 구제는 위 이메일로 보내 주세요.</p>
+
+      <h2>12. 권익침해 구제 방법</h2>
+      <p>개인정보 침해에 대한 신고나 상담이 필요하시면 아래 기관에 문의하실 수 있습니다.</p>
+      <ul>
+        <li>개인정보침해 신고센터: <a href="https://privacy.kisa.or.kr" rel="noopener">privacy.kisa.or.kr</a> / 국번 없이 118</li>
+        <li>개인정보 분쟁조정위원회: <a href="https://www.kopico.go.kr" rel="noopener">www.kopico.go.kr</a> / 1833-6972</li>
+        <li>대검찰청: <a href="https://www.spo.go.kr" rel="noopener">www.spo.go.kr</a> / 국번 없이 1301</li>
+        <li>경찰청: <a href="https://ecrm.police.go.kr" rel="noopener">ecrm.police.go.kr</a> / 국번 없이 182</li>
+      </ul>
+
+      <h2>13. 방침의 변경</h2>
+      <p>이 방침을 바꿀 때는 시행 7일 전부터 사이트에 알립니다.</p>
+    </article>
+
+    <!-- ========== English ========== -->
+    <article lang="en" data-lang="en" hidden>
+      <h1>Privacy Policy</h1>
+      <p class="meta">Effective: November 6, 2026</p>
+      <p class="lead">NEOCOLOR (neocolor.net) sets out this privacy policy under Korea's Personal Information Protection Act to protect your personal information and to handle related questions and complaints promptly.</p>
+
+      <h2>1. Information we process</h2>
+      <ul>
+        <li><b>Sign-up with email</b>: email address, password, name (nickname)</li>
+        <li><b>Sign-up / log-in with Google</b>: the email, name and profile picture URL that Google provides</li>
+        <li><b>Created automatically when you use the service</b>: log-in records (time, IP address, browser information)</li>
+      </ul>
+      <p class="note">Passwords are stored encrypted, so even NEOCOLOR cannot see them.</p>
+
+      <h2>2. Why we process it</h2>
+      <ul>
+        <li>Identifying members, sign-up, log-in and password recovery</li>
+        <li>Providing services such as courses, the community and the Job Center, and sending notices</li>
+        <li>Answering inquiries, preventing misuse and keeping the service secure</li>
+      </ul>
+
+      <h2>3. How long we keep it</h2>
+      <ul>
+        <li>Member information is kept <b>until you delete your account</b>, then destroyed without delay.</li>
+        <li>Information that the law requires us to keep is kept only for that period. e.g. log-in records: 3 months (Protection of Communications Secrets Act)</li>
+      </ul>
+
+      <h2>4. How we destroy it</h2>
+      <p>When the retention period ends or the purpose has been achieved, we destroy the information without delay. Electronic files are deleted so that they cannot be restored.</p>
+
+      <h2>5. Sharing with third parties</h2>
+      <p>We do not provide your personal information to others unless you consent or the law specifically requires it.</p>
+
+      <h2>6. Processors and overseas transfer</h2>
+      <p>To run the service, we entrust the processing of personal information to the companies below, which are located outside Korea.</p>
+      <div class="cards">
+        <div class="card">
+          <h3>Supabase, Inc. (USA)</h3>
+          <dl>
+            <dt>Task</dt><dd>Storing member information, handling log-in</dd>
+            <dt>Information</dt><dd>Member information in section 1 and log-in records</dd>
+            <dt>When and how</dt><dd>Sent over an encrypted network when you sign up or log in</dd>
+            <dt>Retention</dt><dd>Until you delete your account or the contract ends</dd>
+            <dt>Contact</dt><dd><a href="https://supabase.com/privacy" rel="noopener">supabase.com/privacy</a></dd>
+          </dl>
+        </div>
+        <div class="card">
+          <h3>Cloudflare, Inc. (USA)</h3>
+          <dl>
+            <dt>Task</dt><dd>Delivering the website and security</dd>
+            <dt>Information</dt><dd>IP address, browser information</dd>
+            <dt>When and how</dt><dd>Sent over an encrypted network when you visit the site</dd>
+            <dt>Retention</dt><dd>As long as needed for delivery (per the company's policy)</dd>
+            <dt>Contact</dt><dd><a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">cloudflare.com/privacypolicy</a></dd>
+          </dl>
+        </div>
+      </div>
+      <p class="note">If you do not want your information transferred overseas, you can choose not to sign up, or delete your account. Services that require log-in will then not be available.</p>
+
+      <h2>7. Browser storage and visitor statistics</h2>
+      <ul>
+        <li>Log-in status, language and text-size settings, saved courses and a visit marker are stored in your browser's local storage on your device.</li>
+        <li>Visitor statistics only count visits per country (e.g. KR). No IP address or device information is stored for these statistics. The counts are kept with an external counter service (Abacus).</li>
+        <li>We do not use cookies for advertising or tracking.</li>
+        <li>Clearing site data in your browser settings deletes everything stored. You will be logged out and settings will be reset.</li>
+      </ul>
+
+      <h2>8. Your rights</h2>
+      <ul>
+        <li>You can ask at any time to see, correct, delete or stop the processing of your personal information, or to delete your account.</li>
+        <li>Send your request to the email below and we will handle it without delay. You can also make a request through a legal representative or an authorized person.</li>
+      </ul>
+
+      <h2>9. Children under 14</h2>
+      <p>NEOCOLOR does not accept sign-ups from children under 14.</p>
+
+      <h2>10. Security measures</h2>
+      <ul>
+        <li>Passwords stored encrypted</li>
+        <li>All communication encrypted (HTTPS)</li>
+        <li>Access to personal information kept to the minimum people and permissions</li>
+      </ul>
+
+      <h2>11. Privacy officer</h2>
+      <div class="contact">
+        <p><strong>NEOCOLOR Operations Team</strong></p>
+        <p>Email: <a href="mailto:lkysakana@naver.com">lkysakana@naver.com</a></p>
+      </div>
+      <p class="note">Please send privacy questions, complaints and requests for remedies to this email.</p>
+
+      <h2>12. Getting help (Korea)</h2>
+      <p>For reports or advice about privacy violations, you can contact:</p>
+      <ul>
+        <li>Personal Information Infringement Report Center: <a href="https://privacy.kisa.or.kr" rel="noopener">privacy.kisa.or.kr</a> / 118</li>
+        <li>Personal Information Dispute Mediation Committee: <a href="https://www.kopico.go.kr" rel="noopener">www.kopico.go.kr</a> / 1833-6972</li>
+        <li>Supreme Prosecutors' Office: <a href="https://www.spo.go.kr" rel="noopener">www.spo.go.kr</a> / 1301</li>
+        <li>Korean National Police Agency: <a href="https://ecrm.police.go.kr" rel="noopener">ecrm.police.go.kr</a> / 182</li>
+      </ul>
+
+      <h2>13. Changes</h2>
+      <p>If we change this policy, we will announce it on the site at least 7 days before it takes effect.</p>
+    </article>
+
+    <!-- ========== 日本語 ========== -->
+    <article lang="ja" data-lang="ja" hidden>
+      <h1>個人情報処理方針</h1>
+      <p class="meta">施行日:2026年11月6日</p>
+      <p class="lead">NEOCOLOR(neocolor.net)は、韓国の「個人情報保護法」に基づき、利用者の個人情報を保護し、関連するお問い合わせや苦情に速やかに対応するため、次のとおり個人情報処理方針を定めます。</p>
+
+      <h2>1. 取り扱う個人情報の項目</h2>
+      <ul>
+        <li><b>メールで会員登録</b>:メールアドレス、パスワード、名前(ニックネーム)</li>
+        <li><b>Googleアカウントで登録・ログイン</b>:Googleから提供されるメールアドレス、名前、プロフィール写真のURL</li>
+        <li><b>サービス利用時に自動で生成される情報</b>:ログイン記録(日時、接続IP、ブラウザ情報)</li>
+      </ul>
+      <p class="note">パスワードは暗号化して保存するため、NEOCOLORも知ることはできません。</p>
+
+      <h2>2. 利用目的</h2>
+      <ul>
+        <li>会員の確認、会員登録・ログイン、パスワードの再設定</li>
+        <li>講座・コミュニティ・人材センターなどのサービス提供とお知らせ</li>
+        <li>お問い合わせへの対応、不正利用の防止とセキュリティ</li>
+      </ul>
+
+      <h2>3. 保有・利用期間</h2>
+      <ul>
+        <li>会員情報は<b>退会まで</b>保管し、退会後は遅滞なく破棄します。</li>
+        <li>法令により保管が必要な情報は、その期間のみ保管します。例)ログイン記録:3か月(通信秘密保護法)</li>
+      </ul>
+
+      <h2>4. 破棄の手続きと方法</h2>
+      <p>保有期間が終了した場合や利用目的を達成した場合は、遅滞なく破棄します。電子ファイルは復元できない方法で削除します。</p>
+
+      <h2>5. 第三者提供</h2>
+      <p>利用者の同意がある場合や法律に特別な定めがある場合を除き、個人情報を第三者に提供しません。</p>
+
+      <h2>6. 処理の委託と国外移転</h2>
+      <p>サービス運営のため、次の会社に個人情報の処理を委託しており、これらの会社は国外にあります。</p>
+      <div class="cards">
+        <div class="card">
+          <h3>Supabase, Inc.(アメリカ)</h3>
+          <dl>
+            <dt>委託業務</dt><dd>会員情報の保存、ログイン処理</dd>
+            <dt>移転項目</dt><dd>1の会員情報とログイン記録</dd>
+            <dt>移転の時期・方法</dt><dd>会員登録・ログイン時に暗号化されたネットワークで送信</dd>
+            <dt>保有期間</dt><dd>退会または委託契約の終了まで</dd>
+            <dt>連絡先</dt><dd><a href="https://supabase.com/privacy" rel="noopener">supabase.com/privacy</a></dd>
+          </dl>
+        </div>
+        <div class="card">
+          <h3>Cloudflare, Inc.(アメリカ)</h3>
+          <dl>
+            <dt>委託業務</dt><dd>ウェブサイトの配信とセキュリティ</dd>
+            <dt>移転項目</dt><dd>接続IP、ブラウザ情報</dd>
+            <dt>移転の時期・方法</dt><dd>サイト接続時に暗号化されたネットワークで送信</dd>
+            <dt>保有期間</dt><dd>配信処理に必要な期間(同社の方針による)</dd>
+            <dt>連絡先</dt><dd><a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">cloudflare.com/privacypolicy</a></dd>
+          </dl>
+        </div>
+      </div>
+      <p class="note">国外移転を望まない場合は、会員登録をしないか退会してください。その場合、ログインが必要なサービスは利用できません。</p>
+
+      <h2>7. ブラウザのストレージと訪問者統計</h2>
+      <ul>
+        <li>ログイン状態、言語・文字サイズの設定、お気に入り講座、訪問の印は、利用者の端末のブラウザストレージ(ローカルストレージ)に保存します。</li>
+        <li>訪問者数は接続した国(例:KR)ごとの数だけを数えます。この統計にIPや端末情報は保存しません。数は外部のカウンターサービス(Abacus)に記録されます。</li>
+        <li>広告や追跡のためのクッキーは使いません。</li>
+        <li>ブラウザの設定でサイトデータを削除すると、保存された内容はすべて消えます。その場合、ログアウトされ、設定は初期状態に戻ります。</li>
+      </ul>
+
+      <h2>8. 利用者の権利と行使方法</h2>
+      <ul>
+        <li>利用者はいつでも、自分の個人情報の閲覧、訂正、削除、処理停止、退会を求めることができます。</li>
+        <li>下記のメールでご依頼いただければ、遅滞なく対応します。法定代理人や委任を受けた人を通じて依頼することもできます。</li>
+      </ul>
+
+      <h2>9. 14歳未満の児童</h2>
+      <p>NEOCOLORは14歳未満の児童の会員登録を受け付けません。</p>
+
+      <h2>10. 安全性確保のための措置</h2>
+      <ul>
+        <li>パスワードの暗号化保存</li>
+        <li>すべての通信の暗号化(HTTPS)</li>
+        <li>個人情報にアクセスできる人と権限の最小化</li>
+      </ul>
+
+      <h2>11. 個人情報保護責任者</h2>
+      <div class="contact">
+        <p><strong>NEOCOLOR運営チーム</strong></p>
+        <p>メール:<a href="mailto:lkysakana@naver.com">lkysakana@naver.com</a></p>
+      </div>
+      <p class="note">個人情報に関するお問い合わせ、苦情、被害の救済はこのメールにお送りください。</p>
+
+      <h2>12. 権利侵害の救済方法(韓国)</h2>
+      <p>個人情報侵害の申告や相談が必要な場合は、次の機関にお問い合わせいただけます。</p>
+      <ul>
+        <li>個人情報侵害申告センター:<a href="https://privacy.kisa.or.kr" rel="noopener">privacy.kisa.or.kr</a> / 118</li>
+        <li>個人情報紛争調停委員会:<a href="https://www.kopico.go.kr" rel="noopener">www.kopico.go.kr</a> / 1833-6972</li>
+        <li>大検察庁:<a href="https://www.spo.go.kr" rel="noopener">www.spo.go.kr</a> / 1301</li>
+        <li>警察庁:<a href="https://ecrm.police.go.kr" rel="noopener">ecrm.police.go.kr</a> / 182</li>
+      </ul>
+
+      <h2>13. 方針の変更</h2>
+      <p>この方針を変更する場合は、施行の7日前からサイトでお知らせします。</p>
+    </article>
+  </main>
+
+  <footer class="wrap foot">
+    <a href="/" data-home>← NEOCOLOR</a>
+  </footer>
+
+  <script>
+    /* 언어: 주소의 ?lang= → 사이트에서 지난번 고른 언어 → 브라우저 언어 (사이트 본문과 같은 순서) */
+    (function () {
+      var TITLES = { ko: "개인정보처리방침 · NEOCOLOR", en: "Privacy Policy · NEOCOLOR", ja: "個人情報処理方針 · NEOCOLOR" };
+      var ARIA = { ko: "언어 선택", en: "Choose language", ja: "言語を選択" };
+      var HOME = { ko: "← NEOCOLOR 홈", en: "← NEOCOLOR home", ja: "← NEOCOLORホーム" };
+      function get(k) { try { var v = localStorage.getItem(k); return v == null ? null : JSON.parse(v); } catch (e) { return null; } }
+      function set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장이 안 돼도 화면은 그대로 */ } }
+      function pick() {
+        var q = new URLSearchParams(location.search).get("lang");
+        if (TITLES[q]) return q;
+        var saved = get("neo.lang");
+        if (TITLES[saved]) return saved;
+        var nav = (navigator.language || "").toLowerCase();
+        return nav.indexOf("ko") === 0 ? "ko" : nav.indexOf("ja") === 0 ? "ja" : "en";
+      }
+      function show(l) {
+        document.documentElement.lang = l;
+        document.title = TITLES[l];
+        document.querySelectorAll("article[data-lang]").forEach(function (a) { a.hidden = a.dataset.lang !== l; });
+        document.querySelectorAll(".langs button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.l === l)); });
+        document.querySelector(".langs").setAttribute("aria-label", ARIA[l]);
+        var home = document.querySelector("[data-home]"); home.textContent = HOME[l]; home.href = "/?lang=" + l;
+        document.querySelector(".logo").href = "/?lang=" + l;
+      }
+      if (get("neo.big")) document.documentElement.classList.add("big-text");
+      show(pick());
+      document.querySelectorAll(".langs button").forEach(function (b) {
+        b.addEventListener("click", function () {
+          var l = b.dataset.l; set("neo.lang", l); show(l);
+          var u = new URL(location.href); u.searchParams.set("lang", l); history.replaceState(null, "", u);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
