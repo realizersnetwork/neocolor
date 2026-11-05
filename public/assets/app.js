@@ -890,6 +890,9 @@
   }
   async function initAuth() {
     if (!authOn) return;
+    const back = new URL(location.href).searchParams;
+    const hadCode = back.has("code");
+    const linkError = back.has("error") || back.has("error_code");
     try {
       await loadScript(SB_SRC);
       sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, {
@@ -918,6 +921,11 @@
       if (["code", "error", "error_code", "error_description"].some((k) => u.searchParams.has(k))) {
         ["code", "error", "error_code", "error_description"].forEach((k) => u.searchParams.delete(k));
         history.replaceState(null, "", u.pathname + u.search + u.hash);
+      }
+      if ((hadCode || linkError) && !authUser && !authDlg.open) {
+        openAuth("login");
+        authMsg = linkError ? { type: "err", text: t("auth.err.link") } : { type: "ok", text: t("auth.afterConfirm") };
+        renderAuth();
       }
     } catch (_) {
       sb = null; // 불러오기 실패 → 버튼은 '곧 열려요'

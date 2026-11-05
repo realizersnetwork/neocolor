@@ -2,7 +2,8 @@
  *
  * 로그인 (수퍼베이스)
  *   supabaseUrl     : 수퍼베이스 → Project Settings → API → Project URL  (예: https://abcd1234.supabase.co)
- *   supabaseAnonKey : 같은 화면의 anon public 키 (원래 공개용 키라 여기 넣어도 됨. service_role 키는 절대 넣지 말 것)
+ *   supabaseAnonKey : Project Settings → API Keys → Publishable key (sb_publishable_…, 원래 공개용이라 여기 넣어도 됨)
+ *                     Secret key(sb_secret_…)·service_role 키는 절대 넣지 말 것
  *   → 둘 다 넣으면 로그인·회원가입(이메일, 구글, 카카오)이 켜진다. 비어 있으면 버튼만 보이고 '곧 열려요' 안내
  *
  * 구글 애드센스
@@ -11,8 +12,8 @@
  *   → 둘 다 넣으면 화면마다 아래쪽에 광고 한 칸이 생긴다. 비어 있으면 아무것도 안 보인다
  */
 window.NEO_CONFIG = {
-  supabaseUrl: "",
-  supabaseAnonKey: "",
+  supabaseUrl: "https://imlxvwvfqbyznetkgtmv.supabase.co",
+  supabaseAnonKey: "sb_publishable_lrYGPqWDTe5aOZYq5XjmsQ_y5lyECKC",
   adsenseClient: "",
   adsenseSlot: ""
 };
