@@ -45,8 +45,11 @@
 
 ## 방문자 통계 (`#/stats`, 푸터 링크)
 - Cloudflare 설정 없이 무료 카운터 **Abacus**(abacus.jasoncameron.dev)를 쓴다 (소유자 요청: Cloudflare 쓰지 말 것). 코드는 `app.js`의 '방문자 통계'
-- 이름공간 `neocolor.net`, 나라별 키 `c-KR`… (목록 밖 나라는 `c-OT`, 모름 `c-XX`), 오늘 방문자 `d-YYYY-MM-DD`(한국 시간)
-- 나라는 같은 사이트의 `/cdn-cgi/trace`의 `loc` 값. 같은 기기는 한 번만 센다(localStorage). IP는 저장하지 않는다
+- 이름공간 `neocolor-net-2`, 나라별 키 `c-KR`… (목록 밖 나라는 `c-OT`, 모름 `c-XX`), 오늘 방문자 `d-YYYY-MM-DD`(한국 시간)
+  - 2026-11-05 오늘 방문자가 누적보다 많게 꼬여서 고치고 새 이름공간으로 0부터 다시 셈 (예전 `neocolor.net` 이름공간은 안 씀)
+- 나라는 같은 사이트의 `/cdn-cgi/trace`의 `loc` 값. 같은 기기는 한 번만 센다(localStorage `neo.seen2`). IP는 저장하지 않는다
+- 오늘 방문자는 누적에 먼저 잡힌 기기만 센다 (그래서 오늘 > 누적이 될 수 없음). 검색 로봇·자동 브라우저는 세지 않는다
+- 누가 들어왔는지(IP·기기)는 일부러 안 남기므로 알 수 없다
 - neocolor.net(과 neocolor.pages.dev)에서만 센다. 미리보기 주소·내 컴퓨터에서는 안 센다
 - Abacus 제한: IP당 10초에 30번. 통계 화면이 한 번에 18번 읽으니 나라 목록(`STAT_COUNTRIES`)을 크게 늘리지 말 것
 

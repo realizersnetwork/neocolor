@@ -678,43 +678,61 @@
    * 따로 설정할 필요 없는 무료 카운터(Abacus · abacus.jasoncameron.dev)에 나라별 숫자만 올린다
    * - 나라: Cloudflare가 알려주는 접속 나라 (/cdn-cgi/trace 의 loc 값)
    * - 같은 기기(브라우저)는 처음 한 번만 센다. 오늘 방문자는 하루에 한 번만 (한국 시간)
+   * - 오늘 방문자는 누적에 잡힌 기기만 센다 → 오늘이 누적보다 많아질 수 없다
+   * - 검색 로봇·자동 프로그램(headless 브라우저 등)은 세지 않는다
    * - IP 주소는 어디에도 저장하지 않는다
    * - 실서비스 주소(neocolor.net)에서만 센다. 미리보기 주소에서는 세지 않는다
    * - 아래 목록에 없는 나라는 '기타 나라'(OT), 모르는 나라는 '알 수 없음'(XX)
+   * - 2026-11-05 숫자가 꼬인 것을 고치면서 새 이름공간(neocolor-net-2)으로 0부터 다시 셈
    */
   const COUNTER = "https://abacus.jasoncameron.dev";
-  const COUNTER_NS = "neocolor.net";
+  const COUNTER_NS = "neocolor-net-2";
   const STAT_COUNTRIES = ["KR", "US", "JP", "CN", "VN", "PH", "ID", "TH", "IN", "MN", "UZ", "AU", "CA", "SA", "AE"];
+  const SEEN = "neo.seen2";
+  const SEEN_DAY = "neo.seenDay2";
+  const BOT_UA = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|scan|monitor|python|curl|wget|java\/|okhttp|axios|go-http|phantom|selenium|puppeteer|playwright/i;
+  const isBot = () => { try { return navigator.webdriver === true || BOT_UA.test(navigator.userAgent || ""); } catch (_) { return false; } };
   const kstDay = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
   const isLive = () => location.protocol === "https:" && /^(www\.)?neocolor\.net$|^neocolor\.pages\.dev$/.test(location.hostname);
-  const counterUrl = (op, key) => `${COUNTER}/${op}/${COUNTER_NS}/${key}`;
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  // 카운터는 10초에 30번까지만 받는다. 바쁘다고(429) 하면 한 번만 잠깐 기다렸다가 다시
+  async function counterFetch(op, key) {
+    const url = `${COUNTER}/${op}/${COUNTER_NS}/${key}`;
+    let res = await fetch(url, { cache: "no-store", credentials: "omit" });
+    if (res.status === 429) {
+      await wait(Math.min(Number(res.headers.get("retry-after")) || 10, 15) * 1000 + 300);
+      res = await fetch(url, { cache: "no-store", credentials: "omit" });
+    }
+    return res;
+  }
+  let visitDone = Promise.resolve();
   async function countVisit() {
-    if (!isLive()) return;
+    if (!isLive() || isBot()) return;
     const today = kstDay();
     try {
-      if (!store.get("neo.counted", false) && session.get("neo.counted") !== "1") {
+      let seen = store.get(SEEN, false) === true || session.get(SEEN) === "1";
+      if (!seen) {
         let cc = "XX";
         try {
           const txt = await (await fetch("/cdn-cgi/trace", { cache: "no-store" })).text();
           cc = (txt.match(/^loc=([A-Z]{2})$/m) || [])[1] || "XX";
         } catch (_) { /* 나라를 모르면 '알 수 없음' */ }
         const key = cc === "XX" || cc === "T1" ? "XX" : STAT_COUNTRIES.includes(cc) ? cc : "OT";
-        const res = await fetch(counterUrl("hit", "c-" + key), { cache: "no-store", credentials: "omit" });
-        if (res.ok) { store.set("neo.counted", true); session.set("neo.counted", "1"); }
+        if ((await counterFetch("hit", "c-" + key)).ok) { seen = true; store.set(SEEN, true); session.set(SEEN, "1"); }
       }
-      if (store.get("neo.countedDay", "") !== today && session.get("neo.countedDay") !== today) {
-        const res = await fetch(counterUrl("hit", "d-" + today), { cache: "no-store", credentials: "omit" });
-        if (res.ok) { store.set("neo.countedDay", today); session.set("neo.countedDay", today); }
+      if (seen && store.get(SEEN_DAY, "") !== today && session.get(SEEN_DAY) !== today) {
+        if ((await counterFetch("hit", "d-" + today)).ok) { store.set(SEEN_DAY, today); session.set(SEEN_DAY, today); }
       }
-    } catch (_) { /* 카운터가 안 되면 조용히 넘어간다 */ }
+    } catch (_) { /* 카운터가 안 되면 조용히 넘어간다 (다음 방문 때 다시 시도) */ }
   }
   async function loadStats() {
-    // 카운터 서비스는 10초에 30번까지만 받으므로, 방금 불러온 숫자는 20초 동안 다시 쓴다
+    // 방금 불러온 숫자는 20초 동안 다시 쓴다 (카운터 사용 횟수 아끼기)
     if (state.stats && state.stats.ok && Date.now() - state.stats.at < 20000) { renderStats(); return; }
     state.stats = { loading: true };
     renderStats();
+    await Promise.race([visitDone, wait(4000)]); // 내 방문이 먼저 기록된 뒤에 읽는다
     const read = async (key) => {
-      const res = await fetch(counterUrl("get", key), { cache: "no-store", credentials: "omit" });
+      const res = await counterFetch("get", key);
       if (res.status === 404) return 0;
       if (!res.ok) throw new Error(String(res.status));
       const data = await res.json();
@@ -1173,7 +1191,7 @@
   setBig(!!store.get("neo.big", false));
   applyStatic();
   renderAll();
+  visitDone = countVisit();
   handleRoute();
   window.addEventListener("hashchange", handleRoute);
-  countVisit();
 })();
