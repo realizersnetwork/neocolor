@@ -136,8 +136,7 @@
     country: detectCountry(),
     quiz: { step: 0, answers: [] },
     course: null,
-    stats: null,
-    statsDay: null
+    stats: null
   };
 
   /* ---------- 알림 ---------- */
@@ -668,133 +667,95 @@
     $("#calcYear").textContent = money(month * 12);
   }
 
-  // 영상 미리보기 (이 기기에서만 재생, 업로드 없음)
-  const dropzone = $("#dropzone");
-  const videoInput = $("#videoInput");
-  let objectUrl = null;
-  const sizeText = (b) => (b >= 1e9 ? `${fmt(b / 1e9, 1)} GB` : `${fmt(b / 1e6, 1)} MB`);
-  function setVideo(file) {
-    if (!file) return;
-    if (!String(file.type || "").startsWith("video/")) { toast(t("vet.notVideo")); return; }
-    if (objectUrl) URL.revokeObjectURL(objectUrl);
-    objectUrl = URL.createObjectURL(file);
-    $("#previewVideo").src = objectUrl;
-    $("#uploadPreview").hidden = false;
-    dropzone.hidden = true;
-    $("#upReset").hidden = false;
-    $("#fileInfo").textContent = `${file.name} · ${sizeText(file.size)}`;
-    const ti = $("#upTitleInput");
-    if (!ti.value) ti.value = file.name.replace(/\.[^.]+$/, "").slice(0, 60);
-  }
-  function resetVideo() {
-    if (objectUrl) URL.revokeObjectURL(objectUrl);
-    objectUrl = null;
-    const pv = $("#previewVideo");
-    pv.removeAttribute("src");
-    pv.load();
-    $("#uploadPreview").hidden = true;
-    dropzone.hidden = false;
-    $("#upReset").hidden = true;
-    videoInput.value = "";
-  }
-  videoInput.addEventListener("change", () => setVideo(videoInput.files && videoInput.files[0]));
-  dropzone.setAttribute("tabindex", "0");
-  dropzone.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); videoInput.click(); } });
-  ["dragenter", "dragover"].forEach((ev) => dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.add("drag"); }));
-  ["dragleave", "drop"].forEach((ev) => dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.remove("drag"); }));
-  dropzone.addEventListener("drop", (e) => setVideo(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]));
-  $("#upReset").addEventListener("click", resetVideo);
-  $("#upForm").addEventListener("submit", (e) => { e.preventDefault(); toast(t("vet.demoToast")); });
+  // 영상 올리기는 로그인 후에만 (지금은 화면에 파일 선택 칸이 없음)
   ["#inStudents", "#inHours", "#inRate"].forEach((sel) => $(sel).addEventListener("input", updateCalc));
 
-  /* ---------- 방문자 통계 (서버: functions/api/stats.js) ---------- */
-  const onWeb = () => /^https?:$/.test(location.protocol);
-  function countVisit() {
-    // 같은 IP는 서버가 한 번만 센다. 여기서는 같은 탭에서 여러 번 보내지 않게만 막는다
-    if (!onWeb() || session.get("neo.visit")) return;
-    session.set("neo.visit", "1");
-    try { fetch("/api/stats", { method: "POST", keepalive: true }).catch(() => {}); } catch (_) { /* 무시 */ }
+  /* ---------- 방문자 통계 ----------
+   * 따로 설정할 필요 없는 무료 카운터(Abacus · abacus.jasoncameron.dev)에 나라별 숫자만 올린다
+   * - 나라: Cloudflare가 알려주는 접속 나라 (/cdn-cgi/trace 의 loc 값)
+   * - 같은 기기(브라우저)는 처음 한 번만 센다. 오늘 방문자는 하루에 한 번만 (한국 시간)
+   * - IP 주소는 어디에도 저장하지 않는다
+   * - 실서비스 주소(neocolor.net)에서만 센다. 미리보기 주소에서는 세지 않는다
+   * - 아래 목록에 없는 나라는 '기타 나라'(OT), 모르는 나라는 '알 수 없음'(XX)
+   */
+  const COUNTER = "https://abacus.jasoncameron.dev";
+  const COUNTER_NS = "neocolor.net";
+  const STAT_COUNTRIES = ["KR", "US", "JP", "CN", "VN", "PH", "ID", "TH", "IN", "MN", "UZ", "AU", "CA", "SA", "AE"];
+  const kstDay = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+  const isLive = () => location.protocol === "https:" && /^(www\.)?neocolor\.net$|^neocolor\.pages\.dev$/.test(location.hostname);
+  const counterUrl = (op, key) => `${COUNTER}/${op}/${COUNTER_NS}/${key}`;
+  async function countVisit() {
+    if (!isLive()) return;
+    const today = kstDay();
+    try {
+      if (!store.get("neo.counted", false) && session.get("neo.counted") !== "1") {
+        let cc = "XX";
+        try {
+          const txt = await (await fetch("/cdn-cgi/trace", { cache: "no-store" })).text();
+          cc = (txt.match(/^loc=([A-Z]{2})$/m) || [])[1] || "XX";
+        } catch (_) { /* 나라를 모르면 '알 수 없음' */ }
+        const key = cc === "XX" || cc === "T1" ? "XX" : STAT_COUNTRIES.includes(cc) ? cc : "OT";
+        const res = await fetch(counterUrl("hit", "c-" + key), { cache: "no-store", credentials: "omit" });
+        if (res.ok) { store.set("neo.counted", true); session.set("neo.counted", "1"); }
+      }
+      if (store.get("neo.countedDay", "") !== today && session.get("neo.countedDay") !== today) {
+        const res = await fetch(counterUrl("hit", "d-" + today), { cache: "no-store", credentials: "omit" });
+        if (res.ok) { store.set("neo.countedDay", today); session.set("neo.countedDay", today); }
+      }
+    } catch (_) { /* 카운터가 안 되면 조용히 넘어간다 */ }
   }
   async function loadStats() {
+    // 카운터 서비스는 10초에 30번까지만 받으므로, 방금 불러온 숫자는 20초 동안 다시 쓴다
+    if (state.stats && state.stats.ok && Date.now() - state.stats.at < 20000) { renderStats(); return; }
     state.stats = { loading: true };
     renderStats();
-    if (!onWeb()) { state.stats = { ok: false, reason: "not_configured" }; renderStats(); return; }
-    const key = session.get("neo.statsKey") || "";
+    const read = async (key) => {
+      const res = await fetch(counterUrl("get", key), { cache: "no-store", credentials: "omit" });
+      if (res.status === 404) return 0;
+      if (!res.ok) throw new Error(String(res.status));
+      const data = await res.json();
+      return Number(data && data.value) || 0;
+    };
+    const keys = [...STAT_COUNTRIES, "OT", "XX"];
     try {
-      const res = await fetch("/api/stats" + (key ? "?key=" + encodeURIComponent(key) : ""), { cache: "no-store" });
-      const data = await res.json().catch(() => ({}));
-      state.stats = res.ok && data.ok
-        ? data
-        : { ok: false, reason: data.reason || (res.status === 403 ? "forbidden" : res.status === 503 || res.status === 404 || res.status === 405 ? "not_configured" : "error") };
+      const [today, ...counts] = await Promise.all([read("d-" + kstDay()), ...keys.map((k) => read("c-" + k))]);
+      const countries = keys.map((k, i) => ({ country: k, n: counts[i] })).filter((c) => c.n > 0)
+        .sort((a, b) => b.n - a.n || (a.country === "OT" || a.country === "XX" ? 1 : 0) - (b.country === "OT" || b.country === "XX" ? 1 : 0));
+      state.stats = { ok: true, today, countries, total: countries.reduce((a, c) => a + c.n, 0), at: Date.now() };
     } catch (_) {
-      state.stats = { ok: false, reason: "error" };
+      state.stats = { ok: false };
     }
-    renderStats();
+    if (state.view === "stats") renderStats();
   }
   function regionNamer() {
     let dn = null;
     try { dn = new Intl.DisplayNames([LOCALE[lang]], { type: "region" }); } catch (_) { /* 오래된 브라우저 */ }
     return (code) => {
-      if (code === "T1") return "Tor";
+      if (code === "OT") return t("stats.other");
       if (!code || code === "XX") return t("stats.unknown");
       try { return (dn && dn.of(code)) || code; } catch (_) { return code; }
     };
   }
-  const dayText = (d) => {
-    try { return new Intl.DateTimeFormat(LOCALE[lang], { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(d + "T00:00:00Z")); } catch (_) { return d.slice(5); }
-  };
   function renderStats() {
     const box = $("#statsBody");
     const s = state.stats;
     if (!box || !s) return;
     if (s.loading) { box.innerHTML = `<p class="empty">${esc(t("stats.loading"))}</p>`; return; }
-    if (!s.ok) {
-      if (s.reason === "forbidden") {
-        box.innerHTML = `<form class="stats-key" id="statsKeyForm"><p>${esc(t("stats.forbidden"))}</p><div class="stats-key-row"><input type="password" id="statsKey" autocomplete="off" placeholder="${esc(t("stats.keyPh"))}" aria-label="${esc(t("stats.keyPh"))}"><button class="btn btn-dark" type="submit">${esc(t("stats.keyBtn"))}</button></div></form>`;
-        return;
-      }
-      box.innerHTML = `<p class="info-note">${esc(t(s.reason === "not_configured" ? "stats.notReady" : "stats.error"))}</p>`;
-      return;
-    }
+    if (!s.ok) { box.innerHTML = `<p class="info-note">${esc(t("stats.error"))}</p>`; return; }
     const name = regionNamer();
-    const countries = Array.isArray(s.countries) ? s.countries : [];
-    const total = Number(s.total) || 0;
-    const max = Math.max(1, ...countries.map((c) => c.n));
-    const rows = countries.map((c) =>
-      `<div class="stat-row" role="listitem"><span class="stat-name">${esc(name(c.country))}<small>${esc(c.country)}</small></span><span class="wage-track"><span class="wage-bar" style="--w:${((c.n / max) * 100).toFixed(1)}%"></span></span><span class="stat-val">${esc(fmt(c.n))}<small>${esc(fmt(total ? (c.n / total) * 100 : 0, 1))}%</small></span></div>`
+    const max = Math.max(1, ...s.countries.map((c) => c.n));
+    const rows = s.countries.map((c) =>
+      `<div class="stat-row" role="listitem"><span class="stat-name">${esc(name(c.country))}${c.country.length === 2 && c.country !== "OT" && c.country !== "XX" ? `<small>${esc(c.country)}</small>` : ""}</span><span class="wage-track"><span class="wage-bar" style="--w:${((c.n / max) * 100).toFixed(1)}%"></span></span><span class="stat-val">${esc(fmt(c.n))}<small>${esc(fmt(s.total ? (c.n / s.total) * 100 : 0, 1))}%</small></span></div>`
     ).join("");
-
-    // 최근 14일 (방문이 없던 날은 0)
-    const byDay = Object.fromEntries((Array.isArray(s.days) ? s.days : []).map((d) => [d.day, Number(d.n) || 0]));
-    const endDay = /^\d{4}-\d{2}-\d{2}$/.test(s.day || "") ? s.day : new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
-    const end = Date.parse(endDay + "T00:00:00Z");
-    const days = [];
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date(end - i * 864e5).toISOString().slice(0, 10);
-      days.push({ d, n: byDay[d] || 0 });
-    }
-    if (!days.some((x) => x.d === state.statsDay)) state.statsDay = endDay;
-    const sel = days.find((x) => x.d === state.statsDay) || days[days.length - 1];
-    const dmax = Math.max(1, ...days.map((x) => x.n));
-    const bars = days.map((x) =>
-      `<button class="day" type="button" data-day="${x.d}" aria-pressed="${x.d === sel.d}" aria-label="${esc(dayText(x.d))} · ${esc(t("stats.people", { n: fmt(x.n) }))}"><span class="day-bar" style="--h:${((x.n / dmax) * 100).toFixed(1)}%"></span></button>`
-    ).join("");
-
     let updated = "";
-    try { updated = new Date(s.updated).toLocaleString(LOCALE[lang]); } catch (_) { updated = ""; }
+    try { updated = new Date(s.at).toLocaleString(LOCALE[lang]); } catch (_) { updated = ""; }
     box.innerHTML = `
       <div class="kpis">
-        <div class="kpi"><span>${esc(t("stats.total"))}</span><strong>${esc(fmt(total))}</strong></div>
-        <div class="kpi"><span>${esc(t("stats.today"))}</span><strong>${esc(fmt(Number(s.today) || 0))}</strong></div>
+        <div class="kpi"><span>${esc(t("stats.total"))}</span><strong>${esc(fmt(s.total))}</strong></div>
+        <div class="kpi"><span>${esc(t("stats.today"))}</span><strong>${esc(fmt(s.today))}</strong></div>
       </div>
-      <h2 class="sub-title">${esc(t("stats.byCountry"))} <small class="stat-count">${esc(t("stats.countries", { n: countries.length }))}</small></h2>
-      ${countries.length ? `<div class="stat-list" role="list">${rows}</div>` : `<p class="empty">${esc(t("stats.empty"))}</p>`}
-      <h2 class="sub-title">${esc(t("stats.days"))}</h2>
-      <div class="day-chart">
-        <div class="day-bars" role="group" aria-label="${esc(t("stats.days"))}">${bars}</div>
-        <div class="day-axis"><span>${esc(dayText(days[0].d))}</span><span>${esc(dayText(endDay))}</span></div>
-        <p class="day-sel" aria-live="polite">${esc(dayText(sel.d))} · <strong>${esc(t("stats.people", { n: fmt(sel.n) }))}</strong></p>
-      </div>
+      <h2 class="sub-title">${esc(t("stats.byCountry"))}</h2>
+      ${s.countries.length ? `<div class="stat-list" role="list">${rows}</div>` : `<p class="empty">${esc(t("stats.empty"))}</p>`}
       ${updated ? `<p class="source">${esc(t("stats.updated", { t: updated }))}</p>` : ""}`;
   }
 
@@ -1023,7 +984,7 @@
   const CLICK_SEL = [
     "[data-save]", "[data-course]", "[data-cat]", "[data-search]", "[data-soon]", "button[data-mode]", "[data-lang]",
     "[data-go]", "[data-quiz]", "[data-q-opt]", "[data-q-back]", "[data-q-retry]", "[data-filter]", "[data-tab]", "[data-ctab]",
-    "[data-term-cat]", "[data-level-tab]", "[data-wage]", "[data-country]", "[data-day]", "[data-dlg-close]", "[data-mega]"
+    "[data-term-cat]", "[data-level-tab]", "[data-wage]", "[data-country]", "[data-dlg-close]", "[data-mega]"
   ].join(",");
   document.addEventListener("click", (e) => keepFocus(() => onClick(e)));
   function onClick(e) {
@@ -1076,7 +1037,6 @@
       return;
     }
     if (ds.country) { state.country = ds.country; store.set("neo.country", ds.country); renderPlans(); renderPlanTeaser(); return; }
-    if (ds.day) { state.statsDay = ds.day; renderStats(); return; }
     if (el.hasAttribute("data-dlg-close")) { closeDialog(el.closest("dialog")); return; }
     if (ds.mega) { go(coursesHash({ cat: ds.mega })); }
   }
@@ -1119,14 +1079,6 @@
   // 현장 용어 검색
   $("#termSearch").addEventListener("input", (e) => { state.termQ = e.target.value; renderTerms(); });
 
-  // 통계 키
-  document.addEventListener("submit", (e) => {
-    if (e.target && e.target.id === "statsKeyForm") {
-      e.preventDefault();
-      const v = $("#statsKey").value.trim();
-      if (v) { session.set("neo.statsKey", v); loadStats(); }
-    }
-  });
 
   /* ---------- 메인 동영상 ---------- */
   const video = $("#heroVideo");
