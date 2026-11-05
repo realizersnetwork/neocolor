@@ -908,9 +908,9 @@ window.NEO = {
     { q: { ko: "언제부터 들을 수 있나요?", en: "When can I start learning?", ja: "いつから受講できますか?" },
       a: { ko: "지금은 정식 오픈을 준비하고 있어요. 강의는 공종별로 순서대로 열려요.", en: "We're preparing for launch. Courses will open trade by trade.", ja: "現在、正式オープンの準備中です。講座は工種ごとに順次公開します。" } },
     { q: { ko: "NEO PASS는 뭐예요?", en: "What is NEO PASS?", ja: "NEO PASSとは?" },
-      a: { ko: "모든 강의와 인력사무소를 함께 쓰는 수강권이에요. 월 29,000원 월 구독, 또는 평생교육이용권 35만원으로 1년 6개월 동안 이용할 수 있어요. 평생교육이용권은 사용기관 등록을 마친 뒤 쓸 수 있어요.", en: "It's the pass for every course plus the Job Center: a monthly plan at ₩29,000, or 18 months with a ₩350,000 Lifelong Education Voucher. The voucher works once our provider registration is complete.", ja: "全講座と人材センターを使える受講プランです。月額29,000ウォン、または生涯教育利用券35万ウォンで1年6か月。利用券は利用機関登録の完了後に使えます。" } },
+      a: { ko: "짧은 강의·현장 노하우와 인력사무소를 함께 쓰는 구독 수강권이에요. 월 29,000원 월 구독, 또는 평생교육이용권 35만원으로 1년 6개월 동안 쓸 수 있어요. 10시간 이상 긴 과정은 국비지원이나 단품 결제로 듣고, 구독 회원은 첫 2강을 맛보기로 볼 수 있어요. 평생교육이용권은 사용기관 등록을 마친 뒤 쓸 수 있어요.", en: "A subscription for short courses, on-site know-how and the Job Center: ₩29,000 a month, or 18 months with a ₩350,000 Lifelong Education Voucher. Courses of 10+ hours are taken with government funding or bought individually; members can preview the first 2 lessons. The voucher works once our provider registration is complete.", ja: "短い講座・現場のノウハウと人材センターが使えるサブスク型の受講プランです。月額29,000ウォン、または生涯教育利用券35万ウォンで1年6か月。10時間以上の長い講座は国費支援か単品購入で受講し、サブスク会員は最初の2講をお試しで見られます。利用券は利用機関登録の完了後に使えます。" } },
     { q: { ko: "내일배움카드(국비)로 들을 수 있나요?", en: "Can I use the Tomorrow Learning Card?", ja: "明日学びカード(国費)は使えますか?" },
-      a: { ko: "국비지원 직업훈련 과정 승인을 준비하고 있어요. 승인된 과정은 '국비지원'으로 표시할게요.", en: "We're preparing for government training approval. Approved courses will be labeled.", ja: "国費支援の職業訓練講座の承認を準備中です。承認講座は「国費支援」と表示します。" } },
+      a: { ko: "10시간 이상 긴 과정은 내일배움카드(국비) 전용으로 열 예정이에요. 지금 과정 승인을 준비하고 있어요. 내일배움카드를 못 쓰는 분은 같은 과정을 단품 결제로 들을 수 있어요.", en: "Courses of 10+ hours will be government-funded (Tomorrow Learning Card) courses; approval is in progress. If you can't use the card, you can buy the same course individually.", ja: "10時間以上の長い講座は明日学びカード(国費)専用で開講予定で、いま承認を準備しています。カードを使えない方は同じ講座を単品購入で受講できます。" } },
     { q: { ko: "인력사무소는 누가 쓸 수 있나요?", en: "Who can use the Job Center?", ja: "人材センターは誰が使えますか?" },
       a: { ko: "NEO PASS 회원(월 구독·평생교육이용권)이라면 구인·구직·실습생 서비스를 모두 쓸 수 있어요.", en: "NEO PASS members (Monthly or Voucher) get hiring, job seeking, and trainee services.", ja: "NEO PASS会員(月額・利用券)なら求人・求職・実習生サービスをすべて使えます。" } },
     { q: { ko: "실습은 어디서 하나요?", en: "Where does hands-on practice happen?", ja: "実習はどこで行いますか?" },
@@ -924,6 +924,6 @@ window.NEO = {
     { q: { ko: "커뮤니티는 어떻게 운영되나요?", en: "How will the community work?", ja: "コミュニティはどう運営されますか?" },
       a: { ko: "공종별 게시판과 주제별 게시판으로 운영할 예정이에요. 베테랑이 질문에 답하는 '베테랑에게 묻기'와 공종별 현장 용어 사전도 함께 준비하고 있어요.", en: "We'll run boards for each trade plus topic boards, including 'Ask a Veteran' and a site glossary for each trade.", ja: "工種別の掲示板とテーマ別の掲示板で運営する予定です。ベテランが質問に答える「ベテランに聞く」や、工種別の現場用語辞典も準備中です。" } },
     { q: { ko: "외국에서도 쓸 수 있나요?", en: "Can I use it outside Korea?", ja: "海外でも使えますか?" },
-      a: { ko: "사이트는 한국어·영어·일본어를 지원해요. 인도·인도네시아·베트남·필리핀은 현지 요금을 준비하고 있어요.", en: "The site is in Korean, English, and Japanese. Local pricing is planned for India, Indonesia, Vietnam, and the Philippines.", ja: "サイトは韓国語・英語・日本語に対応。インド・インドネシア・ベトナム・フィリピンは現地料金を準備中です。" } }
+      a: { ko: "사이트는 한국어·영어·일본어를 지원해요. 나라별 월 구독료는 수강권 화면에서 볼 수 있어요.", en: "The site is in Korean, English and Japanese. Monthly prices by country are on the Plans page.", ja: "サイトは韓国語・英語・日本語に対応しています。国別の月額料金は受講プランのページで確認できます。" } }
   ]
 };

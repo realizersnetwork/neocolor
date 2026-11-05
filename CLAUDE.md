@@ -37,19 +37,24 @@
 - 강의 카드는 상세 창만 있고 수강은 '정식 오픈 후'
 
 ## 가격 (소유자가 정한 값)
-- 평생교육이용권 350,000원 = 1년 6개월 모든 강의 (2026-11-05 소유자가 6개월에서 바꿈: 월 구독보다 싸게) / 월 구독 29,000원 = 1개월 모든 강의 / 국비지원
+- 평생교육이용권 350,000원 = 1년 6개월 NEO PASS (2026-11-05 소유자가 6개월에서 바꿈: 월 구독보다 싸게) / 월 구독 29,000원 = 1개월 NEO PASS / 국비지원
+- **구독(NEO PASS)이 주는 것 = 짧은 강의·현장 노하우 + 인력사무소** (2026-11-06 소유자)
+- **10시간 이상 긴 과정 = '국비 전용'** (2026-11-06 소유자: 구독이 국비보다 싸지는 이상한 구조를 막으려고). 판단은 `app.js`의 `govOnly()` (짧은 클립 제외, `hours >= 10`). `data.js`의 예전 `gov` 표시는 화면에 안 쓴다
+  - 내일배움카드를 못 쓰는 사람은 같은 과정을 **단품 결제**로 산다. 가격은 오픈 때 안내 (아직 안 정함)
+  - 구독 회원은 긴 과정의 **첫 2강 맛보기**
+  - 강의 필터 '국비 전용'(`?gov=1`), 카드 배지, 강의 상세 창(수강 방법 + '단품 결제' 버튼), 수강권 화면의 단품 결제 칸이 모두 이 규칙을 따른다
 - 다른 나라 월 구독은 그 나라 AI 구독료 수준 (내부 기준: 고소득국 = 그 나라 ChatGPT Plus 가격, 그 외 = ChatGPT Go 가격, GeoSub 2026-11-05). `data.js`의 `pricing`에 39개 나라. **이 기준은 화면에 쓰지 않는다**
 - 수강권 화면에 '나라별 월 구독료' 표 (대한민국 먼저, 나머지 이름 순). 기본 요금은 접속한 나라(`/cdn-cgi/trace`), 한국이면 원화. 다른 나라를 골라봐도 저장하지 않는다
 - 홈에 있던 '지금 건설이 뜨는 나라들'(개발도상국 최저임금) 섹션은 소유자 요청으로 삭제함. 다시 넣지 말 것
 - 아직 실제 결제는 없다
 
-## 로그인·회원가입 (수퍼베이스)
-- 이메일·비밀번호, 구글, 카카오. 코드는 `app.js`의 '로그인·회원가입', 설정값은 `public/assets/config.js`
+## 로그인·회원가입 (수퍼베이스 프로젝트 neocolor, https://imlxvwvfqbyznetkgtmv.supabase.co)
+- 이메일·비밀번호, 구글. **카카오는 뺌** (2026-11-06 소유자). 코드는 `app.js`의 '로그인·회원가입', 설정값은 `public/assets/config.js`
 - 수퍼베이스 라이브러리는 jsdelivr의 `@supabase/supabase-js@2` (새 공개 키 sb_publishable_도 되도록 최신 2.x)
 - `config.js`의 `supabaseUrl`, `supabaseAnonKey`가 비어 있으면 꺼진 상태 (버튼을 누르면 '로그인은 곧 열려요')
 - anon 키는 공개용이라 config.js에 넣어도 된다. **service_role 키는 절대 넣지 않는다**
 - 수퍼베이스 설정: Authentication → URL Configuration에 Site URL `https://neocolor.net`, Redirect URLs `https://neocolor.net/**`, `https://www.neocolor.net/**`, `https://neocolor.pages.dev/**`
-- 구글·카카오는 수퍼베이스 Authentication → Providers에서 켠다. 콜백 주소는 `https://<프로젝트>.supabase.co/auth/v1/callback`. 카카오 이메일 동의는 비즈 앱이어야 해서, 아니면 'Allow users without an email'을 켠다
+- 구글은 수퍼베이스 Authentication → Providers → Google에서 켠다 (구글 클라우드 콘솔의 OAuth 클라이언트 ID·비밀번호 필요). 콜백 주소는 `https://imlxvwvfqbyznetkgtmv.supabase.co/auth/v1/callback`
 - 개인정보처리방침 페이지가 아직 없다. 회원가입을 실제로 열기 전에 꼭 만들어야 한다
 
 ## 베테랑 정산 방식 (2026-11-06 소유자가 정함)

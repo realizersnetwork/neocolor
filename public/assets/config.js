@@ -4,7 +4,7 @@
  *   supabaseUrl     : 수퍼베이스 → Project Settings → API → Project URL  (예: https://abcd1234.supabase.co)
  *   supabaseAnonKey : Project Settings → API Keys → Publishable key (sb_publishable_…, 원래 공개용이라 여기 넣어도 됨)
  *                     Secret key(sb_secret_…)·service_role 키는 절대 넣지 말 것
- *   → 둘 다 넣으면 로그인·회원가입(이메일, 구글, 카카오)이 켜진다. 비어 있으면 버튼만 보이고 '곧 열려요' 안내
+ *   → 둘 다 넣으면 로그인·회원가입(이메일, 구글)이 켜진다. 비어 있으면 버튼만 보이고 '곧 열려요' 안내
  *
  * 구글 애드센스
  *   adsenseClient : 게시자 ID (ca-pub-로 시작)

@@ -67,6 +67,9 @@
   const wageById = byId(D.wages.items);
   const topicById = byId(D.topicBoards);
   const subName = (c) => (catById[c.cat].subs.find((s) => s.id === c.sub) || {}).name;
+  // 10시간 이상 긴 과정은 국비 전용 (단품 결제 가능, 구독 회원은 첫 2강 맛보기)
+  const GOV_ONLY_HOURS = 10;
+  const govOnly = (c) => c.kind !== "clip" && c.hours >= GOV_ONLY_HOURS;
   const lengthText = (c) => (c.kind === "clip" ? t("card.min", { n: c.min }) : t("card.hours", { n: c.hours }));
   const rmHours = (r) =>
     Math.max(1, Math.round(r.courses.reduce((a, id) => { const c = courseById[id]; return a + (c.kind === "clip" ? c.min / 60 : c.hours); }, 0)));
@@ -187,7 +190,7 @@
     const b = [`<span class="b b-soon">${esc(t("badge.soon"))}</span>`];
     if (c.kind === "clip") b.push(`<span class="b b-clip">${esc(t("badge.clip"))}</span>`);
     if (c.knowhow) b.push(`<span class="b b-know">${esc(t("badge.knowhow"))}</span>`);
-    if (c.gov) b.push(`<span class="b b-gov">${esc(t("badge.gov"))}</span>`);
+    if (govOnly(c)) b.push(`<span class="b b-gov">${esc(t("badge.govOnly"))}</span>`);
     return b.join("");
   }
   function saveBtnHTML(id) {
@@ -231,7 +234,7 @@
     const practice = r.courses.some((id) => courseById[id].format !== "online");
     const steps = r.courses.map((id, i) => {
       const c = courseById[id];
-      return `<li><button type="button" data-course="${id}"><span class="n">${i + 1}</span><span class="t">${esc(L(c.title))}</span><span class="m">${esc(lengthText(c))}</span></button></li>`;
+      return `<li><button type="button" data-course="${id}"><span class="n">${i + 1}</span><span class="t">${esc(L(c.title))}</span><span class="m">${esc(lengthText(c))}${govOnly(c) ? ` · ${esc(t("badge.govOnly"))}` : ""}</span></button></li>`;
     }).join("");
     const certs = r.certs.map((x) => `<span class="cert">${esc(L(D.certs[x]))}</span>`).join("");
     return `<article class="rm-full" id="rm-${r.id}" style="--c:${r.color}">
@@ -462,7 +465,7 @@
       if (f.level && c.level !== f.level) return false;
       if (f.online && c.format !== "online") return false;
       if (f.clip && c.kind !== "clip") return false;
-      if (f.gov && !c.gov) return false;
+      if (f.gov && !govOnly(c)) return false;
       if (f.saved && !saved.has(c.id)) return false;
       if (q) {
         const cat = catById[c.cat];
@@ -662,7 +665,7 @@
         <ul>${li("plan.monthly.b1")}${li("plan.monthly.b2", true)}${li("plan.monthly.b3")}${li("plan.monthly.b4")}</ul>
         <button class="btn btn-dark" type="button" data-soon>${esc(t("plan.monthly.btn"))}</button>
       </article>`;
-    $("#pickList").innerHTML = [1, 2, 3].map((i) => `<li><span>${esc(t(`plans.pick${i}.c`))}</span><strong>${esc(t(`plans.pick${i}.r`))}</strong></li>`).join("");
+    $("#pickList").innerHTML = [1, 2, 3, 4].map((i) => `<li><span>${esc(t(`plans.pick${i}.c`))}</span><strong>${esc(t(`plans.pick${i}.r`))}</strong></li>`).join("");
     renderPriceTable();
   }
   // 대한민국 먼저, 나머지는 보는 언어의 이름 순서대로
@@ -732,7 +735,7 @@
 
   /* ---------- 로그인·회원가입 (수퍼베이스) ----------
    * 설정값(config.js)이 있을 때만 켜진다. 없으면 버튼을 눌러도 '곧 열려요' 알림만
-   * - 이메일·비밀번호, 구글, 카카오 / 비밀번호 찾기(메일 링크) → 돌아오면 새 비밀번호 정하기
+   * - 이메일·비밀번호, 구글 (카카오는 소유자 요청으로 뺌) / 비밀번호 찾기(메일 링크) → 돌아오면 새 비밀번호 정하기
    * - 로그인해도 베테랑 영상 올리기·정산은 계속 '서비스 준비 중'
    */
   const CFG = window.NEO_CONFIG || {};
@@ -781,7 +784,6 @@
     return t("auth.err.generic");
   };
   const G_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.2-4 1.2-3.1 0-5.7-2.1-6.6-4.9H1.4v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.4 14.4a7.2 7.2 0 0 1 0-4.7V6.6H1.4a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.7 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.4 6.6l4 3.1C6.3 6.9 8.9 4.8 12 4.8z"/></svg>';
-  const K_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#191919" d="M12 3C6.5 3 2 6.5 2 10.8c0 2.8 1.9 5.2 4.7 6.6l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.5.1 1 .1 1.5.1 5.5 0 10-3.5 10-7.9S17.5 3 12 3z"/></svg>';
   function renderAuth() {
     const box = $("#authBody");
     const msg = authMsg ? `<p class="auth-msg ${authMsg.type === "ok" ? "is-ok" : "is-err"}" role="${authMsg.type === "ok" ? "status" : "alert"}">${esc(authMsg.text)}</p>` : "";
@@ -790,7 +792,6 @@
     const social = `
       <div class="auth-social">
         <button class="auth-google" type="button" data-auth="google"${busy}>${G_LOGO}<span>${esc(t("auth.google"))}</span></button>
-        <button class="auth-kakao" type="button" data-auth="kakao"${busy}>${K_LOGO}<span>${esc(t("auth.kakao"))}</span></button>
       </div>
       <p class="auth-or"><span>${esc(t("auth.or"))}</span></p>`;
     const field = (id, type, label, auto, extra = "") =>
@@ -850,10 +851,10 @@
     authBusy = true; renderAuth();
     const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: homeUrl() } });
     if (error) { authBusy = false; authMsg = { type: "err", text: authErr(error) }; renderAuth(); return; }
-    // 보통은 바로 구글·카카오 화면으로 넘어간다. 안 넘어가면 몇 초 뒤 버튼을 다시 살린다
+    // 보통은 바로 구글 화면으로 넘어간다. 안 넘어가면 몇 초 뒤 버튼을 다시 살린다
     setTimeout(() => { if (authBusy) { authBusy = false; if (authDlg.open) renderAuth(); } }, 6000);
   }
-  // 구글·카카오 화면에서 '뒤로'로 돌아왔을 때 버튼이 잠긴 채 남지 않게
+  // 구글 화면에서 뒤로 돌아왔을 때 버튼이 잠긴 채 남지 않게
   window.addEventListener("pageshow", (e) => { if (e.persisted && authBusy) { authBusy = false; if (authDlg.open) renderAuth(); } });
   async function submitAuth() {
     if (!sb || authBusy) return;
@@ -1130,7 +1131,7 @@
           <div><dt>${esc(t("cm.subs"))}</dt><dd>${esc(t("cm.subsValue"))}</dd></div>
         </dl>
         ${w ? `<div class="cm-sec"><h3>${esc(t("cm.wage"))}</h3><div class="cm-wage"><strong>${esc(money(w.daily))}</strong><span>${esc(L(w.name))}</span><small>${esc(t("cm.wageSrc"))}</small></div></div>` : ""}
-        <div class="cm-sec"><h3>${esc(t("cm.how"))}</h3><ul class="dots"><li>${esc(t("cm.how1"))}</li>${c.gov ? `<li>${esc(t("cm.how2"))}</li>` : ""}</ul></div>
+        <div class="cm-sec"><h3>${esc(t("cm.how"))}</h3><ul class="dots">${(govOnly(c) ? ["cm.howGov", "cm.howSingle", "cm.howTaste"] : ["cm.how1"]).map((k) => `<li>${esc(t(k))}</li>`).join("")}</ul>${govOnly(c) ? `<button class="text-link" type="button" data-go="#/plans">${esc(t("cm.howPlans"))}</button>` : ""}</div>
         ${c.format !== "online" ? `<div class="cm-sec"><h3>${esc(t("cm.practice"))}</h3><div class="cm-practice">${esc(t("cm.practiceDesc"))} <button class="text-link" type="button" data-go="#/jobs/trainee">${esc(t("cm.practiceLink"))}</button></div></div>` : ""}
         <div class="cm-sec"><h3>${esc(t("cm.tools"))}</h3><div class="tool-list">${cat.tools.map((x) => `<span>${esc(L(x))}</span>`).join("")}</div></div>
         ${cat.certs.length ? `<div class="cm-sec"><h3>${esc(t("cm.certs"))}</h3><div class="chip-row">${cat.certs.map((x) => `<span class="cert">${esc(L(D.certs[x]))}</span>`).join("")}</div></div>` : ""}
@@ -1140,7 +1141,7 @@
       </div>
       <div class="cm-actions">
         <button class="btn btn-line" type="button" data-save="${c.id}" aria-pressed="${on}">${icon("heart")}<span>${esc(t(on ? "card.unsave" : "card.save"))}</span></button>
-        <button class="btn btn-dark" type="button" data-go="#/plans">${esc(t("cm.plans"))}</button>
+        ${govOnly(c) ? `<button class="btn btn-dark" type="button" data-soon>${esc(t("cm.single"))}</button>` : `<button class="btn btn-dark" type="button" data-go="#/plans">${esc(t("cm.plans"))}</button>`}
       </div>`;
   }
 
@@ -1331,7 +1332,7 @@
     if (ds.auth) {
       const a = ds.auth;
       if (a === "logout") { toggleUserMenu(false); closeMenus(); if (sb) sb.auth.signOut(); return; }
-      if (a === "google" || a === "kakao") { authSocial(a); return; }
+      if (a === "google") { authSocial(a); return; }
       if (authDlg.open && (a === "login" || a === "signup" || a === "forgot")) { authMode = a; authMsg = null; renderAuth(); return; }
       closeMenus(); openAuth(a);
       return;
