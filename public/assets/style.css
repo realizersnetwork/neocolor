@@ -1219,3 +1219,11 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 /* 개인정보처리방침 링크 (법에 따라 눈에 잘 띄게) */
 .foot-links .foot-privacy { font-weight: 800; color: #fff; }
 .auth-note a { color: var(--ink-2); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+/* 회원 탈퇴 */
+.user-menu .user-delete { margin-top: 6px; min-height: 32px; background: none; color: var(--ink-3); font-size: 12.5px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.drawer-delete { display: block; margin: 6px 0 4px auto; padding: 6px 2px; font-size: 12.5px; color: var(--ink-3); text-decoration: underline; text-underline-offset: 3px; }
+.auth-check { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 12px; background: var(--bg-soft); font-size: 14px; line-height: 1.5; cursor: pointer; }
+.auth-check input { flex: none; width: 18px; height: 18px; margin: 2px 0 0; accent-color: #d92d20; }
+.btn.auth-danger { background: #d92d20; color: #fff; }
+.btn.auth-danger:hover { background: #b42318; }

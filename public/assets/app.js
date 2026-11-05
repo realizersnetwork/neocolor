@@ -420,6 +420,7 @@
       <div class="drawer-auth">${authUser
         ? `<span class="drawer-user">${esc(t("auth.welcome", { name: userLabel(authUser) }))}</span><button type="button" data-auth="logout">${esc(t("auth.logout"))}</button>`
         : `<button type="button" data-auth="login">${esc(t("auth.login"))}</button><button type="button" data-auth="signup">${esc(t("auth.signup"))}</button>`}</div>
+      ${authUser ? `<button class="drawer-delete" type="button" data-auth="delete">${esc(t("auth.delete"))}</button>` : ""}
       ${D.categories.map((c) => `<div class="drawer-cat">
         <button type="button" data-cat="${c.id}"><span class="dot" style="--c:${c.color}"></span>${esc(L(c.name))}</button>
         <div class="drawer-subs">${c.subs.map((s) => `<button type="button" data-cat="${c.id}" data-sub="${s.id}">${esc(L(s.name))}</button>`).join("")}</div>
@@ -747,6 +748,8 @@
   let authMode = "login";
   let authMsg = null; // { type: "ok"|"err", text }
   let authBusy = false;
+  let authDelOk = false;   // 회원 탈퇴 확인란
+  let authDeleted = false; // 탈퇴 직후 '로그아웃했어요' 대신 '탈퇴했어요'를 보이게
   function loadScript(src) {
     return new Promise((resolve, reject) => {
       const el = document.createElement("script");
@@ -827,6 +830,15 @@
           ${msg}${submit("auth.submit.forgot")}
         </form>
         <div class="auth-links"><button type="button" data-auth="login">${esc(t("auth.toLogin"))}</button></div>`;
+    } else if (authMode === "delete") {
+      // 회원 탈퇴: 수퍼베이스의 delete_my_account() 함수가 로그인한 본인 계정만 지운다
+      html = `<h2 id="authTitle">${esc(t("auth.title.delete"))}</h2>
+        <p class="auth-sub">${esc(t("auth.deleteSub"))}</p>
+        <form class="auth-form" id="authForm" novalidate>
+          <label class="auth-check"><input id="authDelOk" type="checkbox"${authDelOk ? " checked" : ""}${busy}><span>${esc(t("auth.deleteOk"))}</span></label>
+          ${msg}<button class="btn auth-submit auth-danger" type="submit"${busy}>${esc(authBusy ? t("auth.wait") : t("auth.submit.delete"))}</button>
+        </form>
+        <div class="auth-links"><button type="button" data-auth="cancel">${esc(t("auth.cancel"))}</button></div>`;
     } else {
       html = `<h2 id="authTitle">${esc(t("auth.title.reset"))}</h2>
         <form class="auth-form" id="authForm" novalidate>
@@ -863,6 +875,7 @@
   async function submitAuth() {
     if (!sb || authBusy) return;
     const v = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
+    if (authMode === "delete") { await deleteAccount(); return; }
     const email = v("authEmail");
     const pw = (document.getElementById("authPw") || {}).value || "";
     if (authMode !== "reset" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { authMsg = { type: "err", text: t("auth.err.email") }; renderAuth(); return; }
@@ -893,6 +906,22 @@
     authMsg = { type: "ok", text: t(done === "checkMail" ? "auth.checkMail" : "auth.sentReset") };
     renderAuth();
   }
+  async function deleteAccount() {
+    const box = document.getElementById("authDelOk");
+    authDelOk = !!(box && box.checked);
+    if (!authDelOk) { authMsg = { type: "err", text: t("auth.err.deleteOk") }; renderAuth(); return; }
+    authBusy = true; authMsg = null; renderAuth();
+    let error = null;
+    try { ({ error } = await sb.rpc("delete_my_account")); } catch (e) { error = e || true; }
+    authBusy = false;
+    // 함수가 아직 없거나 실패하면 이메일로 요청하도록 안내
+    if (error) { authMsg = { type: "err", text: t("auth.err.delete") }; renderAuth(); return; }
+    authDeleted = true;
+    try { await sb.auth.signOut({ scope: "local" }); } catch (_) { /* 계정이 이미 지워져서 실패해도 이 기기에서는 로그아웃 */ }
+    authUser = null; authDelOk = false; renderUser();
+    closeDialog(authDlg);
+    toast(t("auth.deleted"));
+  }
   async function initAuth() {
     if (!authOn) return;
     const back = new URL(location.href).searchParams;
@@ -916,7 +945,7 @@
             if (back !== location.hash) go(back);
           }
         }
-        if (event === "SIGNED_OUT" && before) toast(t("auth.loggedOut"));
+        if (event === "SIGNED_OUT" && before) { if (authDeleted) authDeleted = false; else toast(t("auth.loggedOut")); }
       });
       const { data } = await sb.auth.getSession();
       authUser = data && data.session ? data.session.user : null;
@@ -1338,6 +1367,8 @@
       const a = ds.auth;
       if (a === "logout") { toggleUserMenu(false); closeMenus(); if (sb) sb.auth.signOut(); return; }
       if (a === "google") { authSocial(a); return; }
+      if (a === "cancel") { closeDialog(authDlg); return; }
+      if (a === "delete") { toggleUserMenu(false); closeMenus(); authDelOk = false; openAuth("delete"); return; }
       if (authDlg.open && (a === "login" || a === "signup" || a === "forgot")) { authMode = a; authMsg = null; renderAuth(); return; }
       closeMenus(); openAuth(a);
       return;

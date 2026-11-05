@@ -62,6 +62,11 @@
   - 개인정보 보호책임자: NEOCOLOR 운영팀, 이메일 lkysakana@naver.com (2026-11-06 소유자가 정함)
   - 위탁·국외 이전: Supabase(회원 정보·로그인), Cloudflare(사이트 전송). 새 서비스(결제, 애드센스 등)를 붙이면 이 페이지도 같이 고친다
   - 구글 OAuth 게시에 필요: 브랜딩의 홈페이지 `https://neocolor.net`, 개인정보처리방침 `https://neocolor.net/privacy`
+- 구글 로그인: 2026-11-06 소유자가 구글 콘솔(neocolor 프로젝트, 앱 게시)·수퍼베이스 Google 켜기까지 마침
+- 회원 탈퇴: PC는 내 계정 메뉴, 휴대폰은 서랍 메뉴의 '회원 탈퇴' → 확인란 체크 → `sb.rpc("delete_my_account")` → 이 기기 로그아웃
+  - 수퍼베이스 함수 `public.delete_my_account()` (로그인한 본인 계정만 지움). SQL은 `supabase/sql/delete_my_account.sql`, **소유자가 SQL Editor에서 한 번 실행해야 실제로 작동**
+  - 함수가 없거나 실패하면 'lkysakana@naver.com으로 요청' 안내가 뜬다
+- **메일 발송 한도 주의**: 수퍼베이스 기본 메일은 프로젝트 팀원 주소로만, 시간당 2통 (2026-11-06 확인). 일반 회원은 가입 확인·비밀번호 찾기 메일을 못 받으므로 실서비스엔 커스텀 SMTP(Resend 등, Authentication → Emails → SMTP)가 필요하다
 
 ## 베테랑 정산 방식 (2026-11-06 소유자가 정함)
 - 시간 단위 정산은 하지 않는다 (영상을 쓸데없이 길게 찍게 되므로). **영상 수 기준, 영상 길이 구간별로 편당 단가 고정**

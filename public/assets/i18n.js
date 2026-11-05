@@ -525,6 +525,15 @@ window.NEO_I18N = {
     "cm.copayD": "나머지는 내일배움카드에서 지원돼요",
     "cm.copaySrc": "2026년 기준 · 과정과 대상에 따라 다를 수 있어요",
     "auth.privacy": "개인정보처리방침",
+    "auth.delete": "회원 탈퇴",
+    "auth.title.delete": "회원 탈퇴",
+    "auth.deleteSub": "탈퇴하면 계정과 회원 정보(이메일, 이름)가 바로 지워지고 되돌릴 수 없어요. 법에 따라 보관해야 하는 기록은 정해진 기간이 지나면 지워져요.",
+    "auth.deleteOk": "위 내용을 확인했고 탈퇴할게요",
+    "auth.submit.delete": "탈퇴하기",
+    "auth.cancel": "취소",
+    "auth.deleted": "탈퇴했어요. 그동안 이용해 주셔서 감사합니다.",
+    "auth.err.deleteOk": "확인란에 체크해 주세요.",
+    "auth.err.delete": "지금은 탈퇴를 처리하지 못했어요. lkysakana@naver.com으로 요청해 주시면 바로 처리해 드릴게요.",
   },
 
   en: {
@@ -1047,6 +1056,15 @@ window.NEO_I18N = {
     "cm.copayD": "The Tomorrow Learning Card covers the rest",
     "cm.copaySrc": "As of 2026 · may vary by course and learner",
     "auth.privacy": "Privacy policy",
+    "auth.delete": "Delete account",
+    "auth.title.delete": "Delete your account",
+    "auth.deleteSub": "Your account and member information (email, name) will be deleted right away. This can't be undone. Records that the law requires us to keep are deleted when that period ends.",
+    "auth.deleteOk": "I understand and want to delete my account",
+    "auth.submit.delete": "Delete account",
+    "auth.cancel": "Cancel",
+    "auth.deleted": "Your account has been deleted. Thank you for using NEOCOLOR.",
+    "auth.err.deleteOk": "Please tick the box to confirm.",
+    "auth.err.delete": "We couldn't delete your account right now. Email lkysakana@naver.com and we'll take care of it right away.",
   },
 
   ja: {
@@ -1569,5 +1587,14 @@ window.NEO_I18N = {
     "cm.copayD": "残りは明日学びカードで支援されます",
     "cm.copaySrc": "2026年基準・講座や対象者により異なる場合があります",
     "auth.privacy": "個人情報処理方針",
+    "auth.delete": "退会する",
+    "auth.title.delete": "退会",
+    "auth.deleteSub": "退会すると、アカウントと会員情報(メールアドレス、名前)はすぐに削除され、元に戻せません。法律で保管が必要な記録は、決められた期間が過ぎると削除されます。",
+    "auth.deleteOk": "内容を確認し、退会します",
+    "auth.submit.delete": "退会する",
+    "auth.cancel": "キャンセル",
+    "auth.deleted": "退会しました。ご利用ありがとうございました。",
+    "auth.err.deleteOk": "確認欄にチェックを入れてください。",
+    "auth.err.delete": "現在、退会を処理できませんでした。lkysakana@naver.com までご連絡いただければ、すぐに対応します。",
   }
 };
