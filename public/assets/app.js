@@ -409,13 +409,17 @@
   }
 
   /* ---------- 전체 강의 ---------- */
-  function coursesHash({ cat = "all", sub = null, q = "", saved: sv = false, clip = false } = {}) {
+  // 필터도 전부 주소에 담는다 → 다른 곳에서 들어오면 필터가 깨끗하게 풀린다
+  function coursesHash({ cat = "all", sub = null, q = "", saved: sv = false, clip = false, level = null, online = false, gov = false } = {}) {
     let h = "#/courses";
     if (cat && cat !== "all" && catById[cat]) { h += "/" + cat; if (sub) h += "/" + sub; }
     const p = new URLSearchParams();
     if (q) p.set("q", q);
-    if (sv) p.set("saved", "1");
+    if (level) p.set("level", level);
     if (clip) p.set("clip", "1");
+    if (online) p.set("online", "1");
+    if (gov) p.set("gov", "1");
+    if (sv) p.set("saved", "1");
     const s = p.toString();
     return s ? `${h}?${s}` : h;
   }
@@ -476,7 +480,7 @@
     $("#moreBtn").textContent = t("common.more", { n: Math.max(rest, 0) });
     const empty = $("#emptyText");
     empty.hidden = list.length > 0;
-    empty.textContent = t(f.saved && !state.q ? "courses.emptySaved" : "courses.empty");
+    empty.textContent = t(f.saved && saved.size === 0 ? "courses.emptySaved" : state.q ? "courses.empty" : "courses.emptyFilter");
     let label;
     if (state.q) label = t("courses.resultSearch", { q: esc(state.q) });
     else if (state.cat === "all") label = esc(t("courses.resultAll"));
@@ -942,8 +946,12 @@
       state.cat = catById[r.a] ? r.a : "all";
       state.sub = state.cat !== "all" && catById[state.cat].subs.some((s) => s.id === r.b) ? r.b : null;
       state.q = r.params.get("q") || "";
+      const lv = r.params.get("level");
+      state.filters.level = ["beginner", "pro", "expert"].includes(lv) ? lv : null;
       state.filters.saved = r.params.get("saved") === "1";
       state.filters.clip = r.params.get("clip") === "1";
+      state.filters.online = r.params.get("online") === "1";
+      state.filters.gov = r.params.get("gov") === "1";
       state.limit = pageSize();
       $("#searchInput").value = state.q;
       renderCourses();
@@ -995,8 +1003,9 @@
     if (ds.save) { toggleSave(ds.save); return; }
     if (ds.course) { closeMenus(); openCourse(ds.course); return; }
     if (ds.cat) {
-      const keep = state.view === "courses";
-      go(coursesHash({ cat: ds.cat, sub: ds.sub || null, saved: keep && state.filters.saved, clip: keep && state.filters.clip }));
+      // 강의 목록 안에서 공종을 바꾸면 켜 둔 필터는 그대로, 다른 화면에서 오면 필터 없이
+      const keep = state.view === "courses" && !!el.closest(".view");
+      go(coursesHash({ ...(keep ? state.filters : {}), cat: ds.cat, sub: ds.sub || null }));
       return;
     }
     if (ds.search != null && el.hasAttribute("data-search")) { go(coursesHash({ q: ds.search })); return; }
@@ -1010,20 +1019,10 @@
     if (el.hasAttribute("data-q-retry")) { state.quiz = { step: 0, answers: [] }; renderQuiz(); return; }
     if (ds.filter) {
       const k = ds.filter;
-      if (k.startsWith("level:")) {
-        const lv = k.slice(6);
-        state.filters.level = state.filters.level === lv ? null : lv;
-        state.limit = pageSize();
-        renderCourses();
-      } else if (k === "saved" || k === "clip") {
-        const next = { saved: state.filters.saved, clip: state.filters.clip };
-        next[k] = !next[k];
-        go(coursesHash({ cat: state.cat, sub: state.sub, q: state.q, ...next }));
-      } else {
-        state.filters[k] = !state.filters[k];
-        state.limit = pageSize();
-        renderCourses();
-      }
+      const f = { ...state.filters };
+      if (k.startsWith("level:")) { const lv = k.slice(6); f.level = f.level === lv ? null : lv; }
+      else f[k] = !f[k];
+      go(coursesHash({ ...f, cat: state.cat, sub: state.sub, q: state.q }));
       return;
     }
     if (ds.tab) { go("#/jobs/" + ds.tab); return; }
@@ -1069,7 +1068,7 @@
     searchForm.classList.toggle("open");
     if (searchForm.classList.contains("open")) searchInput.focus();
   });
-  $("#clearSearch").addEventListener("click", () => { searchInput.value = ""; go(coursesHash({ cat: state.cat, sub: state.sub })); });
+  $("#clearSearch").addEventListener("click", () => { searchInput.value = ""; go(coursesHash({ ...state.filters, cat: state.cat, sub: state.sub })); });
   $("#moreBtn").addEventListener("click", () => { state.limit += pageSize(); renderCourses(); });
 
   // 인력사무소 필터
