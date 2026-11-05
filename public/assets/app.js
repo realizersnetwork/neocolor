@@ -1,21 +1,144 @@
-/* NEOCOLOR — 메뉴, 강의 목록, 검색 */
+/* NEOCOLOR — 화면 동작
+ * 언어(ko/en/ja) · 학생/베테랑 모드 · 메뉴 · 강의 · 로드맵 · 커뮤니티 · 인력사무소 · 수강권 · 베테랑 스튜디오 · 방문자 통계
+ * 주소(#/...)로 화면을 바꾼다: #/ · #/courses[/공종[/세부]][?q=&saved=1&clip=1] · #/roadmaps[/id] · #/community[/terms]
+ *   · #/jobs[/hire|seek|trainee] · #/plans · #/veteran[/upload|payout|guide] · #/stats
+ */
 (() => {
   "use strict";
 
-  const DATA = window.NEO;
-  if (!DATA) return;
+  const D = window.NEO;
+  const I = window.NEO_I18N;
+  if (!D || !I) return;
 
-  const { categories, courses, starter } = DATA;
-  const catById = Object.fromEntries(categories.map((c) => [c.id, c]));
-  const courseById = Object.fromEntries(courses.map((c) => [c.id, c]));
-  const $ = (sel) => document.querySelector(sel);
-  const esc = (s) =>
-    String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
-  const shortName = (name) => name.split("·")[0].slice(0, 2);
+  /* ---------- 기본 도구 ---------- */
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (ch) => ESC[ch]);
+  const LANGS = ["ko", "en", "ja"];
+  const LOCALE = { ko: "ko-KR", en: "en-US", ja: "ja-JP" };
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (_) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) { /* 저장이 안 돼도 화면은 그대로 */ } }
+  };
+  const session = {
+    get(k) { try { return sessionStorage.getItem(k); } catch (_) { return null; } },
+    set(k, v) { try { sessionStorage.setItem(k, v); } catch (_) { /* 무시 */ } }
+  };
   const desktopQuery = window.matchMedia("(min-width: 960px)");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const state = { cat: "all", sub: null, q: "", limit: 12 };
+  let lang = detectLang();
+  function detectLang() {
+    try {
+      const q = new URLSearchParams(location.search).get("lang");
+      if (LANGS.includes(q)) return q;
+    } catch (_) { /* 무시 */ }
+    const saved = store.get("neo.lang", null);
+    if (LANGS.includes(saved)) return saved;
+    const prefs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "ko"])
+      .map((s) => String(s).toLowerCase());
+    if (prefs.some((p) => p.startsWith("ko"))) return "ko";
+    if (prefs.some((p) => p.startsWith("ja"))) return "ja";
+    return "en";
+  }
+
+  const t = (key, vars) => {
+    const pack = I[lang] || I.ko;
+    let s = pack[key] != null ? pack[key] : I.ko[key] != null ? I.ko[key] : key;
+    if (vars) s = s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
+    return s;
+  };
+  const L = (o) => (o == null ? "" : typeof o === "string" ? o : o[lang] != null ? o[lang] : o.ko || "");
+  const fmt = (n, digits = 0) =>
+    new Intl.NumberFormat(LOCALE[lang], { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(n);
+  const money = (n) => t("money", { n: fmt(Math.round(n)) });
+  const man = (n) => Math.round(n / 1e4);
+  const krwMonthShort = (n) => (lang === "en" ? `₩${fmt(n / 1e6, 2)}M` : lang === "ja" ? `${fmt(man(n))}万ウォン` : `${fmt(man(n))}만원`);
+  const krwDayShort = (n) => (lang === "en" ? `₩${fmt(Math.round(n / 1e3))}k` : lang === "ja" ? `${man(n)}万ウォン` : `${man(n)}만원`);
+  const krwRangeShort = (a, b) =>
+    lang === "en" ? `₩${fmt(Math.round(a / 1e3))}k–${fmt(Math.round(b / 1e3))}k` : lang === "ja" ? `${man(a)}万〜${man(b)}万ウォン` : `${man(a)}만~${man(b)}만원`;
+
+  /* ---------- 데이터 색인 ---------- */
+  const byId = (arr) => Object.fromEntries(arr.map((x) => [x.id, x]));
+  const catById = byId(D.categories);
+  const courseById = byId(D.courses);
+  const rmById = byId(D.roadmaps);
+  const wageById = byId(D.wages.items);
+  const topicById = byId(D.topicBoards);
+  const subName = (c) => (catById[c.cat].subs.find((s) => s.id === c.sub) || {}).name;
+  const lengthText = (c) => (c.kind === "clip" ? t("card.min", { n: c.min }) : t("card.hours", { n: c.hours }));
+  const rmHours = (r) =>
+    Math.max(1, Math.round(r.courses.reduce((a, id) => { const c = courseById[id]; return a + (c.kind === "clip" ? c.min / 60 : c.hours); }, 0)));
+
+  /* ---------- 아이콘 ---------- */
+  const SV = (body, cls) => `<svg${cls ? ` class="${cls}"` : ""} viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
+  const CAT_ICON = {
+    manage: '<rect x="6" y="4.5" width="12" height="16" rx="2"/><path d="M9.5 4.5h5V7h-5zM9 11h6M9 15h4"/>',
+    civil: '<path d="M12 3v9M10 3h4"/><path d="M8.5 12h7l-.8 5.2a3 3 0 0 1-5.9 0z"/>',
+    frame: '<path d="M5 4.5h14M5 19.5h14M12 4.5v15M8 4.5v2M16 4.5v2M8 17.5v2M16 17.5v2"/>',
+    water: '<path d="M12 3.5s6 6.4 6 10.8a6 6 0 0 1-12 0c0-4.4 6-10.8 6-10.8z"/><path d="M9.5 14.5a2.6 2.6 0 0 0 2.5 2.5"/>',
+    mep: '<path d="M4 10.5h7.5a3.5 3.5 0 0 1 3.5 3.5v1.5M8 10.5v-3M5.5 7.5h5M4 8.5v4M15 18.5v.5M15 21v.5"/>',
+    elec: '<path d="M13.5 3 5.5 13.5h5.5L10 21l8-10.5h-5.5z"/>',
+    exterior: '<rect x="4.5" y="4" width="15" height="16" rx="1.5"/><path d="M12 4v16M4.5 12h15"/>',
+    wood: '<path d="m14.5 4.5 5 5-2.5 2.5-5-5z"/><path d="M13.2 8.8 4.5 17.5l2 2 8.7-8.7"/>',
+    tile: '<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>',
+    finish: '<rect x="4" y="4" width="13" height="5" rx="1.5"/><path d="M17 6.5h2.5v5H11v3"/><rect x="9.5" y="14.5" width="3" height="6" rx="1"/>',
+    labor: '<path d="M3.5 17.5h17M5.5 17.5V15a6.5 6.5 0 0 1 13 0v2.5M10 9V6.5h4V9"/>'
+  };
+  const ICON = {
+    heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+    check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    megaphone: '<path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/>',
+    user: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+    cap: '<path d="m3 9 9-4 9 4-9 4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/>',
+    briefcase: '<rect x="3.5" y="7" width="17" height="12" rx="2"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3.5 12h17"/>',
+    medal: '<circle cx="12" cy="14.5" r="5.5"/><path d="M8 3h8l-2.5 6h-3z"/>',
+    video: '<rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10.5 5-3v9l-5-3z"/>',
+    users: '<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9.5" r="2.4"/><path d="M15.5 14.2A4.5 4.5 0 0 1 21 18.5"/>',
+    chat: '<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A1.5 1.5 0 0 1 4 14.5z"/>',
+    alert: '<path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.5M12 17h.01"/>',
+    camera: '<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.5-2h5L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/>',
+    star: '<path d="m12 4 2.4 5 5.4.7-4 3.7 1 5.4L12 16.2 7.2 18.8l1-5.4-4-3.7 5.4-.7z"/>',
+    coin: '<circle cx="12" cy="12" r="8.5"/><path d="M8 9l1.6 6L12 10l2.4 5L16 9M7.5 12h9"/>',
+    smile: '<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4 4 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/>'
+  };
+  const catIcon = (id, cls) => SV(CAT_ICON[id] || CAT_ICON.labor, cls);
+  const icon = (name, cls) => SV(ICON[name] || "", cls);
+
+  /* ---------- 상태 ---------- */
+  function detectCountry() {
+    const s = store.get("neo.country", null);
+    if (D.pricing.some((p) => p.id === s)) return s;
+    const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""]).map((x) => String(x).toLowerCase());
+    for (const l of langs) {
+      if (l.startsWith("ko")) return "KR";
+      if (l === "hi" || l.startsWith("hi-") || l.endsWith("-in")) return "IN";
+      if (l === "id" || l.startsWith("id-")) return "ID";
+      if (l.startsWith("vi")) return "VN";
+      if (l.startsWith("fil") || l.startsWith("tl") || l.endsWith("-ph")) return "PH";
+    }
+    return "KR";
+  }
+  const savedRaw = store.get("neo.saved", []);
+  let saved = new Set((Array.isArray(savedRaw) ? savedRaw : []).filter((id) => courseById[id]));
   const pageSize = () => (desktopQuery.matches ? 16 : 12);
+  const state = {
+    view: null,
+    cat: "all", sub: null, q: "",
+    filters: { level: null, online: false, clip: false, gov: false, saved: false },
+    limit: pageSize(),
+    jobsTab: "hire", jobRegion: "all", jobCat: "all",
+    commTab: "boards", termCat: "all", termQ: "",
+    lastStudent: "#/",
+    wage: D.wages.items[0].id,
+    homeLevel: "beginner",
+    country: detectCountry(),
+    quiz: { step: 0, answers: [] },
+    course: null,
+    stats: null,
+    statsDay: null
+  };
 
   /* ---------- 알림 ---------- */
   const toastEl = $("#toast");
@@ -24,296 +147,1078 @@
     toastEl.textContent = msg;
     toastEl.classList.add("show");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2400);
+  }
+
+  /* ---------- 고정 문구 번역 ---------- */
+  function applyStatic() {
+    document.documentElement.lang = lang;
+    $$("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
+    $$("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
+    $$("[data-i18n-attr]").forEach((el) => {
+      el.dataset.i18nAttr.split(";").forEach((pair) => {
+        const i = pair.indexOf(":");
+        if (i > 0) el.setAttribute(pair.slice(0, i).trim(), t(pair.slice(i + 1).trim()));
+      });
+    });
+    document.title = t("meta.title");
+    const md = $('meta[name="description"]');
+    if (md) md.setAttribute("content", t("meta.desc"));
+    $$("[data-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
   }
 
   /* ---------- 강의 카드 ---------- */
+  function badgesHTML(c) {
+    const b = [`<span class="b b-soon">${esc(t("badge.soon"))}</span>`];
+    if (c.kind === "clip") b.push(`<span class="b b-clip">${esc(t("badge.clip"))}</span>`);
+    if (c.knowhow) b.push(`<span class="b b-know">${esc(t("badge.knowhow"))}</span>`);
+    if (c.gov) b.push(`<span class="b b-gov">${esc(t("badge.gov"))}</span>`);
+    return b.join("");
+  }
+  function saveBtnHTML(id) {
+    const on = saved.has(id);
+    return `<button class="save-btn" type="button" data-save="${id}" aria-pressed="${on}" aria-label="${esc(t(on ? "card.unsave" : "card.save"))}">${icon("heart")}</button>`;
+  }
   function cardHTML(c) {
     const cat = catById[c.cat];
-    const badges = ['<span class="b b-soon">오픈 예정</span>'];
-    if (c.gov) badges.push('<span class="b b-gov">국비지원 예정</span>');
-    if (c.voucher) badges.push('<span class="b b-voucher">평생교육이용권 예정</span>');
-    return `<article class="card" tabindex="0" data-course="${c.id}" aria-label="${esc(c.title)}, 오픈 예정">
-      <div class="thumb" style="--c:${cat.color}">
-        <span class="thumb-cat">${esc(cat.name)}</span>
-        <span class="thumb-sub">${esc(c.sub)}</span>
-        <span class="thumb-hours">약 ${c.hours}시간</span>
-      </div>
+    return `<article class="card">
+      <div class="thumb" style="--c:${cat.color}">${catIcon(cat.id, "thumb-ic")}<span class="thumb-cat">${esc(L(cat.name))}</span><span class="thumb-sub">${esc(L(subName(c)))}</span></div>
       <div class="card-body">
-        <div class="badges">${badges.join("")}</div>
-        <h3 class="card-title">${esc(c.title)}</h3>
-        <p class="card-desc">${esc(c.desc)}</p>
-        <p class="card-meta">${esc(c.level)} · ${esc(c.format)}</p>
+        <div class="badges">${badgesHTML(c)}</div>
+        <h3 class="card-title">${esc(L(c.title))}</h3>
+        <p class="card-desc">${esc(L(c.desc))}</p>
+        <p class="card-meta">${esc(t("level." + c.level))} · ${esc(t("format." + c.format))} · ${esc(lengthText(c))}</p>
+      </div>
+      <button class="card-hit" type="button" data-course="${c.id}" aria-label="${esc(t("card.open", { title: L(c.title) }))}"></button>
+      ${saveBtnHTML(c.id)}
+    </article>`;
+  }
+  const renderRow = (sel, list) => { const el = $(sel); if (el) el.innerHTML = list.map(cardHTML).join(""); };
+
+  /* ---------- 로드맵 카드 ---------- */
+  function rmWageText(r) {
+    const w = r.wage ? wageById[r.wage] : null;
+    return w ? t("rm.wage", { n: money(w.daily), trade: L(w.name) }) : "";
+  }
+  function rmCardHTML(r) {
+    const wage = rmWageText(r);
+    const certs = r.certs.slice(0, 2).map((x) => `<span class="cert">${esc(L(D.certs[x]))}</span>`).join("");
+    return `<a class="rm-card" href="#/roadmaps/${r.id}" style="--c:${r.color}">
+      <span class="rm-name">${esc(L(r.name))}</span>
+      <span class="rm-goal">${esc(L(r.goal))}</span>
+      <span class="rm-meta">${esc(t("rm.courses", { n: r.courses.length }))} · ${esc(t("rm.hours", { n: rmHours(r) }))}</span>
+      ${wage ? `<span class="rm-wage">${esc(wage)}</span>` : ""}
+      ${certs ? `<span class="chip-row">${certs}</span>` : ""}
+    </a>`;
+  }
+  function rmFullHTML(r) {
+    const wage = rmWageText(r);
+    const practice = r.courses.some((id) => courseById[id].format !== "online");
+    const steps = r.courses.map((id, i) => {
+      const c = courseById[id];
+      return `<li><button type="button" data-course="${id}"><span class="n">${i + 1}</span><span class="t">${esc(L(c.title))}</span><span class="m">${esc(lengthText(c))}</span></button></li>`;
+    }).join("");
+    const certs = r.certs.map((x) => `<span class="cert">${esc(L(D.certs[x]))}</span>`).join("");
+    return `<article class="rm-full" id="rm-${r.id}" style="--c:${r.color}">
+      <h2>${esc(L(r.name))}</h2>
+      <p class="rm-goal">${esc(L(r.goal))}</p>
+      <div class="rm-stats">
+        <span class="pill">${esc(t("rm.courses", { n: r.courses.length }))}</span>
+        <span class="pill">${esc(t("rm.hours", { n: rmHours(r) }))}</span>
+        ${practice ? `<span class="pill pill-ok">${esc(t("cm.practice"))}</span>` : ""}
+        ${wage ? `<span class="pill pill-gov">${esc(wage)}</span>` : ""}
+      </div>
+      <ol class="rm-steps">${steps}</ol>
+      <div class="rm-foot">
+        <div class="chip-row">${certs}</div>
+        <button class="btn btn-dark" type="button" data-soon>${esc(t("rm.start"))}</button>
       </div>
     </article>`;
   }
 
-  const renderRow = (el, list) => { el.innerHTML = list.map(cardHTML).join(""); };
-  renderRow($("#rowStarter"), starter.map((id) => courseById[id]).filter(Boolean));
-  renderRow($("#rowGov"), courses.filter((c) => c.gov));
-  renderRow($("#rowVoucher"), courses.filter((c) => c.voucher));
+  /* ---------- 홈 ---------- */
+  function renderQuick() {
+    const grid = $("#quickGrid");
+    grid.innerHTML = D.categories.map((c) =>
+      `<button class="quick-item" type="button" data-cat="${c.id}"><span class="quick-icon" style="--c:${c.color}">${catIcon(c.id)}</span><span>${esc(L(c.name))}</span></button>`
+    ).join("");
+    // 칸 수를 카테고리 개수에 맞춤: 휴대폰은 마지막 줄 빈칸이 적은 쪽(4칸/5칸), PC는 한 줄(12개 넘으면 두 줄)
+    const n = D.categories.length;
+    const empty = (cols) => (cols - (n % cols)) % cols;
+    grid.style.setProperty("--cols-m", empty(4) <= empty(5) ? 4 : 5);
+    grid.style.setProperty("--cols-d", n <= 12 ? n : Math.ceil(n / 2));
+    $("#suggestChips").innerHTML = (D.suggestions[lang] || D.suggestions.ko)
+      .map((s) => `<button type="button" data-search="${esc(s)}">${esc(s)}</button>`).join("");
+  }
 
-  /* ---------- 탭 · 바로가기 · 푸터 ---------- */
-  const tabItems = [{ id: "all", name: "전체" }, ...categories];
-  $("#catTabs").innerHTML = tabItems
-    .map((c) => `<button class="cat-tab" type="button" data-cat="${c.id}" aria-pressed="false">${esc(c.name)}</button>`)
-    .join("");
-  $("#catChips").innerHTML = tabItems
-    .map((c) => `<button class="chip" type="button" data-cat="${c.id}" aria-pressed="false">${esc(c.name)}</button>`)
-    .join("");
-  $("#quickGrid").innerHTML = categories
-    .map(
-      (c) => `<button class="quick-item" type="button" data-cat="${c.id}">
-        <span class="quick-icon" style="--c:${c.color}">${esc(shortName(c.name))}</span>
-        <span>${esc(c.name)}</span>
-      </button>`
-    )
-    .join("");
-  // 바로가기 칸 수를 카테고리 개수에 맞춤: 휴대폰은 마지막 줄 빈칸이 적은 쪽(5칸/4칸), PC는 한 줄(12개 넘으면 두 줄)
-  const catCount = categories.length;
-  const emptyCells = (cols) => (cols - (catCount % cols)) % cols;
-  $("#quickGrid").style.setProperty("--cols-m", emptyCells(4) < emptyCells(5) ? 4 : 5);
-  $("#quickGrid").style.setProperty("--cols-d", catCount <= 12 ? catCount : Math.ceil(catCount / 2));
-  $("#footCats").innerHTML = categories
-    .map((c) => `<li><button type="button" data-cat="${c.id}">${esc(c.name)}</button></li>`)
-    .join("");
+  const LEVEL_LIST = {
+    beginner: () => D.starter.map((id) => courseById[id]).filter(Boolean),
+    pro: () => D.courses.filter((c) => c.level === "pro" && c.kind !== "clip").slice(0, 12),
+    expert: () => D.courses.filter((c) => c.level === "expert" && c.kind !== "clip")
+  };
+  function renderLevelTabs() {
+    $("#levelTabs").innerHTML = ["beginner", "pro", "expert"].map((lv) =>
+      `<button type="button" role="tab" data-level-tab="${lv}" aria-selected="${state.homeLevel === lv}"><strong>${esc(t("level." + lv))}</strong><span>${esc(t(`home.level.${lv}.d`))}</span></button>`
+    ).join("");
+    renderRow("#rowLevel", LEVEL_LIST[state.homeLevel]());
+  }
 
-  /* ---------- 메가 메뉴 (PC) ---------- */
+  function renderWages() {
+    const items = D.wages.items;
+    const max = Math.max(...items.map((w) => w.daily));
+    $("#wageList").innerHTML = items.map((w) => {
+      const base = w.id === D.wages.base;
+      return `<div role="listitem"><button class="wage-row${base ? " is-base" : ""}" type="button" data-wage="${w.id}" aria-pressed="${state.wage === w.id}">
+        <span class="wage-name">${esc(L(w.name))}${base ? `<small>${esc(t("wage.baseTag"))}</small>` : ""}</span>
+        <span class="wage-track"><span class="wage-bar" style="--w:${((w.daily / max) * 100).toFixed(1)}%"></span></span>
+        <span class="wage-val">${esc(money(w.daily))}</span>
+      </button></div>`;
+    }).join("");
+    renderWageDetail();
+  }
+  function renderWageDetail() {
+    const w = wageById[state.wage] || D.wages.items[0];
+    const base = wageById[D.wages.base];
+    const lines = [];
+    if (w.id !== base.id) lines.push(t("wage.diff", { n: money(w.daily - base.daily) }));
+    lines.push(t("wage.month", { n: krwMonthShort(w.daily * 20) }));
+    $("#wageDetail").innerHTML = `<p class="wd-name">${esc(L(w.name))} · ${esc(L(catById[w.cat].name))}</p>
+      <p class="wd-day">${esc(t("wage.daily", { n: money(w.daily) }))}</p>
+      <ul>${lines.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>
+      <button class="btn btn-primary" type="button" data-cat="${w.cat}">${esc(t("wage.courses"))}</button>`;
+  }
+
+  function renderLadder() {
+    const trades = D.wages.items.filter((w) => w.id !== D.wages.base);
+    const min = Math.min(...trades.map((w) => w.daily));
+    const max = Math.max(...trades.map((w) => w.daily));
+    $("#ladder").innerHTML = D.ladder.map((s, i) => {
+      let wage = "";
+      if (s.wage === "laborer") wage = t("ladder.wageBase", { r: krwDayShort(wageById.laborer.daily) });
+      else if (s.wage === "range") wage = t("ladder.wageRange", { r: krwRangeShort(min, max) });
+      return `<li><a href="${s.link}"><span class="step-no">${i + 1}</span><strong>${esc(L(s.title))}</strong><span class="ld">${esc(L(s.desc))}</span>${wage ? `<em>${esc(wage)}</em>` : ""}</a></li>`;
+    }).join("");
+  }
+
+  const priceFor = (id) => { const p = D.pricing.find((x) => x.id === id) || D.pricing[0]; return typeof p.price === "string" ? p.price : L(p.price); };
+  function renderPlanTeaser() {
+    const items = [
+      { name: t("plan.gov.name"), price: t("plan.gov.price"), sub: t("plan.gov.sub"), badge: t("plan.gov.badge") },
+      { name: t("plan.voucher.name"), price: t("plan.voucher.price"), sub: t("plan.voucher.sub"), badge: t("plan.voucher.badge"), featured: true },
+      { name: t("plan.monthly.name"), price: `${priceFor(state.country)} ${t("plan.monthly.unit")}`, sub: t("plan.monthly.sub"), badge: t("plan.monthly.badge") }
+    ];
+    $("#planTeaser").innerHTML = items.map((p) =>
+      `<a class="plan-mini${p.featured ? " featured" : ""}" href="#/plans"><span class="pm-top"><span class="pm-name">${esc(p.name)}</span><span class="pill${p.featured ? " pill-dark" : ""}">${esc(p.badge)}</span></span><span class="pm-price">${esc(p.price)}</span><span class="pm-sub">${esc(p.sub)}</span></a>`
+    ).join("");
+  }
+
+  function renderCommTeaser() {
+    const boards = [...D.topicBoards.slice(0, 2).map((b) => ({ name: b.name, color: b.color })), ...D.categories.slice(0, 7).map((c) => ({ name: c.name, color: c.color }))];
+    $("#boardChips").innerHTML = boards.map((b) => `<a href="#/community"><span class="dot" style="--c:${b.color}"></span>${esc(L(b.name))}</a>`).join("");
+    const day = Math.floor(Date.now() / 864e5);
+    const start = day % D.terms.length;
+    const pick = [0, 1, 2].map((i) => D.terms[(start + i * 7) % D.terms.length]);
+    $("#termPeek").innerHTML = pick.map((x) =>
+      `<div><strong lang="ko">${esc(x.t)}${lang !== "ko" ? `<small>${esc(x.rom)}</small>` : ""}</strong><span>${esc(L(x.m))}</span></div>`
+    ).join("");
+  }
+
+  function renderJobsTeaser() {
+    $("#jobsTeaser").innerHTML = [["hire", "megaphone"], ["seek", "user"], ["trainee", "cap"]].map(([k, ic]) =>
+      `<a class="jt-item" href="#/jobs/${k}"><span class="jt-ic">${icon(ic)}</span><strong>${esc(t("jobs.tab." + k))}</strong><span>${esc(t(`home.jobs.${k}.d`))}</span></a>`
+    ).join("");
+  }
+
+  const krwPer = (cur) => (cur === "KRW" ? 1 : D.overseas.eur.KRW / D.overseas.eur[cur]);
+  const PER_MONTH = { year: (a) => a / 12, week: (a) => (a * 52) / 12, hour: (a) => (a * 40 * 52) / 12, day: (a) => a * 20 };
+  function osDisplay(krw) {
+    if (lang === "ko") return `${fmt(man(krw))}만원`;
+    if (lang === "ja") return `${fmt(krw / krwPer("JPY") / 1e4, 1)}万円`;
+    return `$${fmt(Math.round(krw / krwPer("USD") / 10) * 10)}`;
+  }
+  function renderOverseas() {
+    const rows = D.overseas.items.map((o) => ({ o, krw: PER_MONTH[o.per](o.amount) * krwPer(o.cur) }));
+    const max = Math.max(...rows.map((r) => r.krw));
+    rows.sort((a, b) => (a.o.ref ? 1 : 0) - (b.o.ref ? 1 : 0) || b.krw - a.krw);
+    $("#osList").innerHTML = rows.map(({ o, krw }) =>
+      `<div class="os-row${o.ref ? " is-ref" : ""}" role="listitem">
+        <div class="os-top"><span class="os-country">${esc(L(o.country))}</span><span class="os-month">${esc(osDisplay(krw))}<small>${esc(t("os.unit"))}</small></span></div>
+        <div class="os-track"><span class="os-bar" style="--w:${((krw / max) * 100).toFixed(1)}%"></span></div>
+        <p class="os-figure">${esc(L(o.figure))}</p>
+        <p class="os-why">${esc(L(o.why))}</p>
+        <p class="os-src">${esc(L(o.src))}</p>
+      </div>`
+    ).join("");
+  }
+
+  const faqHTML = () => D.faq.map((f) => `<details><summary>${esc(L(f.q))}</summary><p>${esc(L(f.a))}</p></details>`).join("");
+
+  /* ---------- 메뉴 (PC 메가 메뉴 · 휴대폰 서랍) ---------- */
   const megaEl = $("#mega");
   const menuBtn = $("#menuBtn");
-  $("#megaList").innerHTML = categories
-    .map(
-      (c) => `<li><button type="button" data-mega="${c.id}">
-        <span class="dot" style="--c:${c.color}"></span>${esc(c.name)}
-      </button></li>`
-    )
-    .join("");
-
-  function renderMegaPanel(catId) {
-    const c = catById[catId];
-    const list = courses.filter((x) => x.cat === catId);
-    $("#megaPanel").innerHTML = `
-      <h3>${esc(c.name)}</h3>
-      <p class="desc">${esc(c.desc)}</p>
-      <div class="mega-subs">${c.subs
-        .map((s) => `<button type="button" data-cat="${c.id}" data-sub="${esc(s)}">${esc(s)}</button>`)
-        .join("")}</div>
-      <ul class="mega-courses">${list.map((x) => `<li>${esc(x.title)}<span>오픈 예정</span></li>`).join("")}</ul>
-      <button type="button" class="mega-all" data-cat="${c.id}">${esc(c.name)} 강의 전체 보기 →</button>`;
-    document.querySelectorAll("[data-mega]").forEach((b) => b.classList.toggle("active", b.dataset.mega === catId));
-  }
-  renderMegaPanel(categories[0].id);
-
-  const megaList = $("#megaList");
-  const showMegaFor = (e) => {
-    const b = e.target.closest("[data-mega]");
-    if (b) renderMegaPanel(b.dataset.mega);
-  };
-  megaList.addEventListener("mouseover", showMegaFor);
-  megaList.addEventListener("focusin", showMegaFor);
-  megaList.addEventListener("click", (e) => {
-    const b = e.target.closest("[data-mega]");
-    if (!b) return;
-    applyFilter({ cat: b.dataset.mega, scroll: true });
-    closeMenus();
-  });
-
-  /* ---------- 모바일 메뉴 ---------- */
   const drawer = $("#drawer");
-  $("#drawerBody").innerHTML = `
-    <div class="drawer-links">
-      <a href="#funding" data-close>국비지원</a>
-      <a href="#funding" data-close>평생교육이용권</a>
-      <a href="#group" data-close>단체교육</a>
-    </div>
-    ${categories
-      .map(
-        (c) => `<div class="drawer-cat">
-          <button type="button" data-cat="${c.id}"><span class="dot" style="--c:${c.color}"></span>${esc(c.name)}</button>
-          <div class="drawer-subs">${c.subs
-            .map((s) => `<button type="button" data-cat="${c.id}" data-sub="${esc(s)}">${esc(s)}</button>`)
-            .join("")}</div>
-        </div>`
-      )
-      .join("")}`;
-
+  let megaCat = D.categories[0].id;
+  function renderMega() {
+    $("#megaList").innerHTML = D.categories.map((c) =>
+      `<li><button type="button" data-mega="${c.id}" class="${c.id === megaCat ? "active" : ""}"><span class="dot" style="--c:${c.color}"></span>${esc(L(c.name))}</button></li>`
+    ).join("");
+    renderMegaPanel(megaCat);
+  }
+  function renderMegaPanel(catId) {
+    megaCat = catId;
+    const c = catById[catId];
+    const list = D.courses.filter((x) => x.cat === catId).slice(0, 10);
+    $("#megaPanel").innerHTML = `
+      <h3>${esc(L(c.name))}</h3>
+      <p class="desc">${esc(L(c.desc))}</p>
+      <div class="mega-subs">${c.subs.map((s) => `<button type="button" data-cat="${c.id}" data-sub="${s.id}">${esc(L(s.name))}</button>`).join("")}</div>
+      <ul class="mega-courses">${list.map((x) => `<li><button type="button" data-course="${x.id}">${esc(L(x.title))}<small>${esc(lengthText(x))}</small></button></li>`).join("")}</ul>
+      <button type="button" class="mega-all" data-cat="${c.id}">${esc(L(c.name))} · ${esc(t("common.viewAll"))} →</button>`;
+    $$("[data-mega]").forEach((b) => b.classList.toggle("active", b.dataset.mega === catId));
+  }
+  function renderDrawer() {
+    $("#drawerBody").innerHTML = `
+      <div class="drawer-links">
+        <a href="#/courses" data-close>${esc(t("nav.courses"))}</a>
+        <a href="#/roadmaps" data-close>${esc(t("nav.roadmaps"))}</a>
+        <a href="#/community" data-close>${esc(t("nav.community"))}</a>
+        <a href="#/jobs" data-close>${esc(t("nav.jobs"))} <span class="pass-chip">PASS</span></a>
+        <a href="#/plans" data-close>${esc(t("nav.plans"))}</a>
+        <a href="#/courses?saved=1" data-close>${esc(t("nav.saved"))}</a>
+      </div>
+      <div class="drawer-auth"><button type="button" data-soon>${esc(t("auth.login"))}</button><button type="button" data-soon>${esc(t("auth.signup"))}</button></div>
+      ${D.categories.map((c) => `<div class="drawer-cat">
+        <button type="button" data-cat="${c.id}"><span class="dot" style="--c:${c.color}"></span>${esc(L(c.name))}</button>
+        <div class="drawer-subs">${c.subs.map((s) => `<button type="button" data-cat="${c.id}" data-sub="${s.id}">${esc(L(s.name))}</button>`).join("")}</div>
+      </div>`).join("")}`;
+  }
+  function renderFooter() {
+    $("#footCats").innerHTML = D.categories.map((c) => `<li><button type="button" data-cat="${c.id}">${esc(L(c.name))}</button></li>`).join("");
+  }
   const openMega = () => { megaEl.hidden = false; menuBtn.setAttribute("aria-expanded", "true"); };
   const closeMega = () => { megaEl.hidden = true; menuBtn.setAttribute("aria-expanded", "false"); };
-  const openDrawer = () => {
-    drawer.hidden = false;
-    document.body.style.overflow = "hidden";
-    menuBtn.setAttribute("aria-expanded", "true");
-  };
+  const openDrawer = () => { drawer.hidden = false; document.documentElement.classList.add("modal-open"); menuBtn.setAttribute("aria-expanded", "true"); };
   const closeDrawer = () => {
     drawer.hidden = true;
-    document.body.style.overflow = "";
+    if (!$$("dialog[open]").length) document.documentElement.classList.remove("modal-open");
     menuBtn.setAttribute("aria-expanded", "false");
   };
   function closeMenus() {
     if (!megaEl.hidden) closeMega();
     if (!drawer.hidden) closeDrawer();
+    $("#searchForm").classList.remove("open");
   }
 
-  menuBtn.addEventListener("click", () => {
-    if (desktopQuery.matches) megaEl.hidden ? openMega() : closeMega();
-    else openDrawer();
-  });
-  drawer.addEventListener("click", (e) => {
-    if (e.target.closest("[data-close]")) closeDrawer();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeMenus();
-  });
-  document.addEventListener("click", (e) => {
-    if (!megaEl.hidden && !e.target.closest("#mega") && !e.target.closest("#menuBtn")) closeMega();
-  });
-  desktopQuery.addEventListener("change", closeMenus);
-
-  /* ---------- 필터 · 검색 ---------- */
-  function filtered() {
+  /* ---------- 전체 강의 ---------- */
+  function coursesHash({ cat = "all", sub = null, q = "", saved: sv = false, clip = false } = {}) {
+    let h = "#/courses";
+    if (cat && cat !== "all" && catById[cat]) { h += "/" + cat; if (sub) h += "/" + sub; }
+    const p = new URLSearchParams();
+    if (q) p.set("q", q);
+    if (sv) p.set("saved", "1");
+    if (clip) p.set("clip", "1");
+    const s = p.toString();
+    return s ? `${h}?${s}` : h;
+  }
+  function filteredCourses() {
     const q = state.q.trim().toLowerCase();
-    return courses.filter((c) => {
+    const f = state.filters;
+    return D.courses.filter((c) => {
       if (state.cat !== "all" && c.cat !== state.cat) return false;
       if (state.sub && c.sub !== state.sub) return false;
+      if (f.level && c.level !== f.level) return false;
+      if (f.online && c.format !== "online") return false;
+      if (f.clip && c.kind !== "clip") return false;
+      if (f.gov && !c.gov) return false;
+      if (f.saved && !saved.has(c.id)) return false;
       if (q) {
-        const hay = [c.title, c.desc, c.sub, catById[c.cat].name, c.format, c.level].join(" ").toLowerCase();
+        const cat = catById[c.cat];
+        const sub = cat.subs.find((s) => s.id === c.sub) || { name: {} };
+        const hay = [c.title, c.desc, cat.name, sub.name].map((o) => [o.ko, o.en, o.ja].join(" ")).join(" ").toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
   }
-
-  function renderSubChips() {
-    const el = $("#subChips");
-    if (state.cat === "all") { el.innerHTML = ""; return; }
-    const c = catById[state.cat];
-    el.innerHTML = [
-      `<button class="chip" type="button" data-cat="${c.id}" aria-pressed="${!state.sub}">전체</button>`,
-      ...c.subs.map(
-        (s) => `<button class="chip" type="button" data-cat="${c.id}" data-sub="${esc(s)}" aria-pressed="${state.sub === s}">${esc(s)}</button>`
-      ),
-    ].join("");
+  function centerPressed(bar) {
+    const btn = bar && bar.querySelector('[aria-pressed="true"]');
+    if (btn) bar.scrollLeft = btn.offsetLeft - bar.clientWidth / 2 + btn.offsetWidth / 2;
   }
+  function renderCourses() {
+    const chips = [{ id: "all", label: t("courses.all") }, ...D.categories.map((c) => ({ id: c.id, label: L(c.name) }))];
+    $("#catChips").innerHTML = chips.map((c) =>
+      `<button class="chip" type="button" data-cat="${c.id}" aria-pressed="${state.cat === c.id}">${esc(c.label)}</button>`
+    ).join("");
+    const sc = $("#subChips");
+    if (state.cat === "all") sc.innerHTML = "";
+    else {
+      const c = catById[state.cat];
+      sc.innerHTML = [
+        `<button class="chip" type="button" data-cat="${c.id}" aria-pressed="${!state.sub}">${esc(t("courses.all"))}</button>`,
+        ...c.subs.map((s) => `<button class="chip" type="button" data-cat="${c.id}" data-sub="${s.id}" aria-pressed="${state.sub === s.id}">${esc(L(s.name))}</button>`)
+      ].join("");
+    }
+    const f = state.filters;
+    const fchips = [
+      ...["beginner", "pro", "expert"].map((lv) => ({ k: "level:" + lv, on: f.level === lv, label: t("level." + lv) })),
+      { k: "clip", on: f.clip, label: t("courses.f.clip") },
+      { k: "online", on: f.online, label: t("courses.f.online") },
+      { k: "gov", on: f.gov, label: t("courses.f.gov") },
+      { k: "saved", on: f.saved, label: `♡ ${t("courses.f.saved")}${saved.size ? " " + saved.size : ""}` }
+    ];
+    $("#filterChips").innerHTML = fchips.map((x) =>
+      `<button class="chip" type="button" data-filter="${x.k}" aria-pressed="${x.on}">${esc(x.label)}</button>`
+    ).join("");
 
-  function renderGrid() {
-    const list = filtered();
+    const list = filteredCourses();
     $("#courseGrid").innerHTML = list.slice(0, state.limit).map(cardHTML).join("");
-    $("#emptyText").hidden = list.length > 0;
     const rest = list.length - state.limit;
     $("#moreWrap").hidden = rest <= 0;
-    $("#moreBtn").textContent = `강의 더 보기 (${Math.max(rest, 0)}개 더)`;
+    $("#moreBtn").textContent = t("common.more", { n: Math.max(rest, 0) });
+    const empty = $("#emptyText");
+    empty.hidden = list.length > 0;
+    empty.textContent = t(f.saved && !state.q ? "courses.emptySaved" : "courses.empty");
     let label;
-    if (state.q) label = `‘${esc(state.q)}’ 검색 결과`;
-    else if (state.cat === "all") label = "전체 강의";
-    else label = esc(catById[state.cat].name) + (state.sub ? ` · ${esc(state.sub)}` : "");
-    $("#resultText").innerHTML = `${label} <strong>${list.length}</strong>개`;
+    if (state.q) label = t("courses.resultSearch", { q: esc(state.q) });
+    else if (state.cat === "all") label = esc(t("courses.resultAll"));
+    else {
+      const c = catById[state.cat];
+      label = esc(L(c.name)) + (state.sub ? " · " + esc(L(c.subs.find((s) => s.id === state.sub).name)) : "");
+    }
+    $("#resultText").innerHTML = t("courses.result", { label, n: list.length });
     $("#clearSearch").hidden = !state.q;
-  }
-
-  function centerPressed(bar) {
-    const btn = bar.querySelector('[aria-pressed="true"]');
-    if (!btn) return;
-    bar.scrollLeft = btn.offsetLeft - bar.clientWidth / 2 + btn.offsetWidth / 2;
-  }
-
-  function applyFilter({ cat = "all", sub = null, q = "", scroll = false } = {}) {
-    state.cat = catById[cat] ? cat : "all";
-    state.sub = state.cat !== "all" && sub && catById[state.cat].subs.includes(sub) ? sub : null;
-    state.q = q;
-    state.limit = pageSize();
-    renderSubChips();
-    renderGrid();
-    document.querySelectorAll("#catTabs [data-cat], #catChips [data-cat]").forEach((b) => {
-      b.setAttribute("aria-pressed", String(b.dataset.cat === state.cat));
-    });
-    centerPressed($("#catTabs"));
     centerPressed($("#catChips"));
-    try {
-      const hash = state.cat === "all" ? "" : `#cat=${state.cat}`;
-      history.replaceState(null, "", location.pathname + location.search + hash);
-    } catch (_) { /* file:// 등에서는 무시 */ }
-    if (scroll) document.getElementById("courses").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // 카테고리 버튼(탭·바로가기·메뉴·푸터·필터 칩) 공통 처리
-  document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-cat]");
-    if (!t) return;
-    const inFilter = !!t.closest("#catChips, #subChips");
-    applyFilter({ cat: t.dataset.cat, sub: t.dataset.sub || null, scroll: !inFilter });
+  /* ---------- 커뮤니티 ---------- */
+  function boardHTML(b, isTrade) {
+    return `<button class="board" type="button" data-soon><span class="bd-ic" style="--c:${b.color}">${isTrade ? catIcon(b.id) : icon(b.icon)}</span><strong>${esc(L(b.name))}</strong><span class="bd-d">${esc(L(b.desc))}</span></button>`;
+  }
+  function renderCommunity() {
+    $$("#commTabs [data-ctab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.ctab === state.commTab)));
+    $$("[data-cpanel]").forEach((p) => { p.hidden = p.dataset.cpanel !== state.commTab; });
+    $("#tradeBoards").innerHTML = D.categories.map((c) => boardHTML(c, true)).join("");
+    $("#topicBoards").innerHTML = D.topicBoards.map((b) => boardHTML(b, false)).join("");
+    $("#postList").innerHTML = D.posts.map((p) => {
+      const board = catById[p.board] || topicById[p.board];
+      return `<li><span class="b">${esc(L(D.postTypes[p.type]))}</span><span class="post-board">${esc(L(board.name))}</span><span class="post-title">${esc(L(p.title))}</span></li>`;
+    }).join("");
+    renderTerms();
+  }
+  function termHTML(x) {
+    const catName = x.cat === "general" ? t("comm.terms.general") : L(catById[x.cat].name);
+    const extra = [];
+    if (x.jp) extra.push(`<span class="jp">${esc(t("comm.terms.from", { jp: x.jp }))}</span>`);
+    if (x.std) extra.push(`<span>${esc(t("comm.terms.std", { std: x.std }))}</span>`);
+    return `<article class="term">
+      <div class="term-top"><span class="term-word" lang="ko">${esc(x.t)}</span><span class="term-rom">${esc(x.rom)}</span><span class="cert term-cat">${esc(catName)}</span></div>
+      <p class="term-mean">${esc(L(x.m))}</p>
+      ${extra.length ? `<div class="term-extra">${extra.join("")}</div>` : ""}
+    </article>`;
+  }
+  function renderTerms() {
+    const used = new Set(D.terms.map((x) => x.cat));
+    const cats = ["all", "general", ...D.categories.map((c) => c.id).filter((id) => used.has(id))];
+    $("#termChips").innerHTML = cats.map((id) => {
+      const label = id === "all" ? t("courses.all") : id === "general" ? t("comm.terms.general") : L(catById[id].name);
+      return `<button class="chip" type="button" data-term-cat="${id}" aria-pressed="${state.termCat === id}">${esc(label)}</button>`;
+    }).join("");
+    const q = state.termQ.trim().toLowerCase();
+    const list = D.terms.filter((x) =>
+      (state.termCat === "all" || x.cat === state.termCat) &&
+      (!q || [x.t, x.rom, x.jp, x.std, x.m.ko, x.m.en, x.m.ja].filter(Boolean).join(" ").toLowerCase().includes(q))
+    );
+    $("#termCount").textContent = t("comm.terms.count", { n: list.length });
+    $("#termGrid").innerHTML = list.map(termHTML).join("");
+    $("#termEmpty").hidden = list.length > 0;
+  }
+
+  /* ---------- 인력사무소 ---------- */
+  const regionMatch = (j) => state.jobRegion === "all" || j.region === state.jobRegion || j.region === "all";
+  const catMatch = (j) => state.jobCat === "all" || j.cat === state.jobCat;
+  const regionName = (id) => L((D.regions.find((r) => r.id === id) || D.regions[0]).name);
+  function hireHTML(j) {
+    const cat = catById[j.cat];
+    const vet = j.tags.includes("veteran");
+    return `<article class="job">
+      <div class="job-top"><span class="b b-sample">${esc(t("common.example"))}</span>${vet ? `<span class="b b-vet">${esc(t("jobs.vet"))}</span>` : ""}<span class="job-type">${esc(t("jobs.type." + j.type))}</span></div>
+      <h3 class="job-title">${esc(L(j.title))}</h3>
+      <p class="job-meta"><span class="dot" style="--c:${cat.color}"></span>${esc(L(cat.name))} · ${esc(L(j.place))}</p>
+      <div class="tags">${j.tags.map((k) => `<span>${esc(L(D.jobTags[k]))}</span>`).join("")}</div>
+      <button class="job-act" type="button" data-soon>${esc(t("jobs.apply"))}</button>
+    </article>`;
+  }
+  function seekHTML(j) {
+    const cat = catById[j.cat];
+    return `<article class="job">
+      <div class="job-top"><span class="b b-sample">${esc(t("common.example"))}</span>${j.neo ? `<span class="b b-neo">${esc(t("jobs.neo"))}</span>` : ""}${j.veteran ? `<span class="b b-vet">${esc(t("jobs.vet"))}</span>` : ""}</div>
+      <h3 class="job-title">${esc(L(j.title))}</h3>
+      <p class="job-meta"><span class="dot" style="--c:${cat.color}"></span>${esc(L(cat.name))} · ${esc(L(j.place))}</p>
+      <div class="tags">${(j.tags || []).map((x) => `<span>${esc(L(x))}</span>`).join("")}</div>
+      <button class="job-act" type="button" data-soon>${esc(t("jobs.contact"))}</button>
+    </article>`;
+  }
+  function traineeHTML(j) {
+    const cat = catById[j.cat];
+    return `<article class="job">
+      <div class="job-top"><span class="b b-sample">${esc(t("common.example"))}</span><span class="b">${esc(t(`jobs.tr.${j.partner}.t`))}</span></div>
+      <h3 class="job-title">${esc(L(j.title))}</h3>
+      <p class="job-meta"><span class="dot" style="--c:${cat.color}"></span>${esc(L(cat.name))} · ${esc(regionName(j.region))}</p>
+      <div class="tags"><span>${esc(t("jobs.tr.status"))}</span></div>
+      <button class="job-act" type="button" data-soon>${esc(t("jobs.tr.applyBtn"))}</button>
+    </article>`;
+  }
+  function renderJobs() {
+    $$("#jobTabs [data-tab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === state.jobsTab)));
+    $$("[data-panel]").forEach((p) => { p.hidden = p.dataset.panel !== state.jobsTab; });
+    const rs = $("#jobRegion");
+    const cs = $("#jobCat");
+    rs.innerHTML = D.regions.map((r) => `<option value="${r.id}">${esc(L(r.name))}</option>`).join("");
+    rs.value = state.jobRegion;
+    cs.innerHTML = [`<option value="all">${esc(t("jobs.allTrades"))}</option>`, ...D.categories.map((c) => `<option value="${c.id}">${esc(L(c.name))}</option>`)].join("");
+    cs.value = state.jobCat;
+
+    const hire = D.jobs.hire.filter((j) => regionMatch(j) && catMatch(j));
+    const seek = D.jobs.seek.filter((j) => regionMatch(j) && catMatch(j));
+    const tr = D.jobs.trainee.filter((j) => regionMatch(j) && catMatch(j));
+    $("#hireList").innerHTML = hire.map(hireHTML).join("");
+    $("#seekList").innerHTML = seek.map(seekHTML).join("");
+    $("#traineeList").innerHTML = tr.length ? tr.map(traineeHTML).join("") : `<p class="empty">${esc(t("jobs.empty"))}</p>`;
+    $("#jobsEmpty").hidden = state.jobsTab === "trainee" || (state.jobsTab === "hire" ? hire.length : seek.length) > 0;
+
+    $("#traineeFlow").innerHTML = [1, 2, 3, 4, 5].map((i) => `<li>${esc(t("jobs.tr.s" + i))}</li>`).join("");
+    $("#partnerTypes").innerHTML = [["school", "cap"], ["office", "briefcase"], ["veteran", "medal"]].map(([k, ic]) =>
+      `<div class="partner"><span class="p-ic">${icon(ic)}</span><strong>${esc(t(`jobs.tr.${k}.t`))}</strong><span>${esc(t(`jobs.tr.${k}.d`))}</span></div>`
+    ).join("");
+    $("#regionGrid").innerHTML = D.regions.filter((r) => r.id !== "all").map((r) =>
+      `<div class="region"><strong>${esc(L(r.name))}</strong><span>${esc(t("jobs.tr.recruiting"))}</span></div>`
+    ).join("");
+  }
+
+  /* ---------- 수강권 ---------- */
+  function renderPlans() {
+    const li = (key, hl) => `<li${hl ? ' class="hl"' : ""}>${icon("check")}<span>${esc(t(key))}</span></li>`;
+    const pr = D.pricing.find((x) => x.id === state.country) || D.pricing[0];
+    $("#plansGrid").innerHTML = `
+      <article class="plan">
+        <div class="plan-top"><span class="pill pill-gov">${esc(t("plan.gov.badge"))}</span><span class="country-label">${esc(t("plan.koreaOnly"))}</span></div>
+        <h3>${esc(t("plan.gov.name"))}</h3>
+        <p class="plan-price">${esc(t("plan.gov.price"))}</p>
+        <p class="plan-sub">${esc(t("plan.gov.sub"))}</p>
+        <ul>${li("plan.gov.b1")}${li("plan.gov.b2")}${li("plan.gov.b3")}</ul>
+        <button class="btn btn-line" type="button" data-soon>${esc(t("plan.gov.btn"))}</button>
+      </article>
+      <article class="plan featured">
+        <div class="plan-top"><span class="plan-pass">NEO PASS</span><span class="pill pill-dark">${esc(t("plan.voucher.badge"))}</span></div>
+        <h3>${esc(t("plan.voucher.name"))}</h3>
+        <p class="plan-price">${esc(t("plan.voucher.price"))}</p>
+        <p class="plan-sub">${esc(t("plan.voucher.sub"))}</p>
+        <ul>${li("plan.voucher.b1")}${li("plan.voucher.b2", true)}${li("plan.voucher.b3")}${li("plan.voucher.b4")}</ul>
+        <p class="country-label">${esc(t("plan.koreaOnly"))}</p>
+        <button class="btn btn-dark" type="button" data-soon>${esc(t("plan.voucher.btn"))}</button>
+      </article>
+      <article class="plan">
+        <div class="plan-top"><span class="plan-pass">NEO PASS</span><span class="pill">${esc(t("plan.monthly.badge"))}</span></div>
+        <h3>${esc(t("plan.monthly.name"))}</h3>
+        <p class="plan-price">${esc(priceFor(pr.id))}<small>${esc(t("plan.monthly.unit"))}</small></p>
+        ${pr.perDay ? `<p class="plan-perday">${esc(t("plan.monthly.perDay"))}</p>` : ""}
+        <p class="plan-sub">${esc(t("plan.monthly.sub"))}</p>
+        <div><p class="country-label">${esc(t("plan.country"))}</p>
+          <div class="country-chips">${D.pricing.map((p) => `<button type="button" data-country="${p.id}" aria-pressed="${p.id === pr.id}">${esc(L(p.name))}</button>`).join("")}</div></div>
+        <ul>${li("plan.monthly.b1")}${li("plan.monthly.b2", true)}${li("plan.monthly.b3")}${li("plan.monthly.b4")}</ul>
+        <button class="btn btn-dark" type="button" data-soon>${esc(t("plan.monthly.btn"))}</button>
+      </article>`;
+    $("#pickList").innerHTML = [1, 2, 3].map((i) => `<li><span>${esc(t(`plans.pick${i}.c`))}</span><strong>${esc(t(`plans.pick${i}.r`))}</strong></li>`).join("");
+  }
+
+  /* ---------- 베테랑 스튜디오 ---------- */
+  function renderVeteran() {
+    const ways = [["way1", "video", "#7a4dff", false], ["way2", "users", "#e03a7a", true], ["way3", "briefcase", "#2f6bff", true]];
+    $("#vetWays").innerHTML = ways.map(([k, ic, c, soon]) =>
+      `<article class="way" style="--c:${c}"><span class="w-ic">${icon(ic)}</span><strong>${esc(t(`vet.${k}.t`))}${soon ? `<span class="soon-tag">${esc(t("common.prep"))}</span>` : ""}</strong><p>${esc(t(`vet.${k}.d`))}</p></article>`
+    ).join("");
+    $("#vetKpis").innerHTML = [1, 2, 3, 4].map((i) => `<div class="kpi"><span>${esc(t("vet.kpi" + i))}</span><strong>${esc(t("vet.kpi" + i + "v"))}</strong></div>`).join("");
+    $("#upSteps").innerHTML = [1, 2, 3, 4].map((i) => `<li><b>${i}</b>${esc(t("vet.step" + i))}</li>`).join("");
+    const upCat = $("#upCat");
+    const upLevel = $("#upLevel");
+    const cv = upCat.value || D.categories[0].id;
+    const lv = upLevel.value || "pro";
+    upCat.innerHTML = D.categories.map((c) => `<option value="${c.id}">${esc(L(c.name))}</option>`).join("");
+    upCat.value = cv;
+    upLevel.innerHTML = ["beginner", "pro", "expert"].map((l) => `<option value="${l}">${esc(t("level." + l))}</option>`).join("");
+    upLevel.value = lv;
+    $("#payGrid").innerHTML = [1, 2, 3].map((i) => `<div class="pay"><strong>${esc(t(`vet.pay${i}.t`))}</strong><p>${esc(t(`vet.pay${i}.d`))}</p></div>`).join("");
+    $("#vetPerks").innerHTML = [1, 2, 3, 4].map((i) =>
+      `<div class="perk"><strong>${esc(t(`vet.perk${i}.t`))}${i === 1 ? `<span class="soon-tag">${esc(t("common.prep"))}</span>` : ""}</strong><p>${esc(t(`vet.perk${i}.d`))}</p></div>`
+    ).join("");
+    $("#vetWho").innerHTML = [1, 2, 3, 4].map((i) => `<li>${esc(t("vet.who" + i))}</li>`).join("");
+    $("#vetGuide").innerHTML = [1, 2, 3, 4, 5, 6].map((i) => `<div class="tip"><b>${i}</b><strong>${esc(t(`vet.g${i}.t`))}</strong><p>${esc(t(`vet.g${i}.d`))}</p></div>`).join("");
+    $("#vetSteps").innerHTML = [1, 2, 3, 4, 5].map((i) => `<li>${esc(t("vet.r" + i))}</li>`).join("");
+    updateCalc();
+  }
+  function updateCalc() {
+    const s = Number($("#inStudents").value);
+    const h = Number($("#inHours").value);
+    const r = Number($("#inRate").value);
+    $("#outStudents").textContent = t("unit.people", { n: fmt(s) });
+    $("#outHours").textContent = t("unit.hours", { n: fmt(h, h % 1 ? 1 : 0) });
+    $("#outRate").textContent = money(r);
+    const month = s * h * r;
+    $("#calcMonth").textContent = money(month);
+    $("#calcYear").textContent = money(month * 12);
+  }
+
+  // 영상 미리보기 (이 기기에서만 재생, 업로드 없음)
+  const dropzone = $("#dropzone");
+  const videoInput = $("#videoInput");
+  let objectUrl = null;
+  const sizeText = (b) => (b >= 1e9 ? `${fmt(b / 1e9, 1)} GB` : `${fmt(b / 1e6, 1)} MB`);
+  function setVideo(file) {
+    if (!file) return;
+    if (!String(file.type || "").startsWith("video/")) { toast(t("vet.notVideo")); return; }
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    objectUrl = URL.createObjectURL(file);
+    $("#previewVideo").src = objectUrl;
+    $("#uploadPreview").hidden = false;
+    dropzone.hidden = true;
+    $("#upReset").hidden = false;
+    $("#fileInfo").textContent = `${file.name} · ${sizeText(file.size)}`;
+    const ti = $("#upTitleInput");
+    if (!ti.value) ti.value = file.name.replace(/\.[^.]+$/, "").slice(0, 60);
+  }
+  function resetVideo() {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    objectUrl = null;
+    const pv = $("#previewVideo");
+    pv.removeAttribute("src");
+    pv.load();
+    $("#uploadPreview").hidden = true;
+    dropzone.hidden = false;
+    $("#upReset").hidden = true;
+    videoInput.value = "";
+  }
+  videoInput.addEventListener("change", () => setVideo(videoInput.files && videoInput.files[0]));
+  dropzone.setAttribute("tabindex", "0");
+  dropzone.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); videoInput.click(); } });
+  ["dragenter", "dragover"].forEach((ev) => dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.add("drag"); }));
+  ["dragleave", "drop"].forEach((ev) => dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.remove("drag"); }));
+  dropzone.addEventListener("drop", (e) => setVideo(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]));
+  $("#upReset").addEventListener("click", resetVideo);
+  $("#upForm").addEventListener("submit", (e) => { e.preventDefault(); toast(t("vet.demoToast")); });
+  ["#inStudents", "#inHours", "#inRate"].forEach((sel) => $(sel).addEventListener("input", updateCalc));
+
+  /* ---------- 방문자 통계 (서버: functions/api/stats.js) ---------- */
+  const onWeb = () => /^https?:$/.test(location.protocol);
+  function countVisit() {
+    // 같은 IP는 서버가 한 번만 센다. 여기서는 같은 탭에서 여러 번 보내지 않게만 막는다
+    if (!onWeb() || session.get("neo.visit")) return;
+    session.set("neo.visit", "1");
+    try { fetch("/api/stats", { method: "POST", keepalive: true }).catch(() => {}); } catch (_) { /* 무시 */ }
+  }
+  async function loadStats() {
+    state.stats = { loading: true };
+    renderStats();
+    if (!onWeb()) { state.stats = { ok: false, reason: "not_configured" }; renderStats(); return; }
+    const key = session.get("neo.statsKey") || "";
+    try {
+      const res = await fetch("/api/stats" + (key ? "?key=" + encodeURIComponent(key) : ""), { cache: "no-store" });
+      const data = await res.json().catch(() => ({}));
+      state.stats = res.ok && data.ok
+        ? data
+        : { ok: false, reason: data.reason || (res.status === 403 ? "forbidden" : res.status === 503 || res.status === 404 || res.status === 405 ? "not_configured" : "error") };
+    } catch (_) {
+      state.stats = { ok: false, reason: "error" };
+    }
+    renderStats();
+  }
+  function regionNamer() {
+    let dn = null;
+    try { dn = new Intl.DisplayNames([LOCALE[lang]], { type: "region" }); } catch (_) { /* 오래된 브라우저 */ }
+    return (code) => {
+      if (code === "T1") return "Tor";
+      if (!code || code === "XX") return t("stats.unknown");
+      try { return (dn && dn.of(code)) || code; } catch (_) { return code; }
+    };
+  }
+  const dayText = (d) => {
+    try { return new Intl.DateTimeFormat(LOCALE[lang], { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(d + "T00:00:00Z")); } catch (_) { return d.slice(5); }
+  };
+  function renderStats() {
+    const box = $("#statsBody");
+    const s = state.stats;
+    if (!box || !s) return;
+    if (s.loading) { box.innerHTML = `<p class="empty">${esc(t("stats.loading"))}</p>`; return; }
+    if (!s.ok) {
+      if (s.reason === "forbidden") {
+        box.innerHTML = `<form class="stats-key" id="statsKeyForm"><p>${esc(t("stats.forbidden"))}</p><div class="stats-key-row"><input type="password" id="statsKey" autocomplete="off" placeholder="${esc(t("stats.keyPh"))}" aria-label="${esc(t("stats.keyPh"))}"><button class="btn btn-dark" type="submit">${esc(t("stats.keyBtn"))}</button></div></form>`;
+        return;
+      }
+      box.innerHTML = `<p class="info-note">${esc(t(s.reason === "not_configured" ? "stats.notReady" : "stats.error"))}</p>`;
+      return;
+    }
+    const name = regionNamer();
+    const countries = Array.isArray(s.countries) ? s.countries : [];
+    const total = Number(s.total) || 0;
+    const max = Math.max(1, ...countries.map((c) => c.n));
+    const rows = countries.map((c) =>
+      `<div class="stat-row" role="listitem"><span class="stat-name">${esc(name(c.country))}<small>${esc(c.country)}</small></span><span class="wage-track"><span class="wage-bar" style="--w:${((c.n / max) * 100).toFixed(1)}%"></span></span><span class="stat-val">${esc(fmt(c.n))}<small>${esc(fmt(total ? (c.n / total) * 100 : 0, 1))}%</small></span></div>`
+    ).join("");
+
+    // 최근 14일 (방문이 없던 날은 0)
+    const byDay = Object.fromEntries((Array.isArray(s.days) ? s.days : []).map((d) => [d.day, Number(d.n) || 0]));
+    const endDay = /^\d{4}-\d{2}-\d{2}$/.test(s.day || "") ? s.day : new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+    const end = Date.parse(endDay + "T00:00:00Z");
+    const days = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(end - i * 864e5).toISOString().slice(0, 10);
+      days.push({ d, n: byDay[d] || 0 });
+    }
+    if (!days.some((x) => x.d === state.statsDay)) state.statsDay = endDay;
+    const sel = days.find((x) => x.d === state.statsDay) || days[days.length - 1];
+    const dmax = Math.max(1, ...days.map((x) => x.n));
+    const bars = days.map((x) =>
+      `<button class="day" type="button" data-day="${x.d}" aria-pressed="${x.d === sel.d}" aria-label="${esc(dayText(x.d))} · ${esc(t("stats.people", { n: fmt(x.n) }))}"><span class="day-bar" style="--h:${((x.n / dmax) * 100).toFixed(1)}%"></span></button>`
+    ).join("");
+
+    let updated = "";
+    try { updated = new Date(s.updated).toLocaleString(LOCALE[lang]); } catch (_) { updated = ""; }
+    box.innerHTML = `
+      <div class="kpis">
+        <div class="kpi"><span>${esc(t("stats.total"))}</span><strong>${esc(fmt(total))}</strong></div>
+        <div class="kpi"><span>${esc(t("stats.today"))}</span><strong>${esc(fmt(Number(s.today) || 0))}</strong></div>
+      </div>
+      <h2 class="sub-title">${esc(t("stats.byCountry"))} <small class="stat-count">${esc(t("stats.countries", { n: countries.length }))}</small></h2>
+      ${countries.length ? `<div class="stat-list" role="list">${rows}</div>` : `<p class="empty">${esc(t("stats.empty"))}</p>`}
+      <h2 class="sub-title">${esc(t("stats.days"))}</h2>
+      <div class="day-chart">
+        <div class="day-bars" role="group" aria-label="${esc(t("stats.days"))}">${bars}</div>
+        <div class="day-axis"><span>${esc(dayText(days[0].d))}</span><span>${esc(dayText(endDay))}</span></div>
+        <p class="day-sel" aria-live="polite">${esc(dayText(sel.d))} · <strong>${esc(t("stats.people", { n: fmt(sel.n) }))}</strong></p>
+      </div>
+      ${updated ? `<p class="source">${esc(t("stats.updated", { t: updated }))}</p>` : ""}`;
+  }
+
+  /* ---------- 강의 상세 창 · 기술 찾기 창 ---------- */
+  const courseDlg = $("#courseDlg");
+  const quizDlg = $("#quizDlg");
+  function showDialog(dlg) {
+    if (dlg.open) return;
+    if (typeof dlg.showModal === "function") dlg.showModal();
+    else dlg.setAttribute("open", "");
+    document.documentElement.classList.add("modal-open");
+  }
+  function closeDialog(dlg) {
+    if (!dlg || !dlg.open) return;
+    if (typeof dlg.close === "function") dlg.close();
+    else { dlg.removeAttribute("open"); dlg.dispatchEvent(new Event("close")); }
+  }
+  const closeAllDialogs = () => $$("dialog[open]").forEach(closeDialog);
+  [courseDlg, quizDlg].forEach((dlg) => {
+    dlg.addEventListener("close", () => {
+      if (!$$("dialog[open]").length && drawer.hidden) document.documentElement.classList.remove("modal-open");
+    });
+    dlg.addEventListener("click", (e) => { if (e.target === dlg) closeDialog(dlg); });
+  });
+
+  function openCourse(id) {
+    if (!courseById[id]) return;
+    state.course = id;
+    renderCourseDialog();
+    showDialog(courseDlg);
+    const inner = $(".sheet-inner", courseDlg);
+    if (inner) inner.scrollTop = 0;
+  }
+  function renderCourseDialog() {
+    const c = courseById[state.course];
+    if (!c) return;
+    const cat = catById[c.cat];
+    const wid = D.wages.byCat[c.cat];
+    const w = wid ? wageById[wid] : null;
+    const rms = D.roadmaps.filter((r) => r.courses.includes(c.id));
+    const related = D.courses.filter((x) => x.cat === c.cat && x.id !== c.id).slice(0, 4);
+    const on = saved.has(c.id);
+    $("#courseBody").innerHTML = `
+      <div class="cm-hero" style="--c:${cat.color}">
+        ${catIcon(cat.id, "thumb-ic")}
+        <p class="cm-crumb">${esc(L(cat.name))} › ${esc(L(subName(c)))}</p>
+        <h2 id="cmTitle">${esc(L(c.title))}</h2>
+        <p>${esc(L(c.desc))}</p>
+        <div class="badges">${badgesHTML(c)}</div>
+      </div>
+      <div class="cm-body">
+        <dl class="cm-meta">
+          <div><dt>${esc(t("cm.hours"))}</dt><dd>${esc(lengthText(c))}</dd></div>
+          <div><dt>${esc(t("cm.level"))}</dt><dd>${esc(t("level." + c.level))}</dd></div>
+          <div><dt>${esc(t("cm.format"))}</dt><dd>${esc(t("format." + c.format))}</dd></div>
+          <div><dt>${esc(t("cm.subs"))}</dt><dd>${esc(t("cm.subsValue"))}</dd></div>
+        </dl>
+        ${w ? `<div class="cm-sec"><h3>${esc(t("cm.wage"))}</h3><div class="cm-wage"><strong>${esc(money(w.daily))}</strong><span>${esc(L(w.name))}</span><small>${esc(t("cm.wageSrc"))}</small></div></div>` : ""}
+        <div class="cm-sec"><h3>${esc(t("cm.how"))}</h3><ul class="dots"><li>${esc(t("cm.how1"))}</li>${c.gov ? `<li>${esc(t("cm.how2"))}</li>` : ""}</ul></div>
+        ${c.format !== "online" ? `<div class="cm-sec"><h3>${esc(t("cm.practice"))}</h3><div class="cm-practice">${esc(t("cm.practiceDesc"))} <button class="text-link" type="button" data-go="#/jobs/trainee">${esc(t("cm.practiceLink"))}</button></div></div>` : ""}
+        <div class="cm-sec"><h3>${esc(t("cm.tools"))}</h3><div class="tool-list">${cat.tools.map((x) => `<span>${esc(L(x))}</span>`).join("")}</div></div>
+        ${cat.certs.length ? `<div class="cm-sec"><h3>${esc(t("cm.certs"))}</h3><div class="chip-row">${cat.certs.map((x) => `<span class="cert">${esc(L(D.certs[x]))}</span>`).join("")}</div></div>` : ""}
+        ${rms.length ? `<div class="cm-sec"><h3>${esc(t("cm.roadmaps"))}</h3><div class="cm-links">${rms.map((r) => `<button type="button" data-go="#/roadmaps/${r.id}">${esc(L(r.name))}</button>`).join("")}</div></div>` : ""}
+        ${related.length ? `<div class="cm-sec"><h3>${esc(t("cm.related"))}</h3><div class="cm-related">${related.map((x) => `<button type="button" data-course="${x.id}">${esc(L(x.title))}<small>${esc(lengthText(x))}</small></button>`).join("")}</div></div>` : ""}
+        <p class="cm-note">${esc(t("cm.curriculum"))}</p>
+      </div>
+      <div class="cm-actions">
+        <button class="btn btn-line" type="button" data-save="${c.id}" aria-pressed="${on}">${icon("heart")}<span>${esc(t(on ? "card.unsave" : "card.save"))}</span></button>
+        <button class="btn btn-dark" type="button" data-go="#/plans">${esc(t("cm.plans"))}</button>
+      </div>`;
+  }
+
+  function openQuiz() {
+    state.quiz = { step: 0, answers: [] };
+    renderQuiz();
+    showDialog(quizDlg);
+  }
+  function renderQuiz() {
+    const total = D.quiz.length;
+    const { step, answers } = state.quiz;
+    const box = $("#quizBody");
+    if (step >= total) {
+      const score = {};
+      answers.forEach((ai, qi) => {
+        const w = D.quiz[qi].options[ai].w;
+        Object.keys(w).forEach((k) => { score[k] = (score[k] || 0) + w[k]; });
+      });
+      const ranked = D.roadmaps.map((r, i) => ({ r, s: score[r.id] || 0, i })).sort((a, b) => b.s - a.s || a.i - b.i);
+      box.innerHTML = `<div class="quiz">
+        <h2 id="quizTitle">${esc(t("quiz.title"))}</h2>
+        <div class="q-bar" style="--p:100%"><i></i></div>
+        <h3>${esc(t("quiz.resultTitle"))}</h3>
+        <div class="q-result">${rmCardHTML(ranked[0].r)}<p class="alt-label">${esc(t("quiz.resultAlt"))}</p>${rmCardHTML(ranked[1].r)}</div>
+        <button class="q-back" type="button" data-q-retry>↺ ${esc(t("quiz.retry"))}</button>
+      </div>`;
+      return;
+    }
+    const q = D.quiz[step];
+    box.innerHTML = `<div class="quiz">
+      <h2 id="quizTitle">${esc(t("quiz.title"))}</h2>
+      <p class="q-step">${esc(t("quiz.step", { n: step + 1, total }))}</p>
+      <div class="q-bar" style="--p:${((step / total) * 100).toFixed(0)}%"><i></i></div>
+      <h3>${esc(L(q.q))}</h3>
+      <div class="q-opts">${q.options.map((o, i) => `<button type="button" data-q-opt="${i}">${esc(L(o.t))}</button>`).join("")}</div>
+      ${step > 0 ? `<button class="q-back" type="button" data-q-back>← ${esc(t("quiz.back"))}</button>` : ""}
+    </div>`;
+  }
+
+  /* ---------- 관심 강의 ---------- */
+  function updateSavedCount() {
+    const el = $("#savedCount");
+    el.textContent = String(saved.size);
+    el.hidden = saved.size === 0;
+  }
+  function toggleSave(id) {
+    if (!courseById[id]) return;
+    const on = !saved.has(id);
+    if (on) saved.add(id); else saved.delete(id);
+    store.set("neo.saved", [...saved]);
+    $$(`.save-btn[data-save="${id}"]`).forEach((b) => {
+      b.setAttribute("aria-pressed", String(on));
+      b.setAttribute("aria-label", t(on ? "card.unsave" : "card.save"));
+    });
+    updateSavedCount();
+    toast(t(on ? "toast.saved" : "toast.unsaved"));
+    if (state.view === "courses") renderCourses();
+    if (courseDlg.open && state.course === id) renderCourseDialog();
+  }
+
+  /* ---------- 주소(라우팅) ---------- */
+  const VIEWS = ["home", "courses", "roadmaps", "community", "jobs", "plans", "veteran", "ads", "stats"];
+  function parseRoute() {
+    const raw = (location.hash || "#/").slice(1);
+    const legacy = raw.match(/^cat=([\w-]+)/);
+    if (legacy) return { view: "courses", a: legacy[1], b: null, params: new URLSearchParams() };
+    const qi = raw.indexOf("?");
+    const path = qi >= 0 ? raw.slice(0, qi) : raw;
+    const params = new URLSearchParams(qi >= 0 ? raw.slice(qi + 1) : "");
+    const parts = path.split("/").filter(Boolean);
+    const view = VIEWS.includes(parts[0]) ? parts[0] : "home";
+    return { view, a: parts[1] || null, b: parts[2] || null, params };
+  }
+  function go(hash) {
+    if (location.hash === hash) handleRoute();
+    else location.hash = hash;
+  }
+  function jumpTop() {
+    const html = document.documentElement;
+    const prev = html.style.scrollBehavior;
+    html.style.scrollBehavior = "auto";
+    window.scrollTo(0, 0);
+    html.style.scrollBehavior = prev;
+  }
+  // 목록을 다시 그려도 키보드 초점이 같은 버튼에 남도록
+  function keepFocus(render) {
+    const a = document.activeElement;
+    const host = a && a !== document.body && a.parentElement ? a.parentElement.closest("[id]") : null;
+    const key = host
+      ? a.getAttributeNames().filter((n) => n.startsWith("data-")).map((n) => `[${n}="${CSS.escape(a.getAttribute(n))}"]`).join("")
+      : "";
+    render();
+    if (host && key && !a.isConnected && host.isConnected) {
+      const next = host.querySelector(key);
+      if (next) next.focus({ preventScroll: true });
+    }
+  }
+  function handleRoute() { keepFocus(route); }
+  function route() {
+    const r = parseRoute();
+    const prev = state.view;
+    state.view = r.view;
+    const mode = r.view === "veteran" ? "veteran" : "student";
+    document.body.dataset.view = r.view;
+    document.body.dataset.mode = mode;
+    if (mode === "student") state.lastStudent = location.hash || "#/";
+    $$(".view").forEach((v) => { v.hidden = v.dataset.view !== r.view; });
+    const navKey = r.view === "veteran" ? "veteran-" + (["upload", "payout", "guide"].includes(r.a) ? r.a : "top") : r.view;
+    $$("[data-nav]").forEach((a) => { if (a.dataset.nav === navKey) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    $$(".mode button[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
     closeMenus();
-  });
+    closeAllDialogs();
 
-  $("#moreBtn").addEventListener("click", () => {
-    state.limit += pageSize();
-    renderGrid();
-  });
+    if (r.view === "courses") {
+      state.cat = catById[r.a] ? r.a : "all";
+      state.sub = state.cat !== "all" && catById[state.cat].subs.some((s) => s.id === r.b) ? r.b : null;
+      state.q = r.params.get("q") || "";
+      state.filters.saved = r.params.get("saved") === "1";
+      state.filters.clip = r.params.get("clip") === "1";
+      state.limit = pageSize();
+      $("#searchInput").value = state.q;
+      renderCourses();
+    } else if (r.view === "jobs") {
+      state.jobsTab = ["hire", "seek", "trainee"].includes(r.a) ? r.a : "hire";
+      renderJobs();
+    } else if (r.view === "community") {
+      state.commTab = r.a === "terms" ? "terms" : "boards";
+      renderCommunity();
+    } else if (r.view === "stats") {
+      loadStats();
+    }
 
-  const form = $("#searchForm");
-  const input = $("#searchInput");
-  form.addEventListener("submit", (e) => {
+    if (video) {
+      if (r.view === "home") { if (!reducedMotion) video.play().catch(() => {}); }
+      else video.pause();
+    }
+
+    let target = null;
+    if (r.view === "roadmaps" && rmById[r.a]) target = document.getElementById("rm-" + r.a);
+    if (r.view === "veteran" && ["upload", "payout", "guide"].includes(r.a)) target = document.getElementById("vet-" + r.a);
+    if (target) {
+      if (prev !== r.view) jumpTop();
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: prev === r.view ? "smooth" : "auto", block: "start" });
+        if (target.classList.contains("rm-full")) { target.classList.remove("flash"); void target.offsetWidth; target.classList.add("flash"); }
+      });
+    } else if (prev !== r.view) {
+      jumpTop();
+    }
+  }
+  function goMode(mode) {
+    if (mode === "veteran") go("#/veteran");
+    else go(state.lastStudent && !state.lastStudent.startsWith("#/veteran") ? state.lastStudent : "#/");
+  }
+
+  /* ---------- 클릭 처리 (한곳에서) ---------- */
+  const CLICK_SEL = [
+    "[data-save]", "[data-course]", "[data-cat]", "[data-search]", "[data-soon]", "button[data-mode]", "[data-lang]",
+    "[data-go]", "[data-quiz]", "[data-q-opt]", "[data-q-back]", "[data-q-retry]", "[data-filter]", "[data-tab]", "[data-ctab]",
+    "[data-term-cat]", "[data-level-tab]", "[data-wage]", "[data-country]", "[data-day]", "[data-dlg-close]", "[data-mega]"
+  ].join(",");
+  document.addEventListener("click", (e) => keepFocus(() => onClick(e)));
+  function onClick(e) {
+    const el = e.target.closest(CLICK_SEL);
+    if (!megaEl.hidden && !e.target.closest("#mega") && !e.target.closest("#menuBtn")) closeMega();
+    if (!el) return;
+    const ds = el.dataset;
+    if (ds.save) { toggleSave(ds.save); return; }
+    if (ds.course) { closeMenus(); openCourse(ds.course); return; }
+    if (ds.cat) {
+      const keep = state.view === "courses";
+      go(coursesHash({ cat: ds.cat, sub: ds.sub || null, saved: keep && state.filters.saved, clip: keep && state.filters.clip }));
+      return;
+    }
+    if (ds.search != null && el.hasAttribute("data-search")) { go(coursesHash({ q: ds.search })); return; }
+    if (el.hasAttribute("data-soon")) { toast(t("toast.soon")); return; }
+    if (el.matches("button[data-mode]")) { goMode(ds.mode); return; }
+    if (ds.lang) { setLang(ds.lang); return; }
+    if (ds.go) { closeAllDialogs(); go(ds.go); return; }
+    if (el.hasAttribute("data-quiz")) { openQuiz(); return; }
+    if (ds.qOpt != null) { state.quiz.answers[state.quiz.step] = Number(ds.qOpt); state.quiz.step += 1; renderQuiz(); return; }
+    if (el.hasAttribute("data-q-back")) { state.quiz.step = Math.max(0, state.quiz.step - 1); renderQuiz(); return; }
+    if (el.hasAttribute("data-q-retry")) { state.quiz = { step: 0, answers: [] }; renderQuiz(); return; }
+    if (ds.filter) {
+      const k = ds.filter;
+      if (k.startsWith("level:")) {
+        const lv = k.slice(6);
+        state.filters.level = state.filters.level === lv ? null : lv;
+        state.limit = pageSize();
+        renderCourses();
+      } else if (k === "saved" || k === "clip") {
+        const next = { saved: state.filters.saved, clip: state.filters.clip };
+        next[k] = !next[k];
+        go(coursesHash({ cat: state.cat, sub: state.sub, q: state.q, ...next }));
+      } else {
+        state.filters[k] = !state.filters[k];
+        state.limit = pageSize();
+        renderCourses();
+      }
+      return;
+    }
+    if (ds.tab) { go("#/jobs/" + ds.tab); return; }
+    if (ds.ctab) { go(ds.ctab === "terms" ? "#/community/terms" : "#/community"); return; }
+    if (ds.termCat) { state.termCat = ds.termCat; renderTerms(); return; }
+    if (ds.levelTab) { state.homeLevel = ds.levelTab; renderLevelTabs(); return; }
+    if (ds.wage) {
+      state.wage = ds.wage;
+      $$("[data-wage]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.wage === state.wage)));
+      renderWageDetail();
+      return;
+    }
+    if (ds.country) { state.country = ds.country; store.set("neo.country", ds.country); renderPlans(); renderPlanTeaser(); return; }
+    if (ds.day) { state.statsDay = ds.day; renderStats(); return; }
+    if (el.hasAttribute("data-dlg-close")) { closeDialog(el.closest("dialog")); return; }
+    if (ds.mega) { go(coursesHash({ cat: ds.mega })); }
+  }
+  // 로고를 다시 누르면 맨 위로
+  $(".logo").addEventListener("click", () => { if (state.view === "home") jumpTop(); });
+
+  // 메가 메뉴: 마우스를 올린 공종의 강의를 보여줌
+  const megaList = $("#megaList");
+  const showMega = (e) => { const b = e.target.closest("[data-mega]"); if (b && b.dataset.mega !== megaCat) renderMegaPanel(b.dataset.mega); };
+  megaList.addEventListener("mouseover", showMega);
+  megaList.addEventListener("focusin", showMega);
+  menuBtn.addEventListener("click", () => {
+    if (desktopQuery.matches) { if (megaEl.hidden) openMega(); else closeMega(); }
+    else openDrawer();
+  });
+  drawer.addEventListener("click", (e) => { if (e.target.closest("[data-close]")) closeDrawer(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenus(); });
+  desktopQuery.addEventListener("change", () => { closeMenus(); if (state.view === "courses") renderCourses(); });
+
+  // 검색
+  const searchForm = $("#searchForm");
+  const searchInput = $("#searchInput");
+  searchForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    applyFilter({ q: input.value.trim(), scroll: true });
-    input.blur();
-  });
-  $("#clearSearch").addEventListener("click", () => {
-    input.value = "";
-    applyFilter({});
+    const q = searchInput.value.trim();
+    searchInput.blur();
+    go(coursesHash({ q }));
   });
   $("#searchToggle").addEventListener("click", () => {
-    form.classList.toggle("open");
-    if (form.classList.contains("open")) input.focus();
+    searchForm.classList.toggle("open");
+    if (searchForm.classList.contains("open")) searchInput.focus();
   });
+  $("#clearSearch").addEventListener("click", () => { searchInput.value = ""; go(coursesHash({ cat: state.cat, sub: state.sub })); });
+  $("#moreBtn").addEventListener("click", () => { state.limit += pageSize(); renderCourses(); });
 
-  /* ---------- 오픈 전 안내 ---------- */
-  document.addEventListener("click", (e) => {
-    if (e.target.closest("[data-course]")) toast("정식 오픈 후 수강할 수 있어요");
-    else if (e.target.closest("[data-soon]")) toast("정식 오픈 후 이용할 수 있어요");
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && e.target instanceof Element && e.target.closest("[data-course]")) {
-      toast("정식 오픈 후 수강할 수 있어요");
+  // 인력사무소 필터
+  $("#jobRegion").addEventListener("change", (e) => { state.jobRegion = e.target.value; renderJobs(); });
+  $("#jobCat").addEventListener("change", (e) => { state.jobCat = e.target.value; renderJobs(); });
+
+  // 현장 용어 검색
+  $("#termSearch").addEventListener("input", (e) => { state.termQ = e.target.value; renderTerms(); });
+
+  // 통계 키
+  document.addEventListener("submit", (e) => {
+    if (e.target && e.target.id === "statsKeyForm") {
+      e.preventDefault();
+      const v = $("#statsKey").value.trim();
+      if (v) { session.set("neo.statsKey", v); loadStats(); }
     }
   });
 
   /* ---------- 메인 동영상 ---------- */
   const video = $("#heroVideo");
   const soundBtn = $("#soundBtn");
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (video && reducedMotion) {
-    video.removeAttribute("autoplay");
-    video.pause();
+  const soundLabel = $("#soundLabel");
+  if (video && reducedMotion) { video.removeAttribute("autoplay"); video.pause(); }
+  function updateSoundLabel() {
+    if (!video || !soundBtn) return;
+    const on = !video.muted;
+    soundBtn.classList.toggle("on", on);
+    soundBtn.setAttribute("aria-pressed", String(on));
+    soundBtn.setAttribute("aria-label", t(on ? "sound.offAria" : "sound.onAria"));
+    soundLabel.textContent = t(on ? "sound.off" : "sound.on");
   }
-
-  // 브라우저는 소리 있는 자동재생을 막기 때문에, 무음으로 시작하고 버튼을 누르면 소리를 켠다
   if (video && soundBtn) {
-    const label = soundBtn.querySelector("span");
+    // 브라우저는 소리 나는 자동재생을 막는다: 무음으로 시작하고, 버튼을 누르면 소리를 켠다
     soundBtn.addEventListener("click", () => {
-      const turnOn = video.muted;
-      video.muted = !turnOn;
-      if (turnOn) {
-        video.volume = 1;
-        video.play().catch(() => {});
-      }
-      soundBtn.classList.toggle("on", turnOn);
-      soundBtn.setAttribute("aria-pressed", String(turnOn));
-      soundBtn.setAttribute("aria-label", turnOn ? "동영상 소리 끄기" : "동영상 소리 켜기");
-      label.textContent = turnOn ? "소리 끄기" : "소리 켜기";
+      video.muted = !video.muted;
+      if (!video.muted) { video.volume = 1; video.play().catch(() => {}); }
+      updateSoundLabel();
     });
-
-    // 화면에서 영상이 안 보이면 멈추고, 다시 보이면 이어서 재생 (소리가 계속 나는 것 방지)
+    // 화면에서 안 보이면 멈춤 (소리가 계속 나지 않게)
     if ("IntersectionObserver" in window) {
       new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) video.pause();
-          else if (!reducedMotion || !video.muted) video.play().catch(() => {});
+          else if (state.view === "home" && (!reducedMotion || !video.muted)) video.play().catch(() => {});
         });
       }, { threshold: 0.15 }).observe(video);
     }
   }
 
+  /* ---------- 글자 크게 ---------- */
+  const sizeBtn = $("#sizeBtn");
+  function setBig(on) {
+    document.documentElement.classList.toggle("big-text", on);
+    sizeBtn.setAttribute("aria-pressed", String(on));
+    store.set("neo.big", on);
+  }
+  sizeBtn.addEventListener("click", () => setBig(!document.documentElement.classList.contains("big-text")));
+
+  /* ---------- 언어 바꾸기 ---------- */
+  function setLang(l) {
+    if (!LANGS.includes(l) || l === lang) return;
+    lang = l;
+    store.set("neo.lang", l);
+    try {
+      const u = new URL(location.href);
+      if (l === "ko") u.searchParams.delete("lang"); else u.searchParams.set("lang", l);
+      history.replaceState(null, "", u.pathname + u.search + u.hash);
+    } catch (_) { /* 파일로 열었을 때 등은 무시 */ }
+    applyStatic();
+    renderAll();
+  }
+
+  /* ---------- 전체 그리기 ---------- */
+  function renderAll() {
+    renderQuick();
+    renderRow("#rowClips", D.courses.filter((c) => c.kind === "clip").slice(0, 12));
+    renderLevelTabs();
+    renderWages();
+    renderLadder();
+    renderPlanTeaser();
+    $("#rmScroller").innerHTML = D.roadmaps.map(rmCardHTML).join("");
+    renderCommTeaser();
+    renderJobsTeaser();
+    renderOverseas();
+    renderRow("#rowDiy", D.courses.filter((c) => c.diy));
+    $("#faqHome").innerHTML = faqHTML();
+    $("#faqPlans").innerHTML = faqHTML();
+    renderMega();
+    renderDrawer();
+    renderFooter();
+    $("#rmList").innerHTML = D.roadmaps.map(rmFullHTML).join("");
+    renderRow("#rowLabor", D.courses.filter((c) => c.cat === "labor"));
+    renderCommunity();
+    renderJobs();
+    renderPlans();
+    renderVeteran();
+    renderCourses();
+    renderStats();
+    updateSavedCount();
+    updateSoundLabel();
+    if (courseDlg.open) renderCourseDialog();
+    if (quizDlg.open) renderQuiz();
+  }
+
   /* ---------- 시작 ---------- */
-  const m = location.hash.match(/^#cat=([\w-]+)/);
-  applyFilter({ cat: m ? m[1] : "all" });
-  if (m) setTimeout(() => document.getElementById("courses").scrollIntoView({ block: "start" }), 0);
+  setBig(!!store.get("neo.big", false));
+  applyStatic();
+  renderAll();
+  handleRoute();
+  window.addEventListener("hashchange", handleRoute);
+  countVisit();
 })();
