@@ -1,25 +1,24 @@
-# 비공개 사이트(전체 사이트) 자동 배포 → 버셀(Vercel) 프로젝트 neocolor-private
+# 전체 사이트 자동 배포 → 버셀(Vercel) 공개 주소 (프로젝트 neocolor)
 # 정식 오픈 전에는 neocolor.net·neo-collar.com 에 '준비 중' 화면만 보이고(public/_redirects),
-# 전체 사이트는 여기서 버셀에 올려 익스프레스리와 형님 둘만 본다 (버셀에 로그인해서 허락받은 사람만).
-# main 에 올라올 때마다 tools/deploy_vercel_private.sh 가
-#   ① 'Vercel Authentication · All Deployments' 비공개 설정을 확인하고(안 되면 올리지 않음) ② public/ 을 올린다.
+# 전체 사이트는 여기서 버셀에 올려서 본다. 로그인 없이 누구나 볼 수 있다 (2026-11-07 소유자: "형님도 수정할 수 있는 공개로")
+# main 에 들어온 수정은 누가 했든(소유자·형님) 자동으로 tools/deploy_vercel.sh 가 올린다.
 # 버셀 GitHub 연결은 쓰지 않는다: 커밋 작성자(Claude·형님)가 소유자 버셀 계정이 아니면 무료 요금제에서 배포가 막히기 때문
 # 필요한 열쇠(저장소 Settings → Secrets and variables → Actions, 소유자가 넣음):
 #   VERCEL_TOKEN : 소유자 버셀 계정 Account Settings → Tokens 에서 만든 열쇠
 # 열쇠가 아직 없으면 실패하지 않고 건너뛴다.
-name: 비공개 사이트 배포 (Vercel)
+name: 버셀 배포 (전체 사이트)
 
 on:
   push:
     branches: [main]
     paths:
       - "public/**"
-      - "tools/deploy_vercel_private.sh"
-      - ".github/workflows/vercel-private.yml"
+      - "tools/deploy_vercel.sh"
+      - ".github/workflows/vercel.yml"
   workflow_dispatch:
 
 concurrency:
-  group: vercel-private-deploy
+  group: vercel-deploy
   cancel-in-progress: false
 
 jobs:
@@ -32,11 +31,11 @@ jobs:
     steps:
       - name: 열쇠가 없으면 건너뜀
         if: env.VERCEL_TOKEN == ''
-        run: echo "VERCEL_TOKEN 이 아직 없어서 비공개 사이트 배포를 건너뜁니다."
+        run: echo "VERCEL_TOKEN 이 아직 없어서 버셀 배포를 건너뜁니다."
 
       - uses: actions/checkout@v4
         if: env.VERCEL_TOKEN != ''
 
-      - name: 버셀에 올리기 (로그인해서 허락받은 사람만 보이게 확인한 뒤)
+      - name: 버셀에 올리기
         if: env.VERCEL_TOKEN != ''
-        run: bash tools/deploy_vercel_private.sh
+        run: bash tools/deploy_vercel.sh
