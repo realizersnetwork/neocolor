@@ -122,6 +122,7 @@
 - NEOCOLLAR가 한 글자 길어서 휴대폰에서는 머리줄 로고만 조금 작게 (스크립트의 `EXTRA_CSS`)
 - 배포: neo-collar.com은 **소유자 본인 Cloudflare 계정**(형님 계정 아님)에 있다. GitHub(realizersnetwork)은 형님 계정의 neocolor 프로젝트에 이미 연결돼 있어서, 소유자 계정에 또 연결하면 neocolor.net 자동 반영이 끊길 수 있다 (Cloudflare 안내: 'A GitHub account should only point to one Cloudflare account'). **GitHub 연결 금지**
   - 그래서 **압축 파일 직접 올리기(Direct Upload)**: Pages 프로젝트 `neo-collar`(Upload assets), 사용자 지정 도메인 neo-collar.com
+  - 2026-11-06 소유자가 첫 업로드(neo-collar.pages.dev)와 neo-collar.com 연결(Active)까지 마침
   - 고칠 때마다 Claude가 스크립트로 neo-collar/를 다시 만들고 `cd neo-collar && zip -qr -X <임시폴더>/neo-collar.zip .`로 압축해서 보낸다 → 소유자가 프로젝트의 **Create deployment**로 올린다. zip은 저장소에 넣지 않는다
 
 ## 배포
