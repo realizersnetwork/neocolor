@@ -1,0 +1,11 @@
+# Cloudflare Pages 캐시 설정: 고친 내용이 휴대폰·PC에 바로 보이도록 매번 새 버전을 확인하게 함
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/assets/*
+  Cache-Control: no-cache
+/privacy
+  Cache-Control: no-cache
+/privacy.html
+  Cache-Control: no-cache

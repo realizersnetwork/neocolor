@@ -113,6 +113,15 @@
 - 휴대폰 머리줄은 한 줄 유지: 영어·일본어는 학생/베테랑 버튼을 좁히고, '글자 크게'일 때 머리줄만 원래 크기(`zoom: 0.87`)
 - '글자 크게' 버튼(나이 드신 분들용), 관심 강의 저장(이 기기에만 저장)
 
+## 두 번째 사이트 neo-collar.com (2026-11-06 소유자가 산 도메인)
+- `neo-collar/` = `public/`을 통째로 복사해서 **이름만 바꾼** 사이트 (NEOCOLOR → NEOCOLLAR, 로고 NEO+COLLAR, neocolor.net → neo-collar.com)
+- **neo-collar/는 손으로 고치지 않는다.** `python3 tools/make_neo_collar.py`로 public/에서 다시 만든다 (옛 이름이 남으면 스크립트가 알려줌)
+- public/을 고치면 **같은 커밋에서 스크립트를 돌려 neo-collar/도 같이** 바꾼다. 소유자가 따로 하라고 하기 전까지 두 사이트는 이름만 다르고 똑같다
+- 로그인·회원가입은 같은 수퍼베이스 프로젝트 그대로 (새로 만들지 않음, 소유자 요청). 수퍼베이스 Redirect URLs에 `https://neo-collar.com/**`, `https://www.neo-collar.com/**`, `https://neo-collar.pages.dev/**`도 있어야 로그인 후 이 사이트로 돌아온다
+- 방문자 통계는 따로 센다: Abacus 이름공간 `neo-collar-com-1` (neo-collar.com, neo-collar.pages.dev에서만)
+- NEOCOLLAR가 한 글자 길어서 휴대폰에서는 머리줄 로고만 조금 작게 (스크립트의 `EXTRA_CSS`)
+- 배포: 도메인을 산 Cloudflare 계정의 Pages 프로젝트 `neo-collar` = 같은 GitHub 저장소(realizersnetwork/neocolor), Production branch `main`, Build command `exit 0`, **Build output directory `neo-collar`**, 사용자 지정 도메인 neo-collar.com
+
 ## 배포
 - Cloudflare Pages + GitHub 연동: `main` = 실서비스(neocolor.net), 그 외 브랜치 = 미리보기 주소
 - 설정값: Build command `exit 0`, Build output directory `public`, 프로젝트 이름 `neocolor` (neocolor.pages.dev)

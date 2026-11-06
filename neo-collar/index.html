@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NEOCOLLAR — Skills for the People Who Build the World</title>
+  <meta name="description" content="현장 기술을 베테랑에게 배우고, 묻고, 인력사무소로 일까지 연결하는 현장 사람들의 플랫폼. 정식 오픈 준비 중입니다.">
+  <meta name="theme-color" content="#0b0d12">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://neo-collar.com/">
+  <meta property="og:title" content="NEOCOLLAR — Skills for the People Who Build the World">
+  <meta property="og:description" content="배우고 · 묻고 · 일하고 · 가르치는 현장 사람들의 플랫폼. 정식 오픈 준비 중입니다.">
+  <meta property="og:image" content="https://neo-collar.com/media/rooftop.jpg">
+  <link rel="alternate" hreflang="ko" href="https://neo-collar.com/?lang=ko">
+  <link rel="alternate" hreflang="en" href="https://neo-collar.com/?lang=en">
+  <link rel="alternate" hreflang="ja" href="https://neo-collar.com/?lang=ja">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="assets/style.css?v=24">
+</head>
+<body data-mode="student" data-view="home">
+  <a class="skip" href="#main" data-i18n="skip">본문으로 건너뛰기</a>
+
+  <!-- 맨 위: 공지 · 글자 크게 · 언어 -->
+  <div class="utility">
+    <div class="wrap util-inner">
+      <p class="util-note"><span class="hide-m" data-i18n="notice">NEOCOLLAR 정식 오픈 준비 중 · 강의는 순차적으로 열립니다</span><span class="show-m" data-i18n="notice.short">정식 오픈 준비 중</span></p>
+      <div class="util-tools">
+        <button class="util-btn" id="sizeBtn" type="button" aria-pressed="false"><span class="size-ic" aria-hidden="true">A<small>A</small></span><span data-i18n="size.btn">글자 크게</span></button>
+        <div class="lang" role="group" aria-label="언어 선택" data-i18n-attr="aria-label:lang.aria">
+          <svg class="globe" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 3.9 5.7 3.9 9s-1.3 6.3-3.9 9c-2.6-2.7-3.9-5.7-3.9-9S9.4 5.7 12 3z"/></svg>
+          <button type="button" data-lang="ko" lang="ko" aria-pressed="true">한국어</button>
+          <button type="button" data-lang="en" lang="en" aria-pressed="false">English</button>
+          <button type="button" data-lang="ja" lang="ja" aria-pressed="false">日本語</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="bar wrap">
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mega" aria-label="메뉴 열기" data-i18n-attr="aria-label:nav.menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <span class="menu-label" data-i18n="nav.categories">카테고리</span>
+      </button>
+
+      <a class="logo" href="#/" aria-label="NEOCOLLAR">
+        <span class="wordmark" aria-hidden="true">NEO<span class="wm-color">COLLAR</span></span>
+      </a>
+      <span class="vet-badge" data-i18n="vet.badge">베테랑 스튜디오</span>
+
+      <nav class="main-nav nav-student" aria-label="주요 메뉴">
+        <a href="#/courses" data-nav="courses" data-i18n="nav.courses">강의</a>
+        <a href="#/roadmaps" data-nav="roadmaps" data-i18n="nav.roadmaps">로드맵</a>
+        <a href="#/community" data-nav="community" data-i18n="nav.community">커뮤니티</a>
+        <a href="#/jobs" data-nav="jobs"><span data-i18n="nav.jobs">인력사무소</span><span class="pass-chip" aria-hidden="true">PASS</span></a>
+        <a href="#/plans" data-nav="plans" data-i18n="nav.plans">수강권</a>
+      </nav>
+      <nav class="main-nav nav-vet" aria-label="베테랑 메뉴">
+        <a href="#/veteran" data-nav="veteran-top" data-i18n="vnav.home">스튜디오</a>
+        <a href="#/veteran/upload" data-nav="veteran-upload" data-i18n="vnav.upload">영상 올리기</a>
+        <a href="#/veteran/payout" data-nav="veteran-payout" data-i18n="vnav.payout">정산</a>
+        <a href="#/veteran/guide" data-nav="veteran-guide" data-i18n="vnav.guide">가이드</a>
+      </nav>
+
+      <form class="search" id="searchForm" role="search">
+        <input id="searchInput" type="search" placeholder="배울 기술 검색 (예: 누수)" aria-label="강의 검색" autocomplete="off" data-i18n-attr="placeholder:search.ph;aria-label:search.aria">
+        <button type="submit" aria-label="검색" data-i18n-attr="aria-label:search.btn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+        </button>
+      </form>
+
+      <div class="bar-end">
+        <button class="icon-btn search-toggle" id="searchToggle" type="button" aria-label="검색 열기" data-i18n-attr="aria-label:search.open">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+        </button>
+        <div class="mode" role="group" aria-label="모드 선택" data-i18n-attr="aria-label:mode.aria">
+          <button type="button" data-mode="student" aria-pressed="true" data-i18n="mode.student">학생</button>
+          <button type="button" data-mode="veteran" aria-pressed="false" data-i18n="mode.veteran">베테랑</button>
+        </div>
+        <a class="icon-btn saved-link" href="#/courses?saved=1" aria-label="관심 강의" data-i18n-attr="aria-label:nav.saved">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+          <span class="count" id="savedCount" hidden>0</span>
+        </a>
+        <button class="btn-text auth-btn" type="button" data-auth="login" data-i18n="auth.login">로그인</button>
+        <button class="btn-solid auth-btn" type="button" data-auth="signup" data-i18n="auth.signup">회원가입</button>
+        <div class="user-wrap" id="userWrap" hidden>
+          <button class="user-btn" id="userBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="userMenu"><span class="user-ava" id="userAva" aria-hidden="true"></span><span class="user-name" id="userName"></span></button>
+          <div class="user-menu" id="userMenu" hidden>
+            <p class="user-email" id="userEmail"></p>
+            <button type="button" data-auth="logout" data-i18n="auth.logout">로그아웃</button>
+            <button class="user-delete" type="button" data-auth="delete" data-i18n="auth.delete">회원 탈퇴</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mega" id="mega" hidden>
+      <div class="wrap mega-inner">
+        <ul class="mega-list" id="megaList"></ul>
+        <div class="mega-panel" id="megaPanel"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="drawer" id="drawer" hidden>
+    <div class="drawer-backdrop" data-close></div>
+    <aside class="drawer-panel" aria-label="전체 카테고리">
+      <div class="drawer-head">
+        <strong data-i18n="nav.allCategories">전체 카테고리</strong>
+        <button class="icon-btn" type="button" data-close aria-label="닫기" data-i18n-attr="aria-label:common.close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <div class="drawer-body" id="drawerBody"></div>
+    </aside>
+  </div>
+
+  <main id="main">
+    <!-- ===================== 홈 ===================== -->
+    <section class="view" data-view="home">
+      <div class="hero">
+        <div class="hero-stage">
+          <div class="hero-video-wrap">
+            <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="media/hero-poster.jpg" aria-hidden="true">
+              <source src="media/hero.mp4?v=4" type="video/mp4">
+            </video>
+            <button class="sound-btn" id="soundBtn" type="button" aria-pressed="false" aria-label="동영상 소리 켜기">
+              <svg class="ic-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="m16 9.5 5 5m0-5-5 5"/></svg>
+              <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg>
+              <span id="soundLabel">소리 켜기</span>
+            </button>
+          </div>
+          <div class="hero-copy">
+            <div class="hero-brand">
+              <p class="wordmark wordmark-xl" aria-hidden="true">NEO<span class="wm-color">COLLAR</span></p>
+              <div class="brand-sub">
+                <span class="chips-mini" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                <span data-i18n="hero.tag">Skills for the People Who Build the World</span>
+              </div>
+            </div>
+            <h1 data-i18n-html="hero.title.html">땀 흘린 만큼,<br>즐기면서 살자.</h1>
+            <p class="lead" data-i18n="hero.lead">AI가 대신하기 어려운 현장 기술을 베테랑에게 배우세요. 일한 만큼 벌고, 일 끝나면 제대로 쉬는 삶. NEOCOLLAR가 그 시작을 함께합니다.</p>
+            <div class="cta">
+              <a class="btn btn-primary" href="#/courses" data-i18n="hero.cta1">강의 둘러보기</a>
+              <a class="btn btn-ghost" href="#/plans" data-i18n="hero.cta2">수강권 보기</a>
+            </div>
+          </div>
+        </div>
+        <figure class="hero-photo">
+          <picture>
+            <source srcset="media/rooftop.webp" type="image/webp">
+            <img src="media/rooftop.jpg" width="1050" height="1400" alt="일 끝나고 옥상에서 한잔하는 테이블" data-i18n-attr="alt:hero.photoAlt">
+          </picture>
+          <figcaption><strong data-i18n="hero.capTitle">오늘 야리끼리하고 한잔하자.</strong><span data-i18n="hero.cap">물량 끝내면 바로 퇴근. 해 떠 있을 때 옥상에서 한잔, 주말엔 계곡. 손에 기술이 있으면 내 시간은 내가 정합니다.</span></figcaption>
+        </figure>
+      </div>
+
+      <section class="quick" aria-label="공종 바로가기" data-i18n-attr="aria-label:home.quickAria">
+        <div class="wrap">
+          <div class="quick-grid" id="quickGrid"></div>
+          <div class="suggest">
+            <span class="suggest-label" data-i18n="home.suggest">추천 검색어</span>
+            <div class="suggest-chips" id="suggestChips"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="clipsTitle">
+        <div class="wrap">
+          <div class="head head-row">
+            <div>
+              <p class="kicker" data-i18n="home.clipsKicker">상황별 노하우</p>
+              <h2 id="clipsTitle" data-i18n="home.clipsTitle">이럴 땐 어떻게 하지?</h2>
+              <p data-i18n="home.clipsSub">현장에서 경력으로만 쌓던 노하우를 5~10분 클립으로</p>
+            </div>
+            <a class="link-more" href="#/courses?clip=1" data-i18n="common.viewAll">전체 보기</a>
+          </div>
+          <div class="scroller" id="rowClips"></div>
+        </div>
+      </section>
+
+      <section class="block block-soft" aria-labelledby="levelTitle">
+        <div class="wrap">
+          <div class="head">
+            <h2 id="levelTitle" data-i18n="home.levelTitle">내 수준에 맞게</h2>
+            <p data-i18n="home.levelSub">처음 시작하는 분부터 30년 차 소장님까지</p>
+          </div>
+          <div class="level-tabs" role="tablist" id="levelTabs"></div>
+          <div class="scroller" id="rowLevel"></div>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="wageTitle">
+        <div class="wrap">
+          <div class="head">
+            <p class="kicker" data-i18n="wage.kicker">기술의 값</p>
+            <h2 id="wageTitle" data-i18n="wage.title">이 기술, 하루에 얼마?</h2>
+            <p data-i18n="wage.sub">한국 건설 현장 직종별 평균 일당이에요. 직종을 눌러보세요.</p>
+          </div>
+          <div class="wage-layout">
+            <div class="wage-list" id="wageList" role="list" aria-label="직종별 평균 일당" data-i18n-attr="aria-label:wage.listAria"></div>
+            <aside class="wage-detail" id="wageDetail" aria-live="polite"></aside>
+          </div>
+          <p class="source" data-i18n="wage.source">출처: 대한건설협회</p>
+        </div>
+      </section>
+
+      <section class="block block-soft" aria-labelledby="ladderTitle">
+        <div class="wrap">
+          <div class="head">
+            <p class="kicker" data-i18n="ladder.kicker">성장 사다리</p>
+            <h2 id="ladderTitle" data-i18n="ladder.title">보조에서 베테랑까지</h2>
+            <p data-i18n="ladder.sub">배우고, 일하고, 이끌고, 물려주는 길. 지금 있는 칸에서 시작하세요.</p>
+          </div>
+          <ol class="ladder" id="ladder"></ol>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="plansTeaserTitle">
+        <div class="wrap">
+          <div class="head head-row">
+            <div>
+              <p class="kicker kicker-pass" data-i18n="home.plansKicker">NEO PASS</p>
+              <h2 id="plansTeaserTitle" data-i18n="home.plansTitle">구독 하나로 현장 노하우 강의와 인력사무소까지</h2>
+              <p data-i18n="home.plansSub">국비지원, 평생교육이용권, 월 구독 중에서 골라요.</p>
+            </div>
+            <a class="link-more" href="#/plans" data-i18n="home.plansBtn">수강권 자세히 보기</a>
+          </div>
+          <div class="plan-mini-grid" id="planTeaser"></div>
+        </div>
+      </section>
+
+      <section class="block block-soft" aria-labelledby="rmHomeTitle">
+        <div class="wrap">
+          <div class="head head-row">
+            <div>
+              <h2 id="rmHomeTitle" data-i18n="home.rmTitle">목표만 정하면 길이 보여요</h2>
+              <p data-i18n="home.rmSub">전체 공정을 다 배울 필요 없어요. 하고 싶은 일에 필요한 강의만 순서대로.</p>
+            </div>
+            <a class="link-more" href="#/roadmaps" data-i18n="common.viewAll">전체 보기</a>
+          </div>
+          <div class="scroller scroller-rm" id="rmScroller"></div>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="commTitle">
+        <div class="wrap">
+          <div class="comm-teaser">
+            <div class="comm-teaser-head">
+              <p class="kicker" data-i18n="home.commKicker">커뮤니티</p>
+              <h2 id="commTitle" data-i18n="home.commTitle">현장 사람들끼리 묻고 답해요</h2>
+              <p data-i18n="home.commSub">공종별 게시판, 베테랑에게 묻기, 현장 용어 사전까지</p>
+              <a class="btn btn-dark" href="#/community" data-i18n="home.commBtn">커뮤니티 가기</a>
+            </div>
+            <div class="comm-teaser-body">
+              <div class="board-chips" id="boardChips"></div>
+              <div class="term-peek">
+                <p class="term-peek-title"><span data-i18n="home.termsTitle">현장 용어</span><a href="#/community/terms" data-i18n="common.viewAll">전체 보기</a></p>
+                <div class="term-peek-list" id="termPeek"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 광고 한 칸 (예시 · 가상 브랜드). 누르면 광고 안내 화면으로 -->
+      <aside class="ad-slot" aria-label="광고" data-i18n-attr="aria-label:ad.aria">
+        <div class="wrap">
+          <a class="ad" href="#/ads">
+            <span class="ad-art" aria-hidden="true">
+              <svg viewBox="0 0 72 72">
+                <path class="ad-beam" d="M0 33h72"/>
+                <path class="ad-beam ad-beam-v" d="M36 0v72"/>
+                <rect x="20" y="20" width="32" height="34" rx="7" fill="#262b33" stroke="#454c58" stroke-width="1.5"/>
+                <rect x="26" y="26" width="20" height="14" rx="3.5" fill="#0b0e12" stroke="#5cf28f" stroke-opacity=".55"/>
+                <circle cx="36" cy="33" r="3" fill="#5cf28f"/>
+                <rect x="20" y="45" width="32" height="3.5" fill="#ffb21a"/>
+                <rect x="24" y="54" width="24" height="6" rx="2.5" fill="#363c46"/>
+              </svg>
+            </span>
+            <span class="ad-copy">
+              <span class="ad-top"><span class="ad-tag"><b data-i18n="ad.label">광고</b><span data-i18n="ad.note">예시 · 가상 브랜드</span></span><span class="ad-brand">GRAVIK</span></span>
+              <strong class="ad-title" data-i18n="ad.title">햇빛 아래서도 또렷한 그린 라인</strong>
+              <span class="ad-desc" data-i18n="ad.desc">4방향 그린 레이저 수평기 GL-4 · 한 번 충전으로 하루 종일</span>
+            </span>
+            <span class="ad-cta"><span data-i18n="ad.cta">자세히 보기</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+          </a>
+        </div>
+      </aside>
+
+      <section class="block" aria-labelledby="jobsTeaserTitle">
+        <div class="wrap">
+          <div class="jobs-teaser">
+            <div class="jobs-teaser-head">
+              <span class="pass-pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg><span data-i18n="home.jobsKicker">NEO PASS 회원 혜택</span></span>
+              <h2 id="jobsTeaserTitle" data-i18n="home.jobsTitle">배우고 끝이 아니에요</h2>
+              <p data-i18n="home.jobsSub">인력사무소에서 일자리와 실습까지 이어져요.</p>
+              <a class="btn btn-dark" href="#/jobs" data-i18n="home.jobsBtn">인력사무소 가기</a>
+            </div>
+            <div class="jobs-teaser-grid" id="jobsTeaser"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block block-dark" aria-labelledby="osTitle">
+        <div class="wrap">
+          <div class="head head-row">
+            <div>
+              <p class="kicker" data-i18n="os.kicker">해외 현장</p>
+              <h2 id="osTitle" data-i18n="os.title">기술은 국경이 없어요</h2>
+              <p data-i18n="os.sub">국내 건설 일자리가 줄어드는 동안, 기술자가 모자란 나라도 많아요.</p>
+            </div>
+            <a class="link-more" href="#/roadmaps/elec" data-i18n="os.btn">전기 기술자 로드맵</a>
+          </div>
+          <div class="os-list" id="osList" role="list" aria-label="나라별 전기 기술자 월 수입" data-i18n-attr="aria-label:os.listAria"></div>
+          <p class="source" data-i18n="os.note">월 환산 기준</p>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="diyTitle">
+        <div class="wrap">
+          <div class="head">
+            <h2 id="diyTitle" data-i18n="home.diyTitle">내 집은 내가 고친다</h2>
+            <p data-i18n="home.diySub">수전 교체부터 셀프 도배까지, 생활 기술</p>
+          </div>
+          <div class="scroller" id="rowDiy"></div>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="vetBannerTitle">
+        <div class="wrap">
+          <div class="vet-banner">
+            <div>
+              <p class="kicker" data-i18n="home.vetKicker">베테랑 모집</p>
+              <h2 id="vetBannerTitle" data-i18n="home.vetTitle">평생 쌓은 기술, 이제 후배에게</h2>
+              <p data-i18n="home.vetSub">은퇴한 반장님도, 30년 차 기능공도.</p>
+            </div>
+            <button class="btn btn-primary" type="button" data-mode="veteran" data-i18n="home.vetBtn">베테랑 모드로 보기</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="block block-soft" aria-labelledby="faqTitle">
+        <div class="wrap wrap-narrow">
+          <div class="head"><h2 id="faqTitle" data-i18n="faq.title">자주 묻는 질문</h2></div>
+          <div class="faq" id="faqHome"></div>
+          <div class="cta-card home-contact">
+            <div><strong data-i18n="contact.homeTitle">정식 오픈 전에도 편하게 연락 주세요</strong><span data-i18n="contact.homeSub">광고·기관 제휴·단체교육·베테랑 사전 신청 문의를 받고 있어요.</span></div>
+            <a class="btn btn-dark" href="#/contact" data-i18n="nav.contact">문의하기</a>
+          </div>
+        </div>
+      </section>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
+    </section>
+
+    <!-- ===================== 전체 강의 ===================== -->
+    <section class="view" data-view="courses" hidden>
+      <div class="wrap page">
+        <div class="page-head">
+          <h1 data-i18n="courses.title">전체 강의</h1>
+          <p data-i18n="courses.lead">필요한 공종만 골라 배우세요. 전체 공정을 다 배울 필요는 없어요.</p>
+        </div>
+        <div class="chips" id="catChips"></div>
+        <div class="chips chips-sub" id="subChips"></div>
+        <div class="chips chips-filter" id="filterChips"></div>
+        <div class="result-bar">
+          <p id="resultText" aria-live="polite"></p>
+          <button class="btn-text" id="clearSearch" type="button" hidden data-i18n="courses.clear">검색 지우기</button>
+        </div>
+        <div class="grid" id="courseGrid"></div>
+        <div class="more-wrap" id="moreWrap" hidden><button class="btn-more" id="moreBtn" type="button"></button></div>
+        <p class="empty" id="emptyText" hidden></p>
+      </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
+    </section>
+
+    <!-- ===================== 로드맵 ===================== -->
+    <section class="view" data-view="roadmaps" hidden>
+      <div class="wrap page">
+        <div class="page-head">
+          <h1 data-i18n="rm.title">로드맵</h1>
+          <p data-i18n="rm.lead">전체 공정을 다 배울 필요 없어요.</p>
+        </div>
+        <div class="quiz-card">
+          <div>
+            <strong data-i18n="quiz.ctaTitle">나에게 맞는 기술 찾기</strong>
+            <span data-i18n="quiz.ctaSub">질문 4개면 충분해요</span>
+          </div>
+          <button class="btn btn-dark" type="button" data-quiz data-i18n="quiz.ctaBtn">시작하기</button>
+        </div>
+        <div class="rm-list" id="rmList"></div>
+        <p class="source" data-i18n="rm.certNote">자격증은 한국 국가기술자격이에요.</p>
+      </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
+    </section>
+
+    <!-- ===================== 커뮤니티 ===================== -->
+    <section class="view" data-view="community" hidden>
+      <div class="wrap page">
+        <div class="page-head">
+          <h1 data-i18n="comm.title">커뮤니티</h1>
+          <p data-i18n="comm.lead">공종별로 묻고 답하고, 현장 이야기와 노하우를 나눠요.</p>
+        </div>
+        <div class="seg" role="tablist" id="commTabs">
+          <button type="button" role="tab" data-ctab="boards" aria-selected="true" data-i18n="comm.tab.boards">게시판</button>
+          <button type="button" role="tab" data-ctab="terms" aria-selected="false" data-i18n="comm.tab.terms">현장 용어 사전</button>
+        </div>
+
+        <div class="comm-panel" data-cpanel="boards">
+          <div class="comm-toolbar">
+            <p class="demo-note"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span data-i18n="comm.boardSoon">정식 오픈 후 열려요</span></p>
+            <button class="btn btn-dark" type="button" data-soon data-i18n="comm.write">글쓰기</button>
+          </div>
+          <h2 class="sub-title" data-i18n="comm.trade">공종별 게시판</h2>
+          <div class="board-grid" id="tradeBoards"></div>
+          <h2 class="sub-title" data-i18n="comm.topic">주제별 게시판</h2>
+          <div class="board-grid" id="topicBoards"></div>
+          <h2 class="sub-title"><span data-i18n="comm.samples">이런 글이 올라와요</span> <span class="b b-sample" data-i18n="common.example">예시</span></h2>
+          <ul class="post-list" id="postList"></ul>
+        </div>
+
+        <div class="comm-panel" data-cpanel="terms" hidden>
+          <div class="term-tools">
+            <input class="term-search" type="search" id="termSearch" autocomplete="off" placeholder="용어를 검색해보세요 (예: 시마이)" aria-label="용어 검색" data-i18n-attr="placeholder:comm.terms.ph;aria-label:comm.terms.ph">
+            <div class="chips" id="termChips"></div>
+          </div>
+          <p class="info-note" data-i18n="comm.terms.note">현장 말은 지역과 팀마다 조금씩 달라요.</p>
+          <p class="term-count" id="termCount" aria-live="polite"></p>
+          <div class="term-grid" id="termGrid"></div>
+          <p class="empty" id="termEmpty" hidden data-i18n="comm.terms.empty">찾는 용어가 없어요.</p>
+          <p class="source" data-i18n="comm.terms.more">용어는 계속 추가하고 있어요.</p>
+        </div>
+      </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
+    </section>
+
+    <!-- ===================== 인력사무소 ===================== -->
+    <section class="view" data-view="jobs" hidden>
+      <div class="wrap page">
+        <div class="page-head">
+          <span class="pass-pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg><span data-i18n="pass.only">NEO PASS 회원 전용</span></span>
+          <h1 data-i18n="jobs.title">인력사무소</h1>
+          <p data-i18n="jobs.lead">배운 기술을 일로 연결해요. 구인·구직부터 실습생까지.</p>
+        </div>
+
+        <div class="pass-banner">
+          <div class="pass-ticket" aria-hidden="true">
+            <span class="pt-top">NEO</span><span class="pt-main">PASS</span>
+          </div>
+          <div class="pass-text">
+            <strong data-i18n="jobs.passTitle">NEO PASS 회원이면 인력사무소를 모두 쓸 수 있어요</strong>
+            <span data-i18n="jobs.passDesc">월 구독·평생교육이용권 회원 전용 · 구인 · 구직 · 실습생</span>
+          </div>
+          <a class="btn btn-primary" href="#/plans" data-i18n="jobs.passBtn">수강권 보기</a>
+        </div>
+
+        <div class="seg" role="tablist" id="jobTabs">
+          <button type="button" role="tab" data-tab="hire" aria-selected="true" data-i18n="jobs.tab.hire">구인</button>
+          <button type="button" role="tab" data-tab="seek" aria-selected="false" data-i18n="jobs.tab.seek">구직</button>
+          <button type="button" role="tab" data-tab="trainee" aria-selected="false" data-i18n="jobs.tab.trainee">실습생</button>
+        </div>
+
+        <div class="job-tools">
+          <p class="demo-note"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span data-i18n="jobs.demo">정식 오픈 전 화면 예시예요.</span></p>
+          <div class="job-filters">
+            <label><span data-i18n="jobs.region">지역</span><select id="jobRegion"></select></label>
+            <label><span data-i18n="jobs.trade">공종</span><select id="jobCat"></select></label>
+          </div>
+        </div>
+
+        <div class="job-panel" data-panel="hire">
+          <div class="cta-card">
+            <div><strong data-i18n="jobs.hire.ctaTitle">사람이 필요하세요?</strong><span data-i18n="jobs.hire.ctaDesc">현장·공종·기간만 적으면 공고가 올라가요.</span></div>
+            <button class="btn btn-dark" type="button" data-soon data-i18n="jobs.hire.ctaBtn">구인 공고 올리기</button>
+          </div>
+          <div class="job-grid" id="hireList"></div>
+        </div>
+
+        <div class="job-panel" data-panel="seek" hidden>
+          <div class="cta-card">
+            <div><strong data-i18n="jobs.seek.ctaTitle">일을 찾고 계세요?</strong><span data-i18n="jobs.seek.ctaDesc">들은 강의가 내 프로필에 수강 이력으로 표시돼요.</span></div>
+            <button class="btn btn-dark" type="button" data-soon data-i18n="jobs.seek.ctaBtn">내 프로필 등록</button>
+          </div>
+          <div class="safety">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
+            <div>
+              <strong data-i18n="jobs.safety.title">현장 첫 출근 전에 꼭</strong>
+              <p data-i18n="jobs.safety.desc">건설 현장에서 일하려면 '건설업 기초안전보건교육'(4시간) 이수증이 필요해요.</p>
+              <button class="text-link" type="button" data-course="h2" data-i18n="jobs.safety.link">안전교육 이수증과 준비물 강의</button>
+            </div>
+          </div>
+          <div class="job-grid" id="seekList"></div>
+        </div>
+
+        <div class="job-panel" data-panel="trainee" hidden>
+          <p class="info-note" data-i18n="jobs.tr.note">실습은 NEOCOLLAR가 직접 운영하지 않아요.</p>
+          <h2 class="sub-title" data-i18n="jobs.tr.flowTitle">실습은 이렇게 진행돼요</h2>
+          <ol class="flow" id="traineeFlow"></ol>
+          <h2 class="sub-title" data-i18n="jobs.tr.partnersTitle">함께하는 곳</h2>
+          <div class="partner-grid" id="partnerTypes"></div>
+          <h2 class="sub-title" data-i18n="jobs.tr.examplesTitle">실습 프로그램 예시</h2>
+          <div class="job-grid" id="traineeList"></div>
+          <h2 class="sub-title" data-i18n="jobs.tr.regionsTitle">지역별 연계 기관</h2>
+          <div class="region-grid" id="regionGrid"></div>
+          <div class="cta-card cta-card-dark">
+            <div><strong data-i18n="jobs.tr.ctaTitle">직업학교·인력사무소를 운영하세요?</strong><span data-i18n="jobs.tr.ctaDesc">우리 지역 실습생과 일자리를 함께 연결해요.</span></div>
+            <a class="btn btn-primary" href="#/contact?topic=partner" data-i18n="jobs.tr.ctaBtn">기관 제휴 문의</a>
+          </div>
+        </div>
+        <p class="empty" id="jobsEmpty" hidden data-i18n="jobs.empty">조건에 맞는 예시가 없어요.</p>
+
+        <section class="sub-block" aria-labelledby="laborTitle">
+          <div class="head">
+            <h2 id="laborTitle" data-i18n="jobs.laborTitle">처음 현장에 나간다면</h2>
+            <p data-i18n="jobs.laborSub">현장 입문 강의로 먼저 준비하세요</p>
+          </div>
+          <div class="scroller" id="rowLabor"></div>
+        </section>
+      </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
+    </section>
+
+    <!-- ===================== 수강권 ===================== -->
+    <section class="view" data-view="plans" hidden>
+      <div class="wrap page">
+        <div class="page-head">
+          <p class="kicker kicker-pass">NEO PASS</p>
+          <h1 data-i18n="plans.title">수강권</h1>
+          <p data-i18n="plans.lead">구독(NEO PASS)은 짧은 강의·현장 노하우와 인력사무소까지. 한 분야를 처음부터 끝까지 배우는 전문과정은 국비지원이나 단품 결제로 들어요.</p>
+        </div>
+        <div class="plans-grid" id="plansGrid"></div>
+        <div class="cta-card single-buy">
+          <div><strong data-i18n="plans.single.t">단품 결제</strong><span data-i18n="plans.single.d">국비 전문과정을 하나씩 살 수 있어요.</span></div>
+          <a class="btn btn-dark" href="#/courses?gov=1" data-i18n="plans.single.btn">전문과정 보기</a>
+        </div>
+        <section class="price-table" id="priceTable" aria-labelledby="ptTitle">
+          <h2 class="sub-title" id="ptTitle" data-i18n="plans.tableTitle">나라별 월 구독료</h2>
+          <div class="pt-groups" id="ptGroups"></div>
+          <p class="source" data-i18n="plans.tableNote">가격 기준</p>
+        </section>
+        <div class="pick">
+          <h2 class="sub-title" data-i18n="plans.pickTitle">어떤 걸 고를까요?</h2>
+          <ul class="pick-list" id="pickList"></ul>
+        </div>
+        <div class="cta-card">
+          <div><strong data-i18n="plans.groupTitle">현장·기업 단체교육</strong><span data-i18n="plans.groupDesc">협력업체 신입 교육, 공종별 실무 교육을 현장에 맞춰 준비해드려요.</span></div>
+          <a class="btn btn-dark" href="#/contact?topic=group" data-i18n="plans.groupBtn">단체교육 문의</a>
+        </div>
+        <div class="sub-block wrap-narrow-left">
+          <h2 class="sub-title" data-i18n="faq.title">자주 묻는 질문</h2>
+          <div class="faq" id="faqPlans"></div>
+        </div>
+      </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
+    </section>
+
+    <!-- ===================== 베테랑 스튜디오 ===================== -->
+    <section class="view" data-view="veteran" hidden>
+      <div class="vet-hero" id="vet-top">
+        <div class="wrap">
+          <p class="vet-tag" data-i18n="vet.tag">나이는 경력일 뿐</p>
+          <h1 data-i18n-html="vet.title.html">평생 쌓은 기술,<br>이제 후배에게 물려주세요</h1>
+          <p class="lead" data-i18n="vet.lead">은퇴한 반장님도, 30년 차 기능공도 환영해요.</p>
+          <div class="cta">
+            <a class="btn btn-primary" href="#/veteran/upload" data-i18n="vet.cta1">영상 올리기</a>
+            <a class="btn btn-ghost" href="#/veteran/payout" data-i18n="vet.cta2">정산 방식 보기</a>
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <p class="vet-note"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span data-i18n="vet.note">베테랑 모드 미리보기예요.</span></p>
+
+        <section class="block-tight" aria-labelledby="waysTitle">
+          <h2 class="sub-title" id="waysTitle" data-i18n="vet.waysTitle">베테랑이 일하는 세 가지 방법</h2>
+          <div class="ways" id="vetWays"></div>
+        </section>
+
+        <section class="block-tight" aria-labelledby="dashTitle">
+          <h2 class="sub-title" id="dashTitle" data-i18n="vet.dashTitle">내 스튜디오</h2>
+          <div class="kpis" id="vetKpis"></div>
+          <p class="source" data-i18n="vet.kpiNote">강의를 올리면 여기에 실적이 쌓여요.</p>
+        </section>
+
+        <section class="block-tight" id="vet-upload" aria-labelledby="upTitle">
+          <h2 class="sub-title" id="upTitle" data-i18n="vet.upTitle">영상 올리기</h2>
+          <p class="sub-lead" data-i18n="vet.upSub">휴대폰으로 찍은 영상도 괜찮아요.</p>
+          <ol class="steps-strip" id="upSteps"></ol>
+          <!-- 로그인 전에는 아무 파일도 올릴 수 없다 (파일 선택 칸 없음) -->
+          <div class="upload">
+            <div class="dropzone is-locked">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>
+              <strong data-i18n="vet.lockTitle">영상 올리기는 서비스 준비 중이에요</strong>
+              <small data-i18n="vet.lockSub">로그인해도 아직은 올릴 수 없어요. 베테랑 등록과 검수 절차가 준비되면 열어드릴게요.</small>
+              <span class="prep-badge" data-i18n="vet.lockBtn">서비스 준비 중</span>
+            </div>
+            <form class="up-form is-locked" onsubmit="return false">
+              <fieldset disabled>
+                <label><span data-i18n="vet.f.title">강의 제목</span><input type="text" placeholder="예: 욕실 실리콘 깔끔하게 쏘는 법" data-i18n-attr="placeholder:vet.f.titlePh"></label>
+                <div class="form-row">
+                  <label><span data-i18n="vet.f.cat">공종</span><select id="upCat"></select></label>
+                  <label><span data-i18n="vet.f.level">난이도</span><select id="upLevel"></select></label>
+                </div>
+                <label><span data-i18n="vet.f.desc">한 줄 소개</span><input type="text" placeholder="무엇을 배우는지 한 줄로 적어주세요" data-i18n-attr="placeholder:vet.f.descPh"></label>
+                <div class="form-actions"><button class="btn btn-dark" type="button" data-i18n="vet.submit">검수 요청</button></div>
+              </fieldset>
+            </form>
+          </div>
+        </section>
+
+        <section class="block-tight" id="vet-payout" aria-labelledby="payTitle">
+          <h2 class="sub-title" id="payTitle" data-i18n="vet.payTitle">수강한 만큼 매달 정산</h2>
+          <p class="sub-lead" data-i18n="vet.paySub">조회수가 아니라 실제로 배운 시간으로 나눠요.</p>
+          <p class="prep-note"><span class="prep-badge" data-i18n="vet.lockBtn">서비스 준비 중</span><span data-i18n="vet.payLock">정산도 서비스 준비 중이에요. 아래 계산기는 예시일 뿐, 실제 정산은 아직 하지 않아요.</span></p>
+          <div class="pay-grid" id="payGrid"></div>
+          <div class="formula">
+            <p data-i18n="vet.formula">내 정산금 = 베테랑 정산 재원 × (내 강의 수강 시간 ÷ 전체 수강 시간)</p>
+            <small data-i18n="vet.formulaNote">배분율과 정산일은 정식 오픈 때 알려드릴게요.</small>
+          </div>
+          <div class="calc">
+            <h3 data-i18n="vet.calcTitle">정산 계산기 (예시)</h3>
+            <div class="calc-grid">
+              <div class="calc-inputs">
+                <label><span><span data-i18n="vet.calc.videos">올린 영상 수</span><output id="outVideos"></output></span><input type="range" id="inVideos" min="1" max="200" step="1" value="50"></label>
+                <label><span><span data-i18n="vet.calc.viewers">영상 1편을 끝까지 본 수강생 (한 달)</span><output id="outViewers"></output></span><input type="range" id="inViewers" min="1" max="500" step="1" value="100"></label>
+                <label class="calc-len"><span data-i18n="vet.calc.len">영상 길이</span><select id="inLen"></select></label>
+              </div>
+              <div class="calc-result">
+                <span data-i18n="vet.calc.month">한 달 예상</span>
+                <strong id="calcMonth">0</strong>
+                <span class="calc-year"><span data-i18n="vet.calc.year">1년이면</span> <b id="calcYear">0</b></span>
+              </div>
+            </div>
+            <p class="source" data-i18n="vet.calc.note">예시 계산이에요.</p>
+          </div>
+        </section>
+
+        <section class="block-tight" aria-labelledby="perksTitle">
+          <h2 class="sub-title" id="perksTitle" data-i18n="vet.perksTitle">베테랑을 위해 준비했어요</h2>
+          <div class="perks" id="vetPerks"></div>
+        </section>
+
+        <section class="block-tight" aria-labelledby="whoTitle">
+          <h2 class="sub-title" id="whoTitle" data-i18n="vet.whoTitle">이런 베테랑을 모십니다</h2>
+          <ul class="personas" id="vetWho"></ul>
+        </section>
+
+        <section class="block-tight" id="vet-guide" aria-labelledby="guideTitle">
+          <h2 class="sub-title" id="guideTitle" data-i18n="vet.guideTitle">촬영 가이드</h2>
+          <div class="guide" id="vetGuide"></div>
+          <h2 class="sub-title" data-i18n="vet.stepsTitle">베테랑 등록 절차</h2>
+          <ol class="flow" id="vetSteps"></ol>
+        </section>
+
+        <section class="block-tight">
+          <div class="vet-apply">
+            <div><strong data-i18n="vet.applyTitle">먼저 베테랑으로 신청하세요</strong><span data-i18n="vet.applyDesc">반장님, 소장님, 기능사 분들의 노하우를 기다려요.</span></div>
+            <a class="btn btn-primary" href="#/contact?topic=veteran" data-i18n="vet.applyBtn">베테랑 사전 신청</a>
+          </div>
+        </section>
+      </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
+    </section>
+
+    <!-- ===================== 광고 안내 ===================== -->
+    <section class="view" data-view="ads" hidden>
+      <div class="wrap page">
+        <div class="ads-hero">
+          <p class="kicker" data-i18n="ads.kicker">광고 안내</p>
+          <h1 data-i18n="ads.title">현장 사람들에게 바로 닿는 광고</h1>
+          <p class="ads-lead" data-i18n="ads.lead">기술을 배우고, 묻고, 일을 찾는 현장 사람들이 모이는 곳이에요. 장비·공구·안전용품·자재 브랜드를 소개해 보세요.</p>
+          <p class="ads-sample" data-i18n="ads.sample">방금 보신 GRAVIK 광고는 예시예요. 그 자리에 여러분의 브랜드가 들어갑니다.</p>
+          <div class="cta">
+            <a class="btn btn-primary" href="#/contact?topic=ads" data-i18n="ads.btn">광고 문의하기</a>
+            <a class="btn btn-ghost" href="#/stats" data-i18n="ads.statsBtn">방문자 통계 보기</a>
+          </div>
+          <p class="ads-contact" id="adsContact"></p>
+        </div>
+
+        <h2 class="sub-title" data-i18n="ads.whyTitle">왜 NEOCOLLAR에 광고하나요</h2>
+        <div class="ads-why">
+          <div><strong data-i18n="ads.why1.t">공종별로 정확하게</strong><p data-i18n="ads.why1.d">타일, 도배, 전기, 설비… 공종별 강의와 게시판에 맞춰 보여줘요.</p></div>
+          <div><strong data-i18n="ads.why2.t">장비를 직접 고르는 사람들</strong><p data-i18n="ads.why2.d">입문자부터 현장소장, 1인 사업자까지 공구와 자재를 직접 사는 사람들이에요.</p></div>
+          <div><strong data-i18n="ads.why3.t">해외 현장까지</strong><p data-i18n="ads.why3.d">한국어·영어·일본어로 열려 있어요.</p></div>
+        </div>
+
+        <h2 class="sub-title" data-i18n="ads.placeTitle">광고 자리</h2>
+        <ol class="ads-places">
+          <li><b>1</b><div><strong data-i18n="ads.p1.t">홈 배너</strong><p data-i18n="ads.p1.d">메인 화면 중간의 가로형 광고 한 칸. 방금 보신 그 자리예요.</p></div></li>
+          <li><b>2</b><div><strong data-i18n="ads.p2.t">공종 게시판 스폰서</strong><p data-i18n="ads.p2.d">공종별 커뮤니티 게시판 위에 브랜드를 소개해요.</p></div></li>
+          <li><b>3</b><div><strong data-i18n="ads.p3.t">강의 소개 화면 장비 소개</strong><p data-i18n="ads.p3.d">강의 소개 화면에 그 공종에서 쓰는 장비를 보여줘요.</p></div></li>
+          <li><b>4</b><div><strong data-i18n="ads.p4.t">실습 장비 지원</strong><p data-i18n="ads.p4.d">연계 직업학교와 실습 현장에 장비를 지원하고 브랜드를 알려요.</p></div></li>
+        </ol>
+        <p class="info-note ads-rule" data-i18n="ads.rule">광고는 언제나 '광고'로 표시하고, 베테랑의 강의 영상 안에는 넣지 않아요. 광고 가격과 조건은 정식 오픈 때 안내해요.</p>
+      </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
+    </section>
+
+    <!-- ===================== 방문자 통계 (무료 카운터 Abacus, app.js 참고) ===================== -->
+    <section class="view" data-view="stats" hidden>
+      <div class="wrap wrap-narrow page">
+        <div class="page-head">
+          <h1 data-i18n="stats.title">방문자 통계</h1>
+          <p data-i18n="stats.lead">나라별 방문자 수예요. 같은 기기에서 다시 와도 한 번만 셉니다.</p>
+        </div>
+        <div id="statsBody" aria-live="polite"></div>
+        <p class="source" data-i18n="stats.privacy">IP 주소는 저장하지 않아요. 나라별 숫자만 무료 카운터 서비스(Abacus)에 저장돼요.</p>
+      </div>
+      <div class="wrap"><aside class="ad-g" hidden aria-label="광고" data-i18n-attr="aria-label:ad.aria"><span class="ad-g-label" data-i18n="ad.label">광고</span></aside></div>
+    </section>
+    <!-- ===================== 문의하기 (고객센터) ===================== -->
+    <section class="view" data-view="contact" hidden>
+      <div class="wrap wrap-narrow page">
+        <div class="page-head">
+          <p class="kicker" data-i18n="contact.kicker">고객센터</p>
+          <h1 data-i18n="contact.title">문의하기</h1>
+          <p data-i18n="contact.lead">광고, 기관 제휴, 단체교육, 베테랑 사전 신청 등 무엇이든 편하게 연락 주세요.</p>
+        </div>
+        <div class="contact-topics" id="contactTopics" role="group" aria-label="문의 종류" data-i18n-attr="aria-label:contact.topicAria"></div>
+        <div id="contactCards"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <strong class="wordmark" aria-label="NEOCOLLAR">NEO<span class="wm-color">COLLAR</span></strong>
+          <p data-i18n="foot.desc">현장에서 바로 쓰는 실무 강의</p>
+        </div>
+        <ul class="foot-cats" id="footCats"></ul>
+      </div>
+      <ul class="foot-links">
+        <li data-i18n="foot.l1">회사소개</li>
+        <li data-i18n="foot.l2">이용약관</li>
+        <li><a class="foot-privacy" href="/privacy" data-privacy data-i18n="foot.l3">개인정보처리방침</a></li>
+        <li data-i18n="foot.l4">취소·환불 정책</li>
+        <li><a href="#/contact" data-i18n="foot.l5">고객센터</a></li>
+        <li><a href="#/ads" data-i18n="foot.ads">광고 안내</a></li>
+        <li><a href="#/stats" data-i18n="foot.stats">방문자 통계</a></li>
+      </ul>
+      <p class="foot-contact" id="footContact"></p>
+      <p class="foot-copy" data-i18n="foot.copy">© 2026 NEOCOLLAR · neo-collar.com · 정식 오픈 준비 중입니다.</p>
+    </div>
+  </footer>
+
+  <!-- 휴대폰 하단 메뉴 -->
+  <nav class="tabbar" aria-label="하단 메뉴">
+    <div class="tab-set tab-student">
+      <a href="#/" data-nav="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg><span data-i18n="nav.home">홈</span></a>
+      <a href="#/courses" data-nav="courses"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="m10.5 9.5 4 2.5-4 2.5z"/></svg><span data-i18n="nav.courses">강의</span></a>
+      <a href="#/community" data-nav="community"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A1.5 1.5 0 0 1 4 14.5z"/><path d="M8 9h8M8 12.5h5"/></svg><span data-i18n="nav.community">커뮤니티</span></a>
+      <a href="#/jobs" data-nav="jobs"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7" width="17" height="12" rx="2"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3.5 12h17"/></svg><span data-i18n="nav.jobs">인력사무소</span><i class="tab-pass" aria-hidden="true"></i></a>
+      <a href="#/plans" data-nav="plans"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/></svg><span data-i18n="nav.plans">수강권</span></a>
+    </div>
+    <div class="tab-set tab-vet">
+      <a href="#/veteran" data-nav="veteran-top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9h17M9 9v11"/></svg><span data-i18n="vnav.home">스튜디오</span></a>
+      <a href="#/veteran/upload" data-nav="veteran-upload"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><span data-i18n="vnav.upload">영상 올리기</span></a>
+      <a href="#/veteran/payout" data-nav="veteran-payout"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8 9l1.6 6L12 10l2.4 5L16 9M7.5 12h9"/></svg><span data-i18n="vnav.payout">정산</span></a>
+      <a href="#/veteran/guide" data-nav="veteran-guide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h9.5L19 9v10.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-14a1 1 0 0 1 1-1z"/><path d="M8 12h8M8 16h5"/></svg><span data-i18n="vnav.guide">가이드</span></a>
+    </div>
+  </nav>
+
+  <dialog class="sheet" id="courseDlg" aria-labelledby="cmTitle">
+    <div class="sheet-inner">
+      <button class="icon-btn sheet-close" type="button" data-dlg-close aria-label="닫기" data-i18n-attr="aria-label:common.close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div id="courseBody"></div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet sheet-sm" id="quizDlg" aria-labelledby="quizTitle">
+    <div class="sheet-inner">
+      <button class="icon-btn sheet-close" type="button" data-dlg-close aria-label="닫기" data-i18n-attr="aria-label:common.close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div id="quizBody"></div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet sheet-sm" id="authDlg" aria-labelledby="authTitle">
+    <div class="sheet-inner">
+      <button class="icon-btn sheet-close" type="button" data-dlg-close aria-label="닫기" data-i18n-attr="aria-label:common.close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div id="authBody"></div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <noscript><p class="noscript">이 사이트는 자바스크립트를 켜야 강의 목록이 보여요.</p></noscript>
+  <script src="assets/i18n.js?v=24"></script>
+  <script src="assets/data.js?v=24"></script>
+  <script src="assets/config.js?v=24"></script>
+  <script src="assets/app.js?v=24"></script>
+</body>
+</html>
