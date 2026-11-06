@@ -804,6 +804,22 @@
   let authMode = "login";
   let authMsg = null; // { type: "ok"|"err", text }
   let authBusy = false;
+  // 수퍼베이스에서 켜진 소셜 로그인만 버튼을 보여준다 (안 켠 로그인을 누르면 수퍼베이스 오류 화면으로 넘어가서)
+  // 확인이 안 되면 이미 켜 둔 구글만 (2026-11-06 소유자: 안 되는 건 빼)
+  let socialOn = { google: true, kakao: false, naver: false, line: false };
+  async function loadProviders() {
+    try {
+      const res = await fetch(CFG.supabaseUrl + "/auth/v1/settings", { headers: { apikey: CFG.supabaseAnonKey }, cache: "no-store", credentials: "omit" });
+      if (!res.ok) return;
+      const j = await res.json();
+      const ext = (j && j.external) || {};
+      const list = [].concat((j && (j.custom_providers || j.custom_oauth_providers)) || []);
+      const custom = (id) => ext["custom:" + id] === true ||
+        list.some((x) => x && (x.identifier === "custom:" + id || x.id === "custom:" + id) && x.enabled !== false);
+      socialOn = { google: ext.google === true, kakao: ext.kakao === true, naver: custom("naver"), line: custom("line") };
+      if (authDlg.open) renderAuth();
+    } catch (_) { /* 확인이 안 되면 구글만 */ }
+  }
   let authDelOk = false;   // 회원 탈퇴 확인란
   let authDeleted = false; // 탈퇴 직후 '로그아웃했어요' 대신 '탈퇴했어요'를 보이게
   function loadScript(src) {
@@ -853,14 +869,12 @@
     const msg = authMsg ? `<p class="auth-msg ${authMsg.type === "ok" ? "is-ok" : "is-err"}" role="${authMsg.type === "ok" ? "status" : "alert"}">${esc(authMsg.text)}</p>` : "";
     const busy = authBusy ? " disabled" : "";
     const submit = (key) => `<button class="btn btn-dark auth-submit" type="submit"${busy}>${esc(authBusy ? t("auth.wait") : t(key))}</button>`;
-    const social = `
+    const shown = [["google", G_LOGO], ["kakao", K_LOGO], ["naver", N_LOGO], ["line", L_LOGO]].filter(([id]) => socialOn[id]);
+    const social = shown.length ? `
       <div class="auth-social">
-        <button class="auth-google" type="button" data-auth="google"${busy}>${G_LOGO}<span>${esc(t("auth.google"))}</span></button>
-        <button class="auth-kakao" type="button" data-auth="kakao"${busy}>${K_LOGO}<span>${esc(t("auth.kakao"))}</span></button>
-        <button class="auth-naver" type="button" data-auth="naver"${busy}>${N_LOGO}<span>${esc(t("auth.naver"))}</span></button>
-        <button class="auth-line" type="button" data-auth="line"${busy}>${L_LOGO}<span>${esc(t("auth.line"))}</span></button>
+        ${shown.map(([id, logo]) => `<button class="auth-${id}" type="button" data-auth="${id}"${busy}>${logo}<span>${esc(t("auth." + id))}</span></button>`).join("\n        ")}
       </div>
-      <p class="auth-or"><span>${esc(t("auth.or"))}</span></p>`;
+      <p class="auth-or"><span>${esc(t("auth.or"))}</span></p>` : "";
     // 개인정보처리방침 (따로 떨어진 페이지, 새 창)
     const privacy = `<a class="auth-privacy" href="/privacy?lang=${lang}" target="_blank" rel="noopener">${esc(t("auth.privacy"))}</a>`;
     const field = (id, type, label, auto, extra = "") =>
@@ -926,6 +940,7 @@
   const homeUrl = () => location.origin + location.pathname + (lang === "ko" ? "" : "?lang=" + lang);
   async function authSocial(provider) {
     if (!sb) return;
+    if (!socialOn[provider]) { toast(t("auth.notReady")); return; }
     session.set("neo.afterLogin", location.hash || "#/");
     authBusy = true; renderAuth();
     // 카카오는 이메일 권한(심사 필요) 없이 닉네임·사진만 받는다. 네이버·라인은 수퍼베이스 '직접 추가' 로그인(custom:naver, custom:line)
@@ -995,6 +1010,7 @@
     const linkError = back.has("error") || back.has("error_code");
     try {
       await loadScript(SB_SRC);
+      loadProviders();
       sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, {
         auth: { flowType: "pkce", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
       });
