@@ -835,6 +835,7 @@
   }
   const authErr = (e) => {
     const m = String((e && (e.message || e.error_description)) || "").toLowerCase();
+    if (m.includes("not enabled") || m.includes("unsupported provider") || m.includes("provider not found")) return t("auth.notReady"); // 아직 수퍼베이스에서 안 켠 로그인
     if (m.includes("invalid login")) return t("auth.err.invalid");
     if (m.includes("already registered") || m.includes("already been registered")) return t("auth.err.exists");
     if (m.includes("not confirmed")) return t("auth.err.unconfirmed");
@@ -844,6 +845,9 @@
     return t("auth.err.generic");
   };
   const G_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.2-4 1.2-3.1 0-5.7-2.1-6.6-4.9H1.4v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.4 14.4a7.2 7.2 0 0 1 0-4.7V6.6H1.4a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.7 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.4 6.6l4 3.1C6.3 6.9 8.9 4.8 12 4.8z"/></svg>';
+  const K_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#191919" d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7l-1 3.6c-.1.3.3.6.6.4l4.3-2.8c.5.1 1 .1 1.5.1 5.5 0 10-3.6 10-8S17.5 3 12 3z"/></svg>';
+  const N_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M13.6 12.7 10.2 7.8H7v8.400h3.400v-4.900l3.400 4.900H17V7.800h-3.400z"/></svg>';
+  const L_LOGO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 3C6.5 3 2 6.5 2 10.8c0 3.8 3.4 7 8 7.6.3.100.7.200.8.500.1.300.1.700 0 1l-.1.800c0 .3-.2 1 .9.500s5.800-3.400 7.900-5.800C21.100 13.800 22 12.400 22 10.800 22 6.500 17.500 3 12 3z"/></svg>';
   function renderAuth() {
     const box = $("#authBody");
     const msg = authMsg ? `<p class="auth-msg ${authMsg.type === "ok" ? "is-ok" : "is-err"}" role="${authMsg.type === "ok" ? "status" : "alert"}">${esc(authMsg.text)}</p>` : "";
@@ -852,6 +856,9 @@
     const social = `
       <div class="auth-social">
         <button class="auth-google" type="button" data-auth="google"${busy}>${G_LOGO}<span>${esc(t("auth.google"))}</span></button>
+        <button class="auth-kakao" type="button" data-auth="kakao"${busy}>${K_LOGO}<span>${esc(t("auth.kakao"))}</span></button>
+        <button class="auth-naver" type="button" data-auth="naver"${busy}>${N_LOGO}<span>${esc(t("auth.naver"))}</span></button>
+        <button class="auth-line" type="button" data-auth="line"${busy}>${L_LOGO}<span>${esc(t("auth.line"))}</span></button>
       </div>
       <p class="auth-or"><span>${esc(t("auth.or"))}</span></p>`;
     // 개인정보처리방침 (따로 떨어진 페이지, 새 창)
@@ -921,7 +928,10 @@
     if (!sb) return;
     session.set("neo.afterLogin", location.hash || "#/");
     authBusy = true; renderAuth();
-    const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: homeUrl() } });
+    // 카카오는 이메일 권한(심사 필요) 없이 닉네임·사진만 받는다. 네이버·라인은 수퍼베이스 '직접 추가' 로그인(custom:naver, custom:line)
+    const opts = { redirectTo: homeUrl() };
+    if (provider === "kakao") opts.scopes = "profile_nickname profile_image";
+    const { error } = await sb.auth.signInWithOAuth({ provider: provider === "naver" || provider === "line" ? "custom:" + provider : provider, options: opts });
     if (error) { authBusy = false; authMsg = { type: "err", text: authErr(error) }; renderAuth(); return; }
     // 보통은 바로 구글 화면으로 넘어간다. 안 넘어가면 몇 초 뒤 버튼을 다시 살린다
     setTimeout(() => { if (authBusy) { authBusy = false; if (authDlg.open) renderAuth(); } }, 6000);
@@ -1426,7 +1436,7 @@
     if (ds.auth) {
       const a = ds.auth;
       if (a === "logout") { toggleUserMenu(false); closeMenus(); if (sb) sb.auth.signOut(); return; }
-      if (a === "google") { authSocial(a); return; }
+      if (a === "google" || a === "kakao" || a === "naver" || a === "line") { authSocial(a); return; }
       if (a === "cancel") { closeDialog(authDlg); return; }
       if (a === "delete") { toggleUserMenu(false); closeMenus(); authDelOk = false; openAuth("delete"); return; }
       if (authDlg.open && (a === "login" || a === "signup" || a === "forgot")) { authMode = a; authMsg = null; renderAuth(); return; }

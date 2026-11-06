@@ -1192,6 +1192,9 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 .auth-social button { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; border-radius: 12px; font-size: 15px; font-weight: 700; }
 .auth-social svg { width: 20px; height: 20px; }
 .auth-google { background: #fff; border: 1px solid #dadce0; color: #1f1f1f; }
+.auth-kakao { background: #fee500; border: 1px solid #fee500; color: #191919; }
+.auth-naver { background: #03c75a; border: 1px solid #03c75a; color: #fff; }
+.auth-line { background: #06c755; border: 1px solid #06c755; color: #fff; }
 .auth-social button:disabled, .auth-submit:disabled { opacity: 0.6; cursor: default; }
 .auth-or { display: flex; align-items: center; gap: 10px; margin: 16px 0 12px; font-size: 12px; color: var(--ink-3); }
 .auth-or::before, .auth-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
