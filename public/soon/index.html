@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <!--
     정식 오픈 전 '준비 중' 화면 (2026-11-07 소유자: 도메인에는 입맛 다실 정도로만)
-    - neocolor.net 첫 화면(/)이 이 파일을 보여준다 (public/_redirects). 전체 사이트는 버셀(Vercel) 주소에서 본다
+    - neo-collar.com 첫 화면(/)이 이 파일을 보여준다 (public/_redirects). 전체 사이트는 버셀(Vercel) 주소에서 본다
     - 전체 사이트의 assets/ 파일(i18n.js 등)은 공개 주소에서 막혀 있으므로, 이 화면은 글자·모양·동작을 전부 이 파일 안에 둔다
     - 화면 문구는 아래 T 에 한국어·영어·일본어를 항상 같이 넣는다
   -->
@@ -233,7 +233,7 @@
 
   <footer>
     <div class="wrap foot">
-      <p data-t="copy">© 2026 NEOCOLOR · neocolor.net · 정식 오픈 준비 중입니다.</p>
+      <p data-t="copy">© 2026 NEOCOLOR · neo-collar.com · 정식 오픈 준비 중입니다.</p>
       <a id="privacyLink" href="/privacy" data-t="privacy">개인정보처리방침</a>
     </div>
   </footer>
@@ -258,7 +258,7 @@
         emailL: "이메일", phoneL: "전화",
         other: "해외에서 걸 때 {n}",
         subject: "[NEOCOLOR] 문의",
-        copy: "© 2026 NEOCOLOR · neocolor.net · 정식 오픈 준비 중입니다.",
+        copy: "© 2026 NEOCOLOR · neo-collar.com · 정식 오픈 준비 중입니다.",
         privacy: "개인정보처리방침"
       },
       en: {
@@ -277,7 +277,7 @@
         emailL: "Email", phoneL: "Phone",
         other: "Within Korea: {n}",
         subject: "[NEOCOLOR] Inquiry",
-        copy: "© 2026 NEOCOLOR · neocolor.net · Launching soon.",
+        copy: "© 2026 NEOCOLOR · neo-collar.com · Launching soon.",
         privacy: "Privacy policy"
       },
       ja: {
@@ -296,7 +296,7 @@
         emailL: "メール", phoneL: "電話",
         other: "韓国国内から:{n}",
         subject: "[NEOCOLOR] お問い合わせ",
-        copy: "© 2026 NEOCOLOR · neocolor.net · 正式オープン準備中です。",
+        copy: "© 2026 NEOCOLOR · neo-collar.com · 正式オープン準備中です。",
         privacy: "個人情報処理方針"
       }
     };
@@ -390,7 +390,7 @@
     const BOT_UA = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|scan|monitor|python|curl|wget|java\/|okhttp|axios|go-http|phantom|selenium|puppeteer|playwright/i;
     const isBot = () => { try { return navigator.webdriver === true || BOT_UA.test(navigator.userAgent || ""); } catch (_) { return false; } };
     const kstDay = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
-    const isLive = () => location.protocol === "https:" && /^(www\.)?neocolor\.net$|^neocolor\.pages\.dev$/.test(location.hostname);
+    const isLive = () => location.protocol === "https:" && /^(www\.)?neo-collar\.com$|^neo-collar\.pages\.dev$/.test(location.hostname);
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     async function counterFetch(op, key) {
       const url = `${COUNTER}/${op}/${COUNTER_NS}/${key}`;

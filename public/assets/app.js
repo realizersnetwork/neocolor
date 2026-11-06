@@ -1106,7 +1106,7 @@
    * - 오늘 방문자는 누적에 잡힌 기기만 센다 → 오늘이 누적보다 많아질 수 없다
    * - 검색 로봇·자동 프로그램(headless 브라우저 등)은 세지 않는다
    * - IP 주소는 어디에도 저장하지 않는다
-   * - 실서비스 주소(neocolor.net)에서만 센다. 미리보기 주소에서는 세지 않는다
+   * - 실서비스 주소(neo-collar.com)에서만 센다. 미리보기 주소에서는 세지 않는다
    * - 아래 목록에 없는 나라는 '기타 나라'(OT), 모르는 나라는 '알 수 없음'(XX)
    * - 2026-11-05 숫자가 꼬인 것을 고치면서 새 이름공간(neocolor-net-2)으로 0부터 다시 셈
    */
@@ -1118,7 +1118,7 @@
   const BOT_UA = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|scan|monitor|python|curl|wget|java\/|okhttp|axios|go-http|phantom|selenium|puppeteer|playwright/i;
   const isBot = () => { try { return navigator.webdriver === true || BOT_UA.test(navigator.userAgent || ""); } catch (_) { return false; } };
   const kstDay = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
-  const isLive = () => location.protocol === "https:" && /^(www\.)?neocolor\.net$|^neocolor\.pages\.dev$/.test(location.hostname);
+  const isLive = () => location.protocol === "https:" && /^(www\.)?neo-collar\.com$|^neo-collar\.pages\.dev$/.test(location.hostname);
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   // 카운터는 10초에 30번까지만 받는다. 바쁘다고(429) 하면 한 번만 잠깐 기다렸다가 다시
   async function counterFetch(op, key) {
@@ -1550,8 +1550,6 @@
   /* ---------- 메인 동영상 ---------- */
   const video = $("#heroVideo");
   const cardVideo = $("#cardVideo");
-  const soundBtn = $("#soundBtn");
-  const soundLabel = $("#soundLabel");
   function armClip(clip) {
     if (!clip) return;
     const fail = () => {
@@ -1571,39 +1569,25 @@
   }
   armClip(video);
   armClip(cardVideo);
-  function updateSoundLabel() {
-    if (!video || !soundBtn) return;
-    const on = !video.muted;
-    soundBtn.classList.toggle("on", on);
-    soundBtn.setAttribute("aria-pressed", String(on));
-    soundBtn.setAttribute("aria-label", t(on ? "sound.offAria" : "sound.onAria"));
-    soundLabel.textContent = t(on ? "sound.off" : "sound.on");
-  }
-  if (video && soundBtn) {
-    // 브라우저는 소리 나는 자동재생을 막는다: 무음으로 시작하고, 버튼을 누르면 소리를 켠다
-    soundBtn.addEventListener("click", () => {
-      video.muted = !video.muted;
-      if (!video.muted) { video.volume = 1; video.play().catch(() => {}); }
-      updateSoundLabel();
-    });
-    // 화면에서 안 보이면 멈춤 (소리가 계속 나지 않게)
-    if ("IntersectionObserver" in window) {
+  // 새 영상에는 소리 트랙이 없다. 화면 밖이면 재생만 멈춘다.
+  if ("IntersectionObserver" in window) {
+    if (video) {
       new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (video.dataset.broken) return;
           if (!entry.isIntersecting) video.pause();
-          else if (state.view === "home" && (!reducedMotion || !video.muted)) video.play().catch(() => {});
+          else if (state.view === "home" && !reducedMotion) video.play().catch(() => {});
         });
       }, { threshold: 0.15 }).observe(video);
-      if (cardVideo) {
-        new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (cardVideo.dataset.broken) return;
-            if (!entry.isIntersecting) cardVideo.pause();
-            else if (state.view === "home" && !reducedMotion) cardVideo.play().catch(() => {});
-          });
-        }, { threshold: 0.15 }).observe(cardVideo);
-      }
+    }
+    if (cardVideo) {
+      new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (cardVideo.dataset.broken) return;
+          if (!entry.isIntersecting) cardVideo.pause();
+          else if (state.view === "home" && !reducedMotion) cardVideo.play().catch(() => {});
+        });
+      }, { threshold: 0.15 }).observe(cardVideo);
     }
   }
 
@@ -1675,7 +1659,6 @@
     renderStats();
     renderContact();
     updateSavedCount();
-    updateSoundLabel();
     if (courseDlg.open) renderCourseDialog();
     if (quizDlg.open) renderQuiz();
     if (authDlg.open) renderAuth();

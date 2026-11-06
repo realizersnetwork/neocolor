@@ -268,20 +268,6 @@ body[data-mode="student"] .vet-badge { display: none !important; }
 .hero-photo figcaption { font-size: 14px; line-height: 1.65; color: rgba(255, 255, 255, 0.92); }
 .hero-photo strong { display: block; margin-bottom: 6px; font-size: 20px; color: #fff; letter-spacing: -0.02em; }
 
-.sound-btn {
-  position: absolute; top: 14px; right: 14px; z-index: 3;
-  display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px 0 11px;
-  border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(11, 13, 18, 0.55); backdrop-filter: blur(6px);
-  color: #fff; font-size: 13px; font-weight: 700;
-}
-.sound-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-.sound-btn .ic-on { display: none; }
-.sound-btn.on .ic-on { display: block; }
-.sound-btn.on .ic-off { display: none; }
-.sound-btn:not(.on) { animation: sound-pulse 2.4s ease-in-out infinite; }
-@keyframes sound-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); } 50% { box-shadow: 0 0 0 7px rgba(255, 255, 255, 0); } }
-
 /* ---------- 공종 바로가기 ---------- */
 .quick { padding: 26px 0 4px; }
 .quick-grid { display: grid; grid-template-columns: repeat(var(--cols-m, 4), minmax(0, 1fr)); gap: 6px; }

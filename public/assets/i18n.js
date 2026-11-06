@@ -67,11 +67,6 @@ window.NEO_I18N = {
     "hero.capTitle": "AI가 책상 일을 가져가도, 기술은 못 가져갑니다.",
     "hero.cap": "화이트칼라에서 블루칼라로, 새 길을 택하는 분들이 늘고 있습니다. 이 새로운 흐름을 '네오칼라'라고 부릅니다. 경력도 나이도 괜찮습니다. 현장 베테랑이 처음부터 알려드립니다.",
     "hero.photoAlt": "푸른 뇌 신경망·로봇·컴퓨터와, 황금빛 현장에서 일하는 숙련공·풍력발전이 대각선으로 나뉜 영상",
-    "sound.on": "소리 켜기",
-    "sound.off": "소리 끄기",
-    "sound.onAria": "동영상 소리 켜기",
-    "sound.offAria": "동영상 소리 끄기",
-
     "home.quickAria": "공종 바로가기",
     "home.suggest": "추천 검색어",
 
@@ -375,7 +370,7 @@ window.NEO_I18N = {
     "foot.l3": "개인정보처리방침",
     "foot.l4": "취소·환불 정책",
     "foot.l5": "고객센터",
-    "foot.copy": "© 2026 NEOCOLOR · neocolor.net · 정식 오픈 준비 중입니다.",
+    "foot.copy": "© 2026 NEOCOLOR · neo-collar.com · 정식 오픈 준비 중입니다.",
     "foot.ads": "광고 안내",
     "foot.stats": "방문자 통계",
 
@@ -634,11 +629,6 @@ window.NEO_I18N = {
     "hero.capTitle": "AI can take the desk job. It can't take your skills.",
     "hero.cap": "More and more white-collar professionals are choosing a new path in blue-collar work. We call this shift Neo-Collar. Your experience counts, and it's never too late. Field veterans teach you from the very start.",
     "hero.photoAlt": "A video split on a diagonal: a blue neural brain, robot, and computer beside skilled workers and wind turbines in golden field light",
-    "sound.on": "Sound on",
-    "sound.off": "Sound off",
-    "sound.onAria": "Turn video sound on",
-    "sound.offAria": "Turn video sound off",
-
     "home.quickAria": "Browse by trade",
     "home.suggest": "Try searching",
 
@@ -942,7 +932,7 @@ window.NEO_I18N = {
     "foot.l3": "Privacy",
     "foot.l4": "Cancellation & refunds",
     "foot.l5": "Support",
-    "foot.copy": "© 2026 NEOCOLOR · neocolor.net · Launching soon.",
+    "foot.copy": "© 2026 NEOCOLOR · neo-collar.com · Launching soon.",
     "foot.ads": "Advertise",
     "foot.stats": "Visitor stats",
 
@@ -1201,11 +1191,6 @@ window.NEO_I18N = {
     "hero.capTitle": "AIが机の仕事を奪っても、技術は奪えません。",
     "hero.cap": "ホワイトカラーからブルーカラーへ、新しい道を選ぶ人が増えています。この新しい流れを「ネオカラー」と呼びます。経験も年齢も関係ありません。現場のベテランが基礎から教えます。",
     "hero.photoAlt": "青い脳の神経網・ロボット・コンピュータと、黄金色の現場で働く熟練工・風力発電が斜めに分かれた動画",
-    "sound.on": "音声オン",
-    "sound.off": "音声オフ",
-    "sound.onAria": "動画の音声をオンにする",
-    "sound.offAria": "動画の音声をオフにする",
-
     "home.quickAria": "工種から探す",
     "home.suggest": "おすすめ検索",
 
@@ -1509,7 +1494,7 @@ window.NEO_I18N = {
     "foot.l3": "個人情報処理方針",
     "foot.l4": "キャンセル・返金",
     "foot.l5": "サポート",
-    "foot.copy": "© 2026 NEOCOLOR · neocolor.net · 正式オープン準備中です。",
+    "foot.copy": "© 2026 NEOCOLOR · neo-collar.com · 正式オープン準備中です。",
     "foot.ads": "広告のご案内",
     "foot.stats": "訪問者統計",
 

@@ -1550,8 +1550,6 @@
   /* ---------- 메인 동영상 ---------- */
   const video = $("#heroVideo");
   const cardVideo = $("#cardVideo");
-  const soundBtn = $("#soundBtn");
-  const soundLabel = $("#soundLabel");
   function armClip(clip) {
     if (!clip) return;
     const fail = () => {
@@ -1571,39 +1569,25 @@
   }
   armClip(video);
   armClip(cardVideo);
-  function updateSoundLabel() {
-    if (!video || !soundBtn) return;
-    const on = !video.muted;
-    soundBtn.classList.toggle("on", on);
-    soundBtn.setAttribute("aria-pressed", String(on));
-    soundBtn.setAttribute("aria-label", t(on ? "sound.offAria" : "sound.onAria"));
-    soundLabel.textContent = t(on ? "sound.off" : "sound.on");
-  }
-  if (video && soundBtn) {
-    // 브라우저는 소리 나는 자동재생을 막는다: 무음으로 시작하고, 버튼을 누르면 소리를 켠다
-    soundBtn.addEventListener("click", () => {
-      video.muted = !video.muted;
-      if (!video.muted) { video.volume = 1; video.play().catch(() => {}); }
-      updateSoundLabel();
-    });
-    // 화면에서 안 보이면 멈춤 (소리가 계속 나지 않게)
-    if ("IntersectionObserver" in window) {
+  // 새 영상에는 소리 트랙이 없다. 화면 밖이면 재생만 멈춘다.
+  if ("IntersectionObserver" in window) {
+    if (video) {
       new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (video.dataset.broken) return;
           if (!entry.isIntersecting) video.pause();
-          else if (state.view === "home" && (!reducedMotion || !video.muted)) video.play().catch(() => {});
+          else if (state.view === "home" && !reducedMotion) video.play().catch(() => {});
         });
       }, { threshold: 0.15 }).observe(video);
-      if (cardVideo) {
-        new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (cardVideo.dataset.broken) return;
-            if (!entry.isIntersecting) cardVideo.pause();
-            else if (state.view === "home" && !reducedMotion) cardVideo.play().catch(() => {});
-          });
-        }, { threshold: 0.15 }).observe(cardVideo);
-      }
+    }
+    if (cardVideo) {
+      new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (cardVideo.dataset.broken) return;
+          if (!entry.isIntersecting) cardVideo.pause();
+          else if (state.view === "home" && !reducedMotion) cardVideo.play().catch(() => {});
+        });
+      }, { threshold: 0.15 }).observe(cardVideo);
     }
   }
 
@@ -1675,7 +1659,6 @@
     renderStats();
     renderContact();
     updateSavedCount();
-    updateSoundLabel();
     if (courseDlg.open) renderCourseDialog();
     if (quizDlg.open) renderQuiz();
     if (authDlg.open) renderAuth();

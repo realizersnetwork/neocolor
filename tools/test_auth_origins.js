@@ -118,6 +118,7 @@ assert.ok(html.includes('src="media/hero.mp4?v=6"'), "hero video wired");
 assert.ok(html.includes('id="cardVideo"'), "card element");
 assert.ok(html.includes("muted"), "autoplay stays muted");
 assert.ok(html.includes("playsinline"), "playsinline");
+assert.ok(!html.includes("soundBtn"), "muted hero has no sound button");
 assert.ok(!html.includes("rooftop"), "old second image removed from the page");
 assert.ok(html.includes('rel="canonical" href="https://neo-collar.com/"'), "canonical production origin");
 assert.ok(!html.includes("https://" + oldApex), "absolute links do not use the disconnected origin");
@@ -127,6 +128,16 @@ assert.ok(app.includes("NEO_ORIGINS.authReturnUrl"), "login return uses the orig
 assert.ok(app.includes("leaveStaleOrigin"), "stale origin leaves before login");
 assert.ok(app.includes('dataset.broken'), "video error falls back");
 assert.ok(app.includes("reducedMotion"), "reduced motion still pauses video");
+assert.ok(!app.includes("soundBtn"), "sound control removed with the silent video");
+assert.ok(app.includes('COUNTER_NS = "neocolor-net-2"'), "analytics namespace kept");
+assert.ok(app.includes("neo-collar.com"), "stats host follows the canonical domain");
+const privacy = fs.readFileSync(path.join(root, "public/privacy.html"), "utf8");
+assert.ok(privacy.includes("neo-collar.com"), "privacy names the canonical domain");
+assert.ok(!privacy.includes(oldApex), "privacy has no disconnected domain");
+assert.ok(privacy.includes("lkysakana@naver.com"), "contact email unchanged");
+const i18n = fs.readFileSync(path.join(root, "public/assets/i18n.js"), "utf8");
+assert.ok(!i18n.includes(oldApex), "visible copy has no disconnected domain");
+assert.ok(!i18n.includes("sound.on"), "sound-button copy removed");
 assert.ok(!/homeUrl = \(\) => location\.origin \+ location\.pathname/.test(app), "pathname is not the login return path");
 
 const cfg = fs.readFileSync(path.join(root, "public/assets/config.js"), "utf8");
