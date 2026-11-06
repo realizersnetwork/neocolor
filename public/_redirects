@@ -1,6 +1,6 @@
 # 정식 오픈 전 '준비 중' 화면 (2026-11-07 소유자)
 # 공개 주소(Cloudflare)에서는 첫 화면에 soon/ 의 '준비 중' 화면만 보이고, 전체 사이트 파일(index.html, assets/)은 열리지 않는다.
-# 전체 사이트는 익스프레스리와 형님 둘만 보는 비공개 주소(Vercel)에 있다 → .github/workflows/vercel-private.yml
+# 전체 사이트는 버셀(Vercel) 주소에서 본다 → .github/workflows/vercel.yml
 # 정식 오픈할 때는 이 파일을 지우면 예전처럼 전체 사이트가 보인다.
 /              /soon/   200
 /index.html    /        302
