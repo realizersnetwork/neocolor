@@ -44,12 +44,18 @@ fail() {
 
 echo "1) 열쇠 확인"
 api GET /v2/user
-[ "$CODE" = 200 ] || fail "VERCEL_TOKEN 열쇠가 맞지 않습니다 (응답 $CODE). 버셀에서 열쇠를 새로 만들어 GitHub Secrets 의 VERCEL_TOKEN 을 바꿔 주세요."
-TEAM="$(jq -r '.user.defaultTeamId // empty' "$RES")"
+if [ "$CODE" = 200 ]; then
+  TEAM="$(jq -r '.user.defaultTeamId // empty' "$RES")"
+else
+  # 팀 전용 열쇠(Scope: 팀 → All Projects)는 계정 정보를 못 읽는다. 그때는 버셀이 열쇠의 팀으로 알아서 정한다
+  echo "   계정 정보는 못 읽음 (응답 $CODE) → 열쇠에 정해진 팀으로 진행"
+fi
 
 echo "2) 버셀 프로젝트 $NAME 확인"
 api GET "/v9/projects/$NAME"
-if [ "$CODE" = 404 ]; then
+if [ "$CODE" = 401 ] || [ "$CODE" = 403 ]; then
+  fail "VERCEL_TOKEN 열쇠가 맞지 않거나 권한이 없습니다 (응답 $CODE). 버셀 Account Tokens 에서 Scope 를 본인 팀 → All Projects 로 새로 만들어 GitHub Secrets 의 VERCEL_TOKEN 을 바꿔 주세요."
+elif [ "$CODE" = 404 ]; then
   echo "   아직 없어서 새로 만듭니다"
   api POST /v11/projects "$(jq -nc --arg n "$NAME" '{name: $n, framework: null}')"
   [ "$CODE" = 200 ] || [ "$CODE" = 201 ] || fail "버셀 프로젝트를 만들지 못했습니다 (응답 $CODE)"
