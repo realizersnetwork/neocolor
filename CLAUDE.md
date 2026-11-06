@@ -51,7 +51,7 @@
 - 아직 실제 결제는 없다
 
 ## 로그인·회원가입 (수퍼베이스 프로젝트 neocolor, https://imlxvwvfqbyznetkgtmv.supabase.co)
-- 이메일·비밀번호, 구글. **카카오는 뺌** (2026-11-06 소유자). 코드는 `app.js`의 '로그인·회원가입', 설정값은 `public/assets/config.js`
+- 이메일·비밀번호, 구글, 카카오, 네이버, 라인 (2026-11-06 형님 요청으로 카카오·네이버·라인 버튼 추가: 한국·일본 손님 편의. 앞서 소유자가 뺐던 카카오를 다시 넣음). 카카오는 수퍼베이스 기본 로그인(`kakao`, 이메일 권한 없이 닉네임·사진만 요청), 네이버·라인은 수퍼베이스 '직접 추가' 로그인(`custom:naver`, `custom:line`)이라 수퍼베이스에서 켜야 작동하고, 안 켠 로그인은 '로그인은 곧 열려요'가 뜬다. 코드는 `app.js`의 '로그인·회원가입', 설정값은 `public/assets/config.js`
 - 수퍼베이스 라이브러리는 jsdelivr의 `@supabase/supabase-js@2` (새 공개 키 sb_publishable_도 되도록 최신 2.x)
 - `config.js`의 `supabaseUrl`, `supabaseAnonKey`가 비어 있으면 꺼진 상태 (버튼을 누르면 '로그인은 곧 열려요')
 - anon 키는 공개용이라 config.js에 넣어도 된다. **service_role 키는 절대 넣지 않는다**
