@@ -937,8 +937,19 @@
     const first = $("#authBody input");
     if (first) setTimeout(() => first.focus(), 50);
   }
-  const homeUrl = () => location.origin + location.pathname + (lang === "ko" ? "" : "?lang=" + lang);
+  const homeUrl = () => (window.NEO_ORIGINS
+    ? window.NEO_ORIGINS.authReturnUrl(location, lang)
+    : location.origin + "/" + (lang === "ko" ? "" : "?lang=" + lang));
+  function leaveStaleOrigin() {
+    const api = window.NEO_ORIGINS;
+    if (!api) return false;
+    const bounce = api.authBounceUrl(location);
+    if (!bounce) return false;
+    location.replace(bounce);
+    return true;
+  }
   async function authSocial(provider) {
+    if (leaveStaleOrigin()) return;
     if (!sb) return;
     if (!socialOn[provider]) { toast(t("auth.notReady")); return; }
     session.set("neo.afterLogin", location.hash || "#/");
@@ -954,6 +965,7 @@
   // 구글 화면에서 뒤로 돌아왔을 때 버튼이 잠긴 채 남지 않게
   window.addEventListener("pageshow", (e) => { if (e.persisted && authBusy) { authBusy = false; if (authDlg.open) renderAuth(); } });
   async function submitAuth() {
+    if (leaveStaleOrigin()) return;
     if (!sb || authBusy) return;
     const v = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
     if (authMode === "delete") { await deleteAccount(); return; }
@@ -1402,10 +1414,11 @@
     }
 
     requestAnimationFrame(() => fillAd(r.view));
-    if (video) {
-      if (r.view === "home") { if (!reducedMotion) video.play().catch(() => {}); }
-      else video.pause();
-    }
+    document.querySelectorAll("#heroVideo, #cardVideo").forEach((clip) => {
+      if (clip.dataset.broken) return;
+      if (r.view === "home") { if (!reducedMotion) clip.play().catch(() => {}); }
+      else clip.pause();
+    });
 
     let target = null;
     if (r.view === "roadmaps" && rmById[r.a]) target = document.getElementById("rm-" + r.a);
@@ -1536,9 +1549,28 @@
 
   /* ---------- 메인 동영상 ---------- */
   const video = $("#heroVideo");
+  const cardVideo = $("#cardVideo");
   const soundBtn = $("#soundBtn");
   const soundLabel = $("#soundLabel");
-  if (video && reducedMotion) { video.removeAttribute("autoplay"); video.pause(); }
+  function armClip(clip) {
+    if (!clip) return;
+    const fail = () => {
+      if (clip.dataset.broken) return;
+      clip.dataset.broken = "1";
+      clip.removeAttribute("autoplay");
+      try { clip.pause(); } catch (_) { /* 무시 */ }
+      const source = clip.querySelector("source");
+      if (source) source.removeAttribute("src");
+      clip.removeAttribute("src");
+      try { clip.load(); } catch (_) { /* 포스터만 남긴다 */ }
+    };
+    clip.addEventListener("error", fail);
+    const source = clip.querySelector("source");
+    if (source) source.addEventListener("error", fail);
+    if (reducedMotion) { clip.removeAttribute("autoplay"); clip.pause(); }
+  }
+  armClip(video);
+  armClip(cardVideo);
   function updateSoundLabel() {
     if (!video || !soundBtn) return;
     const on = !video.muted;
@@ -1558,10 +1590,20 @@
     if ("IntersectionObserver" in window) {
       new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
+          if (video.dataset.broken) return;
           if (!entry.isIntersecting) video.pause();
           else if (state.view === "home" && (!reducedMotion || !video.muted)) video.play().catch(() => {});
         });
       }, { threshold: 0.15 }).observe(video);
+      if (cardVideo) {
+        new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (cardVideo.dataset.broken) return;
+            if (!entry.isIntersecting) cardVideo.pause();
+            else if (state.view === "home" && !reducedMotion) cardVideo.play().catch(() => {});
+          });
+        }, { threshold: 0.15 }).observe(cardVideo);
+      }
     }
   }
 
@@ -1644,7 +1686,8 @@
   applyStatic();
   renderAll();
   visitDone = countVisit();
-  initAuth();
+  if (leaveStaleOrigin()) { /* 끊긴 주소에서는 로그인을 시작하지 않고 허용된 주소로 옮긴다 */ }
+  else initAuth();
   applyTraceCountry();
   handleRoute();
   window.addEventListener("hashchange", handleRoute);

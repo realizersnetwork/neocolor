@@ -235,16 +235,24 @@ body[data-mode="student"] .vet-badge { display: none !important; }
 .hero { background: var(--dark); color: #fff; }
 .hero-stage { position: relative; min-height: 78vh; min-height: 78svh; display: flex; align-items: flex-end; overflow: hidden; }
 .hero-video-wrap { position: absolute; inset: 0; background: var(--dark); }
-.hero-video-wrap video { width: 100%; height: 100%; object-fit: cover; }
+/* 휴대폰: 영상 상자 높이를 720×640 과 같게 해 장면을 자르지 않는다.
+   마스크는 상자 전체가 아니라 그림 아래쪽만 글자 뒤로 녹인다. */
+.hero-video-wrap video {
+  position: absolute; top: 0; left: 0; right: 0; width: 100%; height: auto; aspect-ratio: 9 / 8;
+  object-fit: cover; object-position: center center; background: transparent;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 62%, rgba(0, 0, 0, 0.5) 84%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 62%, rgba(0, 0, 0, 0.5) 84%, transparent 100%);
+}
 .hero-video-wrap::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(180deg, rgba(11, 13, 18, 0.12) 0%, rgba(11, 13, 18, 0.2) 40%, rgba(11, 13, 18, 0.92) 100%);
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0.16) 0%, rgba(11, 13, 18, 0.02) 32%, rgba(11, 13, 18, 0.22) 58%, rgba(11, 13, 18, 0.7) 100%);
 }
 .hero-copy { position: relative; z-index: 1; width: 100%; padding: 0 16px 28px; }
 .wordmark-xl { font-size: clamp(46px, 14vw, 84px); color: #fff; line-height: 0.92; }
 .brand-sub { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.85); }
 .hero h1 { margin-top: 22px; font-size: clamp(32px, 9vw, 60px); font-weight: 800; line-height: 1.14; letter-spacing: -0.035em; }
 .lead { margin-top: 14px; max-width: 34em; font-size: 16px; line-height: 1.65; color: rgba(255, 255, 255, 0.86); }
+.hero-copy .lead { color: rgba(255, 255, 255, 0.96); }
 .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -255,8 +263,9 @@ body[data-mode="student"] .vet-badge { display: none !important; }
 .btn-dark { background: var(--ink); color: #fff; }
 .btn-line { border: 1px solid var(--line); background: #fff; }
 .hero-photo { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); align-items: center; gap: 16px; padding: 6px 16px 34px; }
-.hero-photo img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 14px; }
-.hero-photo figcaption { font-size: 14px; line-height: 1.65; color: rgba(255, 255, 255, 0.78); }
+.hero-photo img,
+.hero-photo video { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; object-position: center center; border-radius: 14px; background: #10131a; }
+.hero-photo figcaption { font-size: 14px; line-height: 1.65; color: rgba(255, 255, 255, 0.92); }
 .hero-photo strong { display: block; margin-bottom: 6px; font-size: 20px; color: #fff; letter-spacing: -0.02em; }
 
 .sound-btn {
@@ -945,12 +954,18 @@ dialog.sheet[open] { animation: sheet-in 0.22s ease-out; }
   .hero-stage { display: contents; }
   .hero-copy { grid-column: 1; grid-row: 1; padding: 0 32px 0 0; }
   .hero-video-wrap {
-    position: relative; inset: auto; grid-column: 2; grid-row: 1; aspect-ratio: 9 / 16;
+    position: relative; inset: auto; grid-column: 2; grid-row: 1; aspect-ratio: 9 / 8;
     border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
   }
-  .hero-video-wrap::after { background: linear-gradient(180deg, transparent 70%, rgba(11, 13, 18, 0.35)); }
-  .hero-photo { grid-column: 3; grid-row: 1; display: block; padding: 0; margin-top: 110px; }
-  .hero-photo img { border-radius: 20px; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6); }
+  /* 칸 비율을 영상(720×640)과 같게 해서 cover 여도 철골·크레인 팔이 잘리지 않는다. 글자는 왼쪽 칸이라 영상 위 암막은 두지 않는다. */
+  .hero-video-wrap video {
+    position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto;
+    object-fit: cover; object-position: center center; -webkit-mask-image: none; mask-image: none;
+  }
+  .hero-video-wrap::after { background: none; }
+  .hero-photo { grid-column: 3; grid-row: 1; display: block; padding: 0; margin-top: 0; }
+  .hero-photo img,
+  .hero-photo video { border-radius: 20px; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6); }
   .hero-photo figcaption { margin-top: 14px; font-size: 13px; }
   .hero-photo strong { font-size: 18px; }
   .lead { font-size: 18px; }
@@ -972,6 +987,11 @@ dialog.sheet[open] { animation: sheet-in 0.22s ease-out; }
   .search { max-width: 240px; }
 }
 
+@media (max-width: 959px) {
+  .hero-copy h1,
+  .hero-copy .lead,
+  .hero-copy .brand-sub { text-shadow: 0 1px 2px rgba(11, 13, 18, 0.75), 0 10px 28px rgba(11, 13, 18, 0.45); }
+}
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
