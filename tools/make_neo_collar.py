@@ -6,7 +6,7 @@ public/ (neocolor.net) 을 통째로 neo-collar/ 로 복사하면서 이름·주
 
     python3 tools/make_neo_collar.py
 
-- NEOCOLOR → NEOCOLLAR, 로고 NEO+COLOR → NEO+COLLAR
+- NEOCOLOR → NEO-COLLAR, 로고 NEO+COLOR → NEO-+COLLAR (2026-11-07 소유자: 하이픈 넣은 NEO-COLLAR)
 - neocolor.net → neo-collar.com, neocolor.pages.dev → neo-collar.pages.dev
 - 방문자 통계는 따로 센다 (Abacus 이름공간 neocolor-net-2 → neo-collar-com-1)
 - 영상·사진 같은 파일은 그대로 복사
@@ -24,9 +24,9 @@ DST = ROOT / "neo-collar"
 TEXT = {".html", ".js", ".css", ".txt", ".json", ".xml", ".svg", ".webmanifest", ""}
 
 RULES = [
-    # 로고: NEO<span class="...">COLOR</span> → NEO<span class="...">COLLAR</span>
-    (re.compile(r'NEO(<span class="[^"]*">)COLOR(</span>)'), r"NEO\1COLLAR\2"),
-    (re.compile(r"NEOCOLOR"), "NEOCOLLAR"),
+    # 로고: NEO<span class="...">COLOR</span> → NEO-<span class="...">COLLAR</span> (하이픈은 흰 글자 NEO 쪽)
+    (re.compile(r'NEO(<span class="[^"]*">)COLOR(</span>)'), r"NEO-\1COLLAR\2"),
+    (re.compile(r"NEOCOLOR"), "NEO-COLLAR"),
     # 방문자 통계 이름공간 (neocolor.net 숫자와 섞이지 않게)
     (re.compile(r"neocolor-net-2"), "neo-collar-com-1"),
     # 주소 (정규식 안에 쓰인 neocolor\.net 도)
@@ -37,22 +37,44 @@ RULES = [
 ]
 
 
-# NEOCOLLAR 로고가 NEOCOLOR보다 한 글자 길어서, 휴대폰 머리줄이 두 줄로 밀리지 않게 로고만 조금 작게
+# NEO-COLLAR 로고가 NEOCOLOR보다 두 글자 길어서, 휴대폰 머리줄이 두 줄로 밀리지 않게 로고만 조금 작게
 EXTRA_CSS = """
-/* (neo-collar 전용) 로고가 한 글자 길어서 휴대폰에서는 조금 작게 → 머리줄 한 줄 유지 */
+/* (neo-collar 전용) 로고 NEO-COLLAR 가 길어서 휴대폰에서는 조금 작게 → 머리줄 한 줄 유지 */
 @media (max-width: 719px) { .site-header .logo .wordmark { font-size: 20px; } }
+@media (max-width: 413px) { html:not([lang="ko"]) .site-header .logo .wordmark { font-size: 18px; } }
 @media (max-width: 379px) {
   .site-header .logo .wordmark { font-size: 19px; }
   html:not([lang="ko"]) .site-header .logo .wordmark { font-size: 17px; }
 }
 """
 
+# 준비 중 화면(soon/index.html)의 큰 로고도 휴대폰에서 화면 밖으로 나가지 않게
+EXTRA_SOON_CSS = """    /* (neo-collar 전용) 로고 NEO-COLLAR 가 길어서 휴대폰에서 화면 밖으로 나가지 않게 조금 작게 */
+    .wordmark-xl { font-size: clamp(44px, 14vw, 108px); }
+"""
 
-def convert(text: str, name: str = "") -> str:
+
+# 화면 글 속 NEO-COLLAR 가 'NEO-' 에서 줄이 바뀌지 않게, 보이는 글에서는 줄바꿈 안 되는 하이픈(U+2011)을 쓴다.
+# 제목·메타·화면 읽기(aria-label)·메일 제목·주석 줄은 보통 하이픈 그대로 (검색·복사할 때 같은 글자로 보이게)
+KEEP_ASCII = re.compile(r"<title>|<meta |aria-label|subject|^\s*(/\*|\*|//|<!--)")
+
+
+def nobreak(text: str) -> str:
+    return "\n".join(
+        line if KEEP_ASCII.search(line) else line.replace("NEO-COLLAR", "NEO‑COLLAR")
+        for line in text.split("\n")
+    )
+
+
+def convert(text: str, rel: str = "") -> str:
     for pat, rep in RULES:
         text = pat.sub(rep, text)
-    if name == "style.css":
+    if rel.endswith((".html", ".js")):
+        text = nobreak(text)
+    if rel == "assets/style.css":
         text = text.rstrip("\n") + "\n" + EXTRA_CSS
+    if rel == "soon/index.html":
+        text = text.replace("  </style>", EXTRA_SOON_CSS + "  </style>", 1)
     return text
 
 
@@ -67,7 +89,7 @@ def main() -> int:
             continue
         dst.parent.mkdir(parents=True, exist_ok=True)
         if src.suffix.lower() in TEXT:
-            dst.write_text(convert(src.read_text(encoding="utf-8"), src.name), encoding="utf-8")
+            dst.write_text(convert(src.read_text(encoding="utf-8"), rel.as_posix()), encoding="utf-8")
         else:
             shutil.copy2(src, dst)
     # 남은 옛 이름이 있으면 알려준다

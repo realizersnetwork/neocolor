@@ -3,7 +3,7 @@
 #
 # - 정식 오픈 전에는 두 도메인(neocolor.net·neo-collar.com)에 '준비 중' 화면만 보이므로,
 #   전체 사이트는 여기서 버셀 공개 주소에 올려서 본다 (2026-11-07 소유자: "형님도 수정할 수 있는 공개로")
-# - 버셀에는 NEOCOLLAR 이름 사이트(neo-collar/ = public/에서 이름만 바꿔 만든 것)를 올린다
+# - 버셀에는 NEO-COLLAR 이름 사이트(neo-collar/ = public/에서 이름만 바꿔 만든 것)를 올린다
 #   (2026-11-07 소유자: "NEO-COLLAR로 바꿔야지 당연히"). 워크플로가 올리기 전에 neo-collar/를 public/에서 다시 만든다
 # - main 에 들어온 수정은 누가 했든(소유자·형님) 자동으로 올라간다
 # - 로그인 없이 누구나 볼 수 있게(Vercel Authentication 끔) 맞추고, 검색엔진에는 안 나오게 한다(noindex)
@@ -19,7 +19,7 @@ NAME="${VERCEL_PROJECT_NAME:-neocolor}"
 API="${VERCEL_API:-https://api.vercel.com}"
 CLI="${VERCEL_CLI:-npx --yes vercel@latest}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SRC="${VERCEL_SITE_DIR:-neo-collar}"   # 올릴 폴더 (NEOCOLLAR 이름 사이트)
+SRC="${VERCEL_SITE_DIR:-neo-collar}"   # 올릴 폴더 (NEO-COLLAR 이름 사이트)
 : "${VERCEL_TOKEN:?VERCEL_TOKEN 열쇠가 없습니다}"
 [ -f "$ROOT/$SRC/index.html" ] || { echo "::error::$SRC/index.html 이 없습니다"; exit 1; }
 

@@ -15,7 +15,7 @@
   - `public/404.html`은 지우지 않는다: 없으면 Cloudflare가 없는 주소에 전체 사이트 첫 화면(index.html)을 내보낸다
   - 준비 중 화면은 `assets/`(i18n.js 등)를 못 쓰므로 글자·모양·동작이 전부 그 파일 안에 있다. 문구는 그 파일의 `T`에 ko·en·ja 같이. 방문자 통계도 그 파일이 같은 카운터·같은 이름으로 센다 (`app.js`의 `STAT_COUNTRIES`를 바꾸면 같이 바꾼다)
 - **전체 사이트 = 버셀(Vercel) 프로젝트 `neocolor`, 로그인 없이 누구나 보는 공개 주소**
-  - 버셀에는 **NEOCOLLAR 이름 사이트**(`neo-collar/` = public/에서 이름만 바꾼 것)를 올린다 (2026-11-07 소유자: "NEO-COLLAR로 바꿔야지 당연히"). 워크플로가 올리기 전에 `make_neo_collar.py`로 다시 만든다
+  - 버셀에는 **NEO-COLLAR 이름 사이트**(`neo-collar/` = public/에서 이름만 바꾼 것)를 올린다 (2026-11-07 소유자: "NEO-COLLAR로 바꿔야지 당연히"). 워크플로가 올리기 전에 `make_neo_collar.py`로 다시 만든다
   - 그래서 버셀 주소의 `#/stats`는 neo-collar.com 방문자 숫자(`neo-collar-com-1`)를 보여준다. neocolor.net 숫자(`neocolor-net-2`)는 따로 쌓이고 지금 보여주는 화면은 없다
   - 주소: **https://neocollar.vercel.app** (소유자: "neocollar 들어가는 가장 단순한 거로, 없으면 neocollar1028"). 스크립트가 이 순서로 붙인다. 처음 만들 때 생긴 https://neocolor.vercel.app 도 같은 사이트로 열린다
   - 버셀 계정은 소유자 것 (팀 이름 Realizers, 2026-11-07 첫 배포 성공)
@@ -116,7 +116,7 @@
 - 오늘 방문자는 누적에 먼저 잡힌 기기만 센다 (그래서 오늘 > 누적이 될 수 없음). 검색 로봇·자동 브라우저는 세지 않는다
 - 누가 들어왔는지(IP·기기)는 일부러 안 남기므로 알 수 없다
 - neocolor.net(과 neocolor.pages.dev)에서만 센다. 미리보기 주소·내 컴퓨터에서는 안 센다
-- 정식 오픈 전에는 공개 주소의 준비 중 화면(`soon/index.html`)이 같은 방식으로 센다. 버셀 주소의 `#/stats`는 NEOCOLLAR 사이트라 neo-collar.com 숫자만 보인다
+- 정식 오픈 전에는 공개 주소의 준비 중 화면(`soon/index.html`)이 같은 방식으로 센다. 버셀 주소의 `#/stats`는 NEO-COLLAR 사이트라 neo-collar.com 숫자만 보인다
 - Abacus 제한: IP당 10초에 30번. 통계 화면이 한 번에 18번 읽으니 나라 목록(`STAT_COUNTRIES`)을 크게 늘리지 말 것
 
 ## 광고
@@ -136,13 +136,14 @@
 - '글자 크게' 버튼(나이 드신 분들용), 관심 강의 저장(이 기기에만 저장)
 
 ## 두 번째 사이트 neo-collar.com (2026-11-06 소유자가 산 도메인)
-- `neo-collar/` = `public/`을 통째로 복사해서 **이름만 바꾼** 사이트 (NEOCOLOR → NEOCOLLAR, 로고 NEO+COLLAR, neocolor.net → neo-collar.com)
+- `neo-collar/` = `public/`을 통째로 복사해서 **이름만 바꾼** 사이트 (NEOCOLOR → **NEO-COLLAR**(하이픈 있음, 2026-11-07 소유자), 로고 `NEO-`+색 `COLLAR`, neocolor.net → neo-collar.com)
 - **neo-collar/는 손으로 고치지 않는다.** `python3 tools/make_neo_collar.py`로 public/에서 다시 만든다 (옛 이름이 남으면 스크립트가 알려줌)
 - public/을 고치면 **같은 커밋에서 스크립트를 돌려 neo-collar/도 같이** 바꾼다. 소유자가 따로 하라고 하기 전까지 두 사이트는 이름만 다르고 똑같다
 - 로그인·회원가입은 같은 수퍼베이스 프로젝트 그대로 (새로 만들지 않음, 소유자 요청). 수퍼베이스 Redirect URLs에 `https://neo-collar.com/**`, `https://www.neo-collar.com/**`, `https://neo-collar.pages.dev/**`도 있어야 로그인 후 이 사이트로 돌아온다
 - 방문자 통계는 따로 센다: Abacus 이름공간 `neo-collar-com-1` (neo-collar.com, neo-collar.pages.dev에서만)
-- 준비 중 화면·`_redirects`·`404.html`도 스크립트가 같이 복사한다 → neo-collar.com도 준비 중 화면만 보인다. 버셀 주소(neocollar.vercel.app)에는 이 NEOCOLLAR 사이트 하나만 올린다
-- NEOCOLLAR가 한 글자 길어서 휴대폰에서는 머리줄 로고만 조금 작게 (스크립트의 `EXTRA_CSS`)
+- 준비 중 화면·`_redirects`·`404.html`도 스크립트가 같이 복사한다 → neo-collar.com도 준비 중 화면만 보인다. 버셀 주소(neocollar.vercel.app)에는 이 NEO-COLLAR 사이트 하나만 올린다
+- NEO-COLLAR가 두 글자 길어서 휴대폰에서는 머리줄 로고(`EXTRA_CSS`)와 준비 중 화면 큰 로고(`EXTRA_SOON_CSS`)만 조금 작게
+- 화면 글 속 NEO-COLLAR는 'NEO-'에서 줄이 바뀌지 않게 줄바꿈 안 되는 하이픈(U+2011)으로 바꾼다 (스크립트의 `nobreak`). 제목·메타·aria-label·메일 제목은 보통 하이픈
 - 배포: neo-collar.com은 **소유자 본인 Cloudflare 계정**(형님 계정 아님)에 있다. GitHub(realizersnetwork)은 형님 계정의 neocolor 프로젝트에 이미 연결돼 있어서, 소유자 계정에 또 연결하면 neocolor.net 자동 반영이 끊길 수 있다 (Cloudflare 안내: 'A GitHub account should only point to one Cloudflare account'). **GitHub 연결 금지**
   - Pages 프로젝트 `neo-collar`는 **직접 올리기(Direct Upload)** 방식으로 만들었다 (2026-11-06 소유자가 첫 업로드와 neo-collar.com 연결 Active까지 마침)
   - **자동 배포: GitHub Actions `.github/workflows/neo-collar.yml`** — main에 올라올 때마다 스크립트로 neo-collar/를 다시 만들고 wrangler로 neo-collar.com에 올린다. 그래서 소유자 세션이든 형님 세션이든 **public/만 고치고 스크립트 돌려 main에 합치면 두 사이트가 같이 바뀐다**

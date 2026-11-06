@@ -1,4 +1,4 @@
-/* NEOCOLLAR — 현장 실무 강의 · 인력사무소 · 베테랑 스튜디오 */
+/* NEO-COLLAR — 현장 실무 강의 · 인력사무소 · 베테랑 스튜디오 */
 
 :root {
   --ink: #111318;
@@ -1267,8 +1267,9 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 .calc-break, .calc-plus { display: block; margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
 .calc-plus { color: var(--ink-3); }
 
-/* (neo-collar 전용) 로고가 한 글자 길어서 휴대폰에서는 조금 작게 → 머리줄 한 줄 유지 */
+/* (neo-collar 전용) 로고 NEO-COLLAR 가 길어서 휴대폰에서는 조금 작게 → 머리줄 한 줄 유지 */
 @media (max-width: 719px) { .site-header .logo .wordmark { font-size: 20px; } }
+@media (max-width: 413px) { html:not([lang="ko"]) .site-header .logo .wordmark { font-size: 18px; } }
 @media (max-width: 379px) {
   .site-header .logo .wordmark { font-size: 19px; }
   html:not([lang="ko"]) .site-header .logo .wordmark { font-size: 17px; }

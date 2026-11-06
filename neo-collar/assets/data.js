@@ -1,5 +1,5 @@
 /*
- * NEOCOLLAR 데이터 (한국어 ko · 영어 en · 일본어 ja)
+ * NEO-COLLAR 데이터 (한국어 ko · 영어 en · 일본어 ja)
  * - 글자를 바꿀 때는 ko/en/ja 세 언어를 함께 고친다
  * - 강의·공종을 추가하면 메뉴·목록·검색에 자동 반영된다
  * - gov: 국비지원(내일배움카드) 예정 / diy: '내 집은 내가 고친다' 줄 / knowhow: '남한테 묻기 애매했던 노하우' 줄
@@ -923,7 +923,7 @@ window.NEO = {
     { q: { ko: "인력사무소는 누가 쓸 수 있나요?", en: "Who can use the Job Center?", ja: "人材センターは誰が使えますか?" },
       a: { ko: "NEO PASS 회원(월 구독·평생교육이용권)이라면 구인·구직·실습생 서비스를 모두 쓸 수 있어요.", en: "NEO PASS members (Monthly or Voucher) get hiring, job seeking, and trainee services.", ja: "NEO PASS会員(月額・利用券)なら求人・求職・実習生サービスをすべて使えます。" } },
     { q: { ko: "실습은 어디서 하나요?", en: "Where does hands-on practice happen?", ja: "実習はどこで行いますか?" },
-      a: { ko: "NEOCOLLAR가 직접 운영하지 않고, 각 지역 직업학교·인력사무소·현장 베테랑과 연계해 진행해요. 지역별 연계 기관은 정해지는 대로 알려드릴게요.", en: "We don't run it ourselves. Practice happens with local vocational schools, staffing offices, and veterans. We'll announce partners by region.", ja: "NEOCOLLARは直接運営せず、各地域の職業学校・人材事務所・現場のベテランと提携して行います。地域ごとの提携先は決まり次第お知らせします。" } },
+      a: { ko: "NEO‑COLLAR가 직접 운영하지 않고, 각 지역 직업학교·인력사무소·현장 베테랑과 연계해 진행해요. 지역별 연계 기관은 정해지는 대로 알려드릴게요.", en: "We don't run it ourselves. Practice happens with local vocational schools, staffing offices, and veterans. We'll announce partners by region.", ja: "NEO‑COLLARは直接運営せず、各地域の職業学校・人材事務所・現場のベテランと提携して行います。地域ごとの提携先は決まり次第お知らせします。" } },
     { q: { ko: "베테랑은 어떻게 정산받나요?", en: "How do veterans get paid?", ja: "ベテランはどう精算されますか?" },
       a: { ko: "세 가지로 받아요. ① 저희가 요청드린 짧은 강의 영상이 검수를 통과하면 1편마다 제작비(길이별 5만·8만·12만 원), ② 구독·이용권 매출의 30%를 학생이 끝까지 본 영상 수와 길이대로 매달 나눠 드리고, ③ 국비 전문과정은 승인 후 수강료의 30%를 수강생마다 드려요(국비 과정 영상은 제작비 없음). 금액과 정산일은 정식 오픈 때 확정해요.", en: "Three ways. ① A production fee for each requested short lesson video that passes review (₩50,000 / ₩80,000 / ₩120,000 by length), ② 30% of subscription and voucher revenue, shared monthly by how many of your videos learners finish and their length, and ③ 30% of the course fee per learner for funded programs you make, once approved (no production fee for funded-program videos). Amounts and payout dates will be set at launch.", ja: "3つの方法で受け取れます。①こちらからお願いした短い講座動画が審査を通ると1本ごとに制作費(長さ別に5万・8万・12万ウォン)、②サブスク・利用券の売上の30%を、受講生が最後まで見た動画の本数と長さに応じて毎月分配、③国費専門コースは承認後、受講料の30%を受講生ごとにお支払いします(国費コースの動画に制作費はありません)。金額と精算日は正式オープン時に確定します。" } },
     { q: { ko: "나이가 많아도 베테랑이 될 수 있나요?", en: "Is there an age limit for veterans?", ja: "年齢が高くてもベテランになれますか?" },

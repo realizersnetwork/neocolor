@@ -1,4 +1,4 @@
-/* NEOCOLLAR — 화면 동작
+/* NEO-COLLAR — 화면 동작
  * 언어(ko/en/ja) · 학생/베테랑 모드 · 메뉴 · 강의 · 로드맵 · 커뮤니티 · 인력사무소 · 수강권 · 베테랑 스튜디오 · 방문자 통계
  * 주소(#/...)로 화면을 바꾼다: #/ · #/courses[/공종[/세부]][?q=&saved=1&clip=1] · #/roadmaps[/id] · #/community[/terms]
  *   · #/jobs[/hire|seek|trainee] · #/plans · #/veteran[/upload|payout|guide] · #/stats
@@ -443,7 +443,7 @@
   const mainPhone = () => (lang === "ko" ? C.phone : C.intl);
   const subPhone = () => t(lang === "ko" ? "contact.intlNote" : "contact.krNote", { n: lang === "ko" ? C.intl : C.phone });
   function contactMail(topic) {
-    const subject = `[NEOCOLLAR] ${t("contact.topic." + topic)}`;
+    const subject = `[NEO-COLLAR] ${t("contact.topic." + topic)}`;
     const body = topic === "etc" ? "" : t("contact.body." + topic);
     return `mailto:${C.email}?subject=${encodeURIComponent(subject)}${body ? "&body=" + encodeURIComponent(body) : ""}`;
   }

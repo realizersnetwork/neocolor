@@ -1,5 +1,5 @@
 # neo-collar.com 자동 배포
-# main 에 올라올 때마다 public/ 에서 neo-collar/ 를 다시 만들고(이름만 NEOCOLLAR로),
+# main 에 올라올 때마다 public/ 에서 neo-collar/ 를 다시 만들고(이름만 NEO-COLLAR로),
 # 소유자 Cloudflare 계정의 Pages 프로젝트 neo-collar 에 올린다.
 # 필요한 열쇠(저장소 Settings → Secrets and variables → Actions, 소유자가 넣음):
 #   CLOUDFLARE_API_TOKEN : 소유자 Cloudflare 계정의 'Cloudflare Pages: Edit' 권한 열쇠

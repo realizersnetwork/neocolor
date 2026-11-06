@@ -1,4 +1,4 @@
-/* NEOCOLLAR 설정값 — 여기에는 공개돼도 괜찮은 값만 넣는다 (비밀번호·비밀 키 금지)
+/* NEO-COLLAR 설정값 — 여기에는 공개돼도 괜찮은 값만 넣는다 (비밀번호·비밀 키 금지)
  *
  * 로그인 (수퍼베이스)
  *   supabaseUrl     : 수퍼베이스 → Project Settings → API → Project URL  (예: https://abcd1234.supabase.co)
