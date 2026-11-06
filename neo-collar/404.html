@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NEOCOLLAR</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0b0d12">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <!-- 없는 주소를 열었을 때 보이는 화면. 이 파일이 있어야 Cloudflare가 없는 주소에 전체 사이트 첫 화면을 내보내지 않는다 -->
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; min-height: 100svh; display: grid; place-items: center; padding: 24px 16px;
+      background: #0b0d12; color: #fff; text-align: center; line-height: 1.5; -webkit-font-smoothing: antialiased; word-break: keep-all;
+      font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Segoe UI", Roboto, sans-serif;
+    }
+    html:lang(ja) body {
+      word-break: normal; line-break: strict;
+      font-family: "Pretendard Variable", Pretendard, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", YuGothic, Meiryo, "Noto Sans JP", sans-serif;
+    }
+    .wordmark { display: inline-block; font-size: 34px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: #fff; text-decoration: none; }
+    .wm-color {
+      background: linear-gradient(90deg, #00b3c7, #2f6bff, #7a4dff, #ff3d8b, #ff7a1a, #ffc21a, #00b3c7); background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+    }
+    h1 { margin: 28px 0 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+    p { margin: 10px 0 0; font-size: 15px; color: rgba(255, 255, 255, 0.72); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 48px; margin-top: 26px; padding: 0 22px;
+      border-radius: 12px; background: #fff; color: #111318; font-size: 15px; font-weight: 700; text-decoration: none;
+    }
+    :focus-visible { outline: 2px solid #2f6bff; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="wordmark" href="/" aria-label="NEOCOLLAR">NEO<span class="wm-color">COLLAR</span></a>
+    <h1 data-t="t">페이지를 찾을 수 없습니다</h1>
+    <p data-t="d">주소가 바뀌었거나 아직 열리지 않은 페이지입니다.</p>
+    <a class="btn" href="/" data-t="home">홈으로 가기</a>
+  </main>
+  <script>
+  (() => {
+    const T = {
+      ko: { t: "페이지를 찾을 수 없습니다", d: "주소가 바뀌었거나 아직 열리지 않은 페이지입니다.", home: "홈으로 가기" },
+      en: { t: "Page not found", d: "The address may have changed, or this page isn't open yet.", home: "Go to home" },
+      ja: { t: "ページが見つかりません", d: "アドレスが変わったか、まだ公開されていないページです。", home: "ホームへ" }
+    };
+    // 언어: 주소의 ?lang= → 지난번 선택 → 브라우저 언어 (전체 사이트와 같은 순서)
+    let lang = null;
+    try { const q = new URLSearchParams(location.search).get("lang"); if (T[q]) lang = q; } catch (_) { /* 무시 */ }
+    if (!lang) { try { const s = JSON.parse(localStorage.getItem("neo.lang")); if (T[s]) lang = s; } catch (_) { /* 무시 */ } }
+    if (!lang) {
+      const prefs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "ko"]).map((s) => String(s).toLowerCase());
+      lang = prefs.some((p) => p.startsWith("ko")) ? "ko" : prefs.some((p) => p.startsWith("ja")) ? "ja" : "en";
+    }
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-t]").forEach((el) => { el.textContent = T[lang][el.dataset.t]; });
+    document.querySelectorAll('a[href="/"]').forEach((a) => { a.href = lang === "ko" ? "/" : "/?lang=" + lang; });
+  })();
+  </script>
+</body>
+</html>
