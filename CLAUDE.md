@@ -121,9 +121,10 @@
 - 방문자 통계는 따로 센다: Abacus 이름공간 `neo-collar-com-1` (neo-collar.com, neo-collar.pages.dev에서만)
 - NEOCOLLAR가 한 글자 길어서 휴대폰에서는 머리줄 로고만 조금 작게 (스크립트의 `EXTRA_CSS`)
 - 배포: neo-collar.com은 **소유자 본인 Cloudflare 계정**(형님 계정 아님)에 있다. GitHub(realizersnetwork)은 형님 계정의 neocolor 프로젝트에 이미 연결돼 있어서, 소유자 계정에 또 연결하면 neocolor.net 자동 반영이 끊길 수 있다 (Cloudflare 안내: 'A GitHub account should only point to one Cloudflare account'). **GitHub 연결 금지**
-  - 그래서 **압축 파일 직접 올리기(Direct Upload)**: Pages 프로젝트 `neo-collar`(Upload assets), 사용자 지정 도메인 neo-collar.com
-  - 2026-11-06 소유자가 첫 업로드(neo-collar.pages.dev)와 neo-collar.com 연결(Active)까지 마침
-  - 고칠 때마다 Claude가 스크립트로 neo-collar/를 다시 만들고 `cd neo-collar && zip -qr -X <임시폴더>/neo-collar.zip .`로 압축해서 보낸다 → 소유자가 프로젝트의 **Create deployment**로 올린다. zip은 저장소에 넣지 않는다
+  - Pages 프로젝트 `neo-collar`는 **직접 올리기(Direct Upload)** 방식으로 만들었다 (2026-11-06 소유자가 첫 업로드와 neo-collar.com 연결 Active까지 마침)
+  - **자동 배포: GitHub Actions `.github/workflows/neo-collar.yml`** — main에 올라올 때마다 스크립트로 neo-collar/를 다시 만들고 wrangler로 neo-collar.com에 올린다. 그래서 소유자 세션이든 형님 세션이든 **public/만 고치고 스크립트 돌려 main에 합치면 두 사이트가 같이 바뀐다**
+  - 열쇠: 저장소 Secrets `CLOUDFLARE_API_TOKEN`(소유자 계정, Cloudflare Pages: Edit), `CLOUDFLARE_ACCOUNT_ID`(3767ca5b370e0fea0921e5bdf5e95071). 소유자만 넣을 수 있다(저장소 관리자). 열쇠가 없으면 이 작업은 건너뛴다
+  - 비상용: Actions가 안 될 때는 `cd neo-collar && zip -qr -X <임시폴더>/neo-collar.zip .`로 압축해서 소유자에게 보내고, 소유자가 프로젝트의 **Create deployment**로 올린다. zip은 저장소에 넣지 않는다
 
 ## 배포
 - Cloudflare Pages + GitHub 연동: `main` = 실서비스(neocolor.net), 그 외 브랜치 = 미리보기 주소
