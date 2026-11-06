@@ -14,7 +14,9 @@
   - `public/_redirects`(Cloudflare 전용): `/` → `soon/`을 보여주고, `/index.html`·`/assets/*`는 첫 화면으로 돌려보낸다. 공개 주소에서 열리는 건 준비 중 화면, `/privacy`(구글 로그인 심사에 홈페이지·개인정보처리방침이 필요), `media/`, `favicon.svg`뿐
   - `public/404.html`은 지우지 않는다: 없으면 Cloudflare가 없는 주소에 전체 사이트 첫 화면(index.html)을 내보낸다
   - 준비 중 화면은 `assets/`(i18n.js 등)를 못 쓰므로 글자·모양·동작이 전부 그 파일 안에 있다. 문구는 그 파일의 `T`에 ko·en·ja 같이. 방문자 통계도 그 파일이 같은 카운터·같은 이름으로 센다 (`app.js`의 `STAT_COUNTRIES`를 바꾸면 같이 바꾼다)
-- **전체 사이트(`public/` 그대로) = 버셀(Vercel) 프로젝트 `neocolor`, 로그인 없이 누구나 보는 공개 주소** (보통 https://neocolor.vercel.app, 이름이 이미 있으면 버셀이 뒤에 글자를 붙임. 실제 주소는 GitHub Actions 실행 요약이나 버셀 프로젝트의 Domains)
+- **전체 사이트(`public/` 그대로) = 버셀(Vercel) 프로젝트 `neocolor`, 로그인 없이 누구나 보는 공개 주소**
+  - 주소: **https://neocollar.vercel.app** (소유자: "neocollar 들어가는 가장 단순한 거로, 없으면 neocollar1028"). 스크립트가 이 순서로 붙인다. 처음 만들 때 생긴 https://neocolor.vercel.app 도 같은 사이트로 열린다
+  - 버셀 계정은 소유자 것 (팀 이름 Realizers, 2026-11-07 첫 배포 성공)
   - 형님도 고칠 수 있다: 소유자·형님 누구 수정이든 main에 들어가면 자동으로 버셀에 올라간다
   - 자동 배포: `.github/workflows/vercel.yml` → `tools/deploy_vercel.sh`. 열쇠는 저장소 Secrets `VERCEL_TOKEN`(소유자 버셀 계정에서 만든 것, 소유자만 넣음). 열쇠가 없으면 건너뛴다. 올릴 때마다 로그인 없이 보기(Vercel Authentication 끔)로 맞추고, 검색엔진에는 안 나오게(noindex) 한다
   - **버셀의 GitHub 연결(Import Git Repository)은 쓰지 않는다**: 커밋 작성자가 Claude·형님이라 무료 요금제에서 배포가 막힌다('Git author must have access'). 그래서 git 정보 없이 임시 폴더에서 올린다

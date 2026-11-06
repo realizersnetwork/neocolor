@@ -97,12 +97,33 @@ OUT="$WORK/deploy.txt"
 DEPLOY_URL="$(grep -Eo 'https://[A-Za-z0-9.-]+' "$OUT" | tail -n 1 || true)"
 echo "   이번 버전: ${DEPLOY_URL:-(주소를 읽지 못함)}"
 
-echo "6) 사이트 주소"
-api GET "/v9/projects/$PID"
-ADDR=""
-if [ "$CODE" = 200 ]; then
-  ADDR="$(jq -r '([.targets.production.alias[]?] + [.alias[]?.domain?])
-    | map(select(type == "string" and endswith(".vercel.app"))) | sort_by(length) | first // empty' "$RES")"
+echo "6) 주소 정하기: neocollar 가 들어간 가장 단순한 주소 (2026-11-07 소유자)"
+# 앞에서부터 쓸 수 있는 것 하나를 붙인다. 이미 붙어 있는 게 있으면 그대로 쓴다
+DOMAINS="${VERCEL_DOMAINS:-neocollar.vercel.app neocollar1028.vercel.app}"   # 소유자: "없으면 neocollar1028"
+CHOSEN=""
+HAVE=""
+api GET "/v9/projects/$PID/domains"
+if [ "$CODE" = 200 ]; then HAVE="$(jq -r '.domains[]?.name // empty' "$RES")"; fi
+for d in $DOMAINS; do
+  if printf '%s\n' "$HAVE" | grep -qxF "$d"; then CHOSEN="$d"; echo "   이미 붙어 있음: $d"; break; fi
+done
+if [ -z "$CHOSEN" ]; then
+  for d in $DOMAINS; do
+    api POST "/v10/projects/$PID/domains" "$(jq -nc --arg n "$d" '{name: $n}')"
+    if [ "$CODE" = 200 ] || [ "$CODE" = 201 ]; then CHOSEN="$d"; echo "   새로 붙임: $d"; break; fi
+    echo "   $d 는 쓸 수 없음 (응답 $CODE) → 다음 후보"
+  done
+fi
+[ -n "$CHOSEN" ] || echo "::warning::neocollar 주소를 붙이지 못했습니다. 기본 주소로 열립니다"
+
+echo "7) 사이트 주소"
+ADDR="$CHOSEN"
+if [ -z "$ADDR" ]; then
+  api GET "/v9/projects/$PID"
+  if [ "$CODE" = 200 ]; then
+    ADDR="$(jq -r '([.targets.production.alias[]?] + [.alias[]?.domain?])
+      | map(select(type == "string" and endswith(".vercel.app"))) | sort_by(length) | first // empty' "$RES")"
+  fi
 fi
 echo "   https://${ADDR:-$NAME.vercel.app} (버셀 프로젝트 화면의 Domains 에서도 볼 수 있음)"
 if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
