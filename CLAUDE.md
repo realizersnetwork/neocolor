@@ -8,7 +8,23 @@
 - '현장 입문'(id `labor`) 카테고리 = 첫 출근, 현장 용어, 일당·정산, 기공 되기, 사무소 창업. 원래 이름은 '인력사무소'였는데 상단 메뉴 인력사무소(구인·구직)와 겹쳐서 바꿨다
 - 화면 구성은 패스트캠퍼스 같은 강의 사이트를 참고하되, 로고·이미지·문구는 가져오지 않는다
 
-## 메뉴와 화면 (주소는 `#/...`)
+## 지금 공개 상태: 두 도메인은 '준비 중' 화면, 전체 사이트는 둘만 보는 비공개 주소 (2026-11-07 소유자)
+- 소유자 요청: "지금까지 올린 건 비공개로 형님이랑 둘만 버셀로 보고, 도메인 두 개는 준비 중 띄우고 입맛 다실 정도로만"
+- **neocolor.net·neo-collar.com 첫 화면 = `public/soon/index.html`** ('준비 중' 맛보기: 로고·슬로건·한 줄 소개·배우고/묻고/일하고/가르치고 네 칸·문의 연락처·개인정보처리방침 링크). 가격·강의 목록 같은 자세한 내용은 넣지 않는다
+  - `public/_redirects`(Cloudflare 전용): `/` → `soon/`을 보여주고, `/index.html`·`/assets/*`는 첫 화면으로 돌려보낸다. 공개 주소에서 열리는 건 준비 중 화면, `/privacy`(구글 로그인 심사에 홈페이지·개인정보처리방침이 필요), `media/`, `favicon.svg`뿐
+  - `public/404.html`은 지우지 않는다: 없으면 Cloudflare가 없는 주소에 전체 사이트 첫 화면(index.html)을 내보낸다
+  - 준비 중 화면은 `assets/`(i18n.js 등)를 못 쓰므로 글자·모양·동작이 전부 그 파일 안에 있다. 문구는 그 파일의 `T`에 ko·en·ja 같이. 방문자 통계도 그 파일이 같은 카운터·같은 이름으로 센다 (`app.js`의 `STAT_COUNTRIES`를 바꾸면 같이 바꾼다)
+- **전체 사이트(`public/` 그대로) = 비공개 주소: 버셀(Vercel) 프로젝트 `neocolor-private`** (보통 https://neocolor-private.vercel.app, 실제 주소는 GitHub Actions 실행 요약이나 버셀 프로젝트의 Domains)
+  - 버셀에 로그인해서 허락받은 사람만 본다 (Vercel Authentication · All Deployments). 버셀 무료(Hobby)는 외부 사람 1명까지 허락 가능 → 형님. 형님은 버셀 가입 후 주소를 열어 'Request Access', 소유자가 승인
+  - 자동 배포: `.github/workflows/vercel-private.yml` → `tools/deploy_vercel_private.sh`. main에 올라올 때마다 ① 비공개 설정을 확인하고(안 되면 올리지 않고 멈춤) ② public/을 올린다. 열쇠는 저장소 Secrets `VERCEL_TOKEN`(소유자 버셀 계정에서 만든 것, 소유자만 넣음). 열쇠가 없으면 건너뛴다
+  - **버셀의 GitHub 연결(Import Git Repository)은 쓰지 않는다**: 커밋 작성자가 Claude·형님이라 무료 요금제에서 배포가 막힌다('Git author must have access'). 그래서 git 정보 없이 임시 폴더에서 올린다
+  - 수퍼베이스 Redirect URLs에 버셀 주소(`https://neocolor-private.vercel.app/**`)도 있어야 비공개 주소에서 로그인한 뒤 그 주소로 돌아온다
+  - 버셀 무료 요금제는 원래 개인·비상업용이다. 둘이 보는 미리보기로만 쓰고, 실서비스는 지금처럼 Cloudflare
+- 그래서 **public/을 고치면 바뀐 모습은 비공개 주소(버셀)에서 보인다.** 공개 주소에는 준비 중 화면만 보인다
+- **정식 오픈 = `public/_redirects` 지우기** (스크립트로 neo-collar/도 같이) → 두 도메인에 전체 사이트가 다시 보인다
+- 예전 Cloudflare 배포 기록 주소(무작위 주소, 예전 미리보기 브랜치 주소)에는 그때의 전체 사이트가 남아 있다 (기록 보존 원칙으로 지우지 않음). 저장소가 공개(public)면 GitHub에서 코드도 누구나 볼 수 있다
+
+## 메뉴와 화면 (주소는 `#/...`, 정식 오픈 전에는 비공개 주소에서만 보임)
 - `#/` 홈 · `#/courses[/공종[/세부]]` 강의 (필터도 주소에: `?q=&level=&clip=1&online=1&gov=1&saved=1`) · `#/roadmaps[/id]` 로드맵
 - `#/community[/terms]` 커뮤니티: 공종별·주제별 게시판 메뉴(글쓰기는 아직 없음) + 현장 용어 사전
 - `#/jobs[/hire|seek|trainee]` 인력사무소: 구인·구직·실습생. **NEO PASS 회원 전용**이라고 눈에 띄게 표시 (메뉴의 PASS 표시, 배너)
@@ -24,7 +40,7 @@
 - 손님이 보는 화면에 내부 판단 근거를 쓰지 않는다: '선진국·개발도상국', 'ChatGPT', 'AI 구독료 수준', 가격 정한 이유 등 (2026-11-06 소유자가 화냄)
 
 ## 3개 국어 (한국어·English·日本語)
-- 화면 문구는 전부 `public/assets/i18n.js`에 키로 넣고, ko·en·ja 세 언어를 **항상 같이** 넣는다 (빠지면 한국어로 보임)
+- 화면 문구는 전부 `public/assets/i18n.js`에 키로 넣고, ko·en·ja 세 언어를 **항상 같이** 넣는다 (빠지면 한국어로 보임). 예외: 준비 중 화면(`soon/index.html`)·`404.html`은 파일 안에 세 언어를 같이 넣는다
 - `data.js`의 이름·설명도 `{ ko, en, ja }`. 강의·용어를 추가할 때 세 언어 다 넣기
 - HTML에서는 `data-i18n="키"`, `data-i18n-html`, `data-i18n-attr="placeholder:키;aria-label:키"`
 - 언어 정하는 순서: 주소의 `?lang=` → 지난번 선택 → 브라우저 언어(한국어 아니면 일본어, 그 외 영어)
@@ -96,6 +112,7 @@
 - 오늘 방문자는 누적에 먼저 잡힌 기기만 센다 (그래서 오늘 > 누적이 될 수 없음). 검색 로봇·자동 브라우저는 세지 않는다
 - 누가 들어왔는지(IP·기기)는 일부러 안 남기므로 알 수 없다
 - neocolor.net(과 neocolor.pages.dev)에서만 센다. 미리보기 주소·내 컴퓨터에서는 안 센다
+- 정식 오픈 전에는 공개 주소의 준비 중 화면(`soon/index.html`)이 같은 방식으로 센다. 숫자는 비공개 주소의 `#/stats`에서 본다
 - Abacus 제한: IP당 10초에 30번. 통계 화면이 한 번에 18번 읽으니 나라 목록(`STAT_COUNTRIES`)을 크게 늘리지 말 것
 
 ## 광고
@@ -120,6 +137,7 @@
 - public/을 고치면 **같은 커밋에서 스크립트를 돌려 neo-collar/도 같이** 바꾼다. 소유자가 따로 하라고 하기 전까지 두 사이트는 이름만 다르고 똑같다
 - 로그인·회원가입은 같은 수퍼베이스 프로젝트 그대로 (새로 만들지 않음, 소유자 요청). 수퍼베이스 Redirect URLs에 `https://neo-collar.com/**`, `https://www.neo-collar.com/**`, `https://neo-collar.pages.dev/**`도 있어야 로그인 후 이 사이트로 돌아온다
 - 방문자 통계는 따로 센다: Abacus 이름공간 `neo-collar-com-1` (neo-collar.com, neo-collar.pages.dev에서만)
+- 준비 중 화면·`_redirects`·`404.html`도 스크립트가 같이 복사한다 → neo-collar.com도 준비 중 화면만 보인다. 비공개 주소(버셀)는 NEOCOLOR 하나만 둔다
 - NEOCOLLAR가 한 글자 길어서 휴대폰에서는 머리줄 로고만 조금 작게 (스크립트의 `EXTRA_CSS`)
 - 배포: neo-collar.com은 **소유자 본인 Cloudflare 계정**(형님 계정 아님)에 있다. GitHub(realizersnetwork)은 형님 계정의 neocolor 프로젝트에 이미 연결돼 있어서, 소유자 계정에 또 연결하면 neocolor.net 자동 반영이 끊길 수 있다 (Cloudflare 안내: 'A GitHub account should only point to one Cloudflare account'). **GitHub 연결 금지**
   - Pages 프로젝트 `neo-collar`는 **직접 올리기(Direct Upload)** 방식으로 만들었다 (2026-11-06 소유자가 첫 업로드와 neo-collar.com 연결 Active까지 마침)
@@ -132,6 +150,7 @@
 - Cloudflare Pages + GitHub 연동: `main` = 실서비스(neocolor.net), 그 외 브랜치 = 미리보기 주소
 - 설정값: Build command `exit 0`, Build output directory `public`, 프로젝트 이름 `neocolor` (neocolor.pages.dev)
 - 도메인과 Pages 프로젝트는 지인(형님)의 Cloudflare 계정에 있고, 소유자는 Administrator 멤버로 접근한다
+- 정식 오픈 전에는 `public/_redirects` 때문에 Cloudflare 쪽(공개 주소·미리보기 주소 모두)은 준비 중 화면만 보인다. 전체 사이트는 버셀 비공개 주소 (위 '지금 공개 상태')
 
 ## 버전 기록·백업 (누가 고치든 전부 남긴다)
 - 이 사이트는 소유자(realizers)와 형님이 각자 클로드로 고친다. 최종 버전은 항상 `main` = neocolor.net
@@ -151,6 +170,6 @@
 - 소유자 세션도 미리보기 주소 없이 바로 neocolor.net(`main`)에 반영한다 (2026-11-05 소유자: "도메인이 있는데 왜 미리보기 주소야"). 큰 변경이면 브랜치에 커밋해 두고 `main`에 merge commit으로 합친다
 - 긴 작업은 한꺼번에 쌓아두지 말고 단계마다 올린다 (사용 한도에 걸려도 작업이 남게). 다만 너무 잦게는 말고
 - 형님 세션: 크기와 상관없이 위 '바로 반영' 순서를 따른다
-- 반영 전에 Claude가 헤드리스 크롬으로 휴대폰(390px)·PC(1440px) 화면을 캡처해서 깨진 곳이 없는지 직접 본다. 한국어·영어·일본어 다 확인
+- 반영 전에 Claude가 헤드리스 크롬으로 휴대폰(390px)·PC(1440px) 화면을 캡처해서 깨진 곳이 없는지 직접 본다. 한국어·영어·일본어 다 확인 (정식 오픈 전에는 전체 사이트와 준비 중 화면 둘 다)
 - CSS·JS를 고치면 `index.html`의 `?v=` 숫자를 하나 올린다 (예전 파일이 브라우저에 남아 있는 문제 방지). `public/_headers`로 캐시도 매번 확인하게 해둠
 - 소유자와 형님 모두 비개발자다. 설명은 짧고 쉬운 한국어로, 클릭 단위로 구체적으로. 작업 중 표시(진행 목록, 명령 설명)도 한국어로

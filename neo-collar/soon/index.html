@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NEOCOLLAR — Skills for the People Who Build the World</title>
+  <meta name="description" content="현장 사람들이 배우고 · 묻고 · 일하고 · 가르치는 곳. NEOCOLLAR 정식 오픈 준비 중입니다.">
+  <meta name="theme-color" content="#0b0d12">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://neo-collar.com/">
+  <meta property="og:title" content="NEOCOLLAR — Skills for the People Who Build the World">
+  <meta property="og:description" content="배우고 · 묻고 · 일하고 · 가르치는 현장 사람들의 플랫폼. 정식 오픈 준비 중입니다.">
+  <meta property="og:image" content="https://neo-collar.com/media/rooftop.jpg?v=3">
+  <link rel="canonical" href="https://neo-collar.com/">
+  <link rel="alternate" hreflang="ko" href="https://neo-collar.com/?lang=ko">
+  <link rel="alternate" hreflang="en" href="https://neo-collar.com/?lang=en">
+  <link rel="alternate" hreflang="ja" href="https://neo-collar.com/?lang=ja">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <!--
+    정식 오픈 전 '준비 중' 화면 (2026-11-07 소유자: 도메인에는 입맛 다실 정도로만)
+    - neo-collar.com 첫 화면(/)이 이 파일을 보여준다 (public/_redirects). 전체 사이트는 비공개 주소(Vercel)에만 있다
+    - 전체 사이트의 assets/ 파일(i18n.js 등)은 공개 주소에서 막혀 있으므로, 이 화면은 글자·모양·동작을 전부 이 파일 안에 둔다
+    - 화면 문구는 아래 T 에 한국어·영어·일본어를 항상 같이 넣는다
+  -->
+  <style>
+    :root {
+      --dark: #0b0d12;
+      --dark-2: #161a22;
+      --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+        "Noto Sans KR", "Malgun Gothic", "Segoe UI", Roboto, sans-serif;
+      --font-ja: "Pretendard Variable", Pretendard, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI",
+        "Yu Gothic", YuGothic, Meiryo, "Noto Sans JP", "Noto Sans CJK JP", sans-serif;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; background: var(--dark); color: #fff; font-family: var(--font); line-height: 1.5;
+      -webkit-font-smoothing: antialiased; word-break: keep-all; overflow-wrap: break-word;
+    }
+    html:lang(ja) body { font-family: var(--font-ja); word-break: normal; line-break: strict; overflow-wrap: anywhere; }
+    a { color: inherit; text-decoration: none; }
+    h1, h2, p, ul, dl, dd { margin: 0; }
+    ul { padding: 0; list-style: none; }
+    button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+    :focus-visible { outline: 2px solid #2f6bff; outline-offset: 2px; }
+    svg.ic { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .wrap { width: min(1200px, calc(100% - 32px)); margin-inline: auto; }
+
+    /* 로고: NEO + 색이 흐르는 COLOR */
+    .wordmark { font-weight: 800; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; }
+    .wm-color {
+      background: linear-gradient(90deg, #00b3c7, #2f6bff, #7a4dff, #ff3d8b, #ff7a1a, #ffc21a, #00b3c7);
+      background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent; -webkit-text-fill-color: transparent;
+      animation: wm-flow 12s linear infinite;
+    }
+    @keyframes wm-flow { from { background-position: 0% 0; } to { background-position: 150% 0; } }
+    .chips { display: inline-flex; gap: 5px; }
+    .chips i { display: block; width: 12px; height: 12px; border-radius: 3px; animation: chip-rise 3.6s ease-in-out infinite; }
+    .chips i:nth-child(1) { background: #00b3c7; }
+    .chips i:nth-child(2) { background: #2f6bff; animation-delay: 0.15s; }
+    .chips i:nth-child(3) { background: #7a4dff; animation-delay: 0.3s; }
+    .chips i:nth-child(4) { background: #ff3d8b; animation-delay: 0.45s; }
+    .chips i:nth-child(5) { background: #ff7a1a; animation-delay: 0.6s; }
+    .chips i:nth-child(6) { background: #ffc21a; animation-delay: 0.75s; }
+    @keyframes chip-rise { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+    /* 첫 화면: 영상 위에 글 */
+    .stage { position: relative; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; overflow: hidden; }
+    .bg { position: absolute; inset: 0; background: var(--dark); }
+    .bg video { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .bg::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(180deg, rgba(11, 13, 18, 0.6) 0%, rgba(11, 13, 18, 0.12) 22%, rgba(11, 13, 18, 0.28) 50%, rgba(11, 13, 18, 0.94) 100%);
+    }
+    .top {
+      position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding-top: max(14px, env(safe-area-inset-top));
+    }
+    .pill {
+      display: inline-flex; align-items: center; border-radius: 999px;
+      background: rgba(11, 13, 18, 0.55); border: 1px solid rgba(255, 255, 255, 0.24);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    }
+    .badge { gap: 8px; height: 34px; padding: 0 13px 0 11px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+    .badge i { width: 8px; height: 8px; border-radius: 50%; background: #2fe08f; animation: ping 2s ease-out infinite; }
+    @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(47, 224, 143, 0.6); } 80%, 100% { box-shadow: 0 0 0 8px rgba(47, 224, 143, 0); } }
+    .lang { padding: 3px; gap: 2px; }
+    .lang button { height: 28px; padding: 0 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: rgba(255, 255, 255, 0.78); white-space: nowrap; }
+    .lang button[aria-pressed="true"] { background: #fff; color: #111318; }
+    .copy { position: relative; z-index: 1; margin-top: auto; padding: 48px 0 40px; }
+    .wordmark-xl { font-size: clamp(52px, 15.5vw, 108px); line-height: 0.92; }
+    .tag { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.86); }
+    h1 { margin-top: 24px; max-width: 16em; font-size: clamp(27px, 7.2vw, 56px); font-weight: 800; line-height: 1.2; letter-spacing: -0.035em; }
+    html:lang(ja) h1 { font-size: clamp(24px, 6.4vw, 52px); letter-spacing: -0.02em; }
+    .lead { margin-top: 14px; max-width: 34em; font-size: 16px; line-height: 1.65; color: rgba(255, 255, 255, 0.86); }
+
+    /* 맛보기: 배우고 · 묻고 · 일하고 · 가르치고 */
+    .peek { padding: 44px 0 6px; }
+    .eyebrow { font-size: 13px; font-weight: 800; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.6); }
+    .peek ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+    .peek li { padding: 18px 16px 20px; border-radius: 16px; background: var(--dark-2); border: 1px solid rgba(255, 255, 255, 0.07); }
+    .peek li svg.ic { width: 28px; height: 28px; stroke-width: 1.7; }
+    .peek li:nth-child(1) svg { color: #00b3c7; }
+    .peek li:nth-child(2) svg { color: #5b8bff; }
+    .peek li:nth-child(3) svg { color: #ff5c9d; }
+    .peek li:nth-child(4) svg { color: #ffc21a; }
+    .peek b { display: block; margin-top: 12px; font-size: 19px; font-weight: 800; letter-spacing: -0.02em; }
+    .peek li span { display: block; margin-top: 5px; font-size: 14px; line-height: 1.55; color: rgba(255, 255, 255, 0.72); }
+
+    /* 문의 */
+    .contact { padding: 34px 0 44px; }
+    .contact-box {
+      padding: 24px 18px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(135deg, rgba(47, 107, 255, 0.2), rgba(122, 77, 255, 0.1) 50%, rgba(255, 61, 139, 0.14));
+    }
+    .contact h2 { font-size: 21px; font-weight: 800; line-height: 1.35; letter-spacing: -0.02em; }
+    .contact-box > p { margin-top: 8px; font-size: 14.5px; line-height: 1.6; color: rgba(255, 255, 255, 0.8); }
+    .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 0 20px; border-radius: 12px; font-size: 15.5px; font-weight: 700; }
+    .btn-primary { background: #fff; color: #111318; }
+    .btn-ghost { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.32); }
+    .lines { display: grid; gap: 12px; margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, 0.14); }
+    .lines div { display: grid; grid-template-columns: 4.6em minmax(0, 1fr); align-items: baseline; gap: 10px; }
+    html:lang(en) .lines div { grid-template-columns: 3.6em minmax(0, 1fr); }
+    .lines dt { font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.6); }
+    .lines dd { min-width: 0; }
+    .lines a { font-weight: 700; }
+    .email-text { font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Roboto Mono", "Noto Sans Mono", "DejaVu Sans Mono", monospace; letter-spacing: -0.02em; font-size: 16px; overflow-wrap: anywhere; }
+    .phone-main { font-size: 21px; font-weight: 800; letter-spacing: -0.01em; white-space: nowrap; }
+    .lines small { display: block; margin-top: 2px; font-size: 13px; color: rgba(255, 255, 255, 0.62); }
+
+    footer { border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 20px 0 calc(26px + env(safe-area-inset-bottom)); font-size: 13px; color: rgba(255, 255, 255, 0.56); }
+    .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 18px; }
+    .foot a { color: rgba(255, 255, 255, 0.8); text-decoration: underline; text-underline-offset: 3px; }
+
+    @media (max-width: 479px) {
+      .tag .chips { display: none; } /* 휴대폰에서는 슬로건이 한 줄에 들어가도록 색 칩을 뺀다 */
+    }
+    @media (max-width: 359px) {
+      .lang button { padding: 0 8px; font-size: 12px; }
+      .badge { padding: 0 11px 0 9px; font-size: 12px; }
+    }
+    @media (min-width: 720px) {
+      .top { padding-top: max(22px, env(safe-area-inset-top)); }
+      .copy { padding-bottom: 64px; }
+      .tag { font-size: 15px; }
+      .lead { font-size: 18px; }
+      .peek { padding-top: 64px; }
+      .peek ul { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+      .peek li { padding: 24px 22px 26px; }
+      .contact { padding: 48px 0 64px; }
+      .contact-box { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 4px 40px; padding: 34px 36px; }
+      .contact-box > h2, .contact-box > p, .contact-box > .cta { grid-column: 1; }
+      .contact-box > .lines { grid-column: 2; grid-row: 1 / span 3; align-self: center; margin-top: 0; padding: 0 0 0 36px; border-top: 0; border-left: 1px solid rgba(255, 255, 255, 0.14); }
+      .contact h2 { font-size: 26px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .wm-color, .chips i, .badge i { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="bg" aria-hidden="true">
+      <video id="bgVideo" autoplay muted loop playsinline preload="auto" poster="/media/hero-poster.jpg">
+        <source src="/media/hero.mp4?v=5" type="video/mp4">
+      </video>
+    </div>
+
+    <header class="top wrap">
+      <p class="pill badge"><i aria-hidden="true"></i><span data-t="soon">정식 오픈 준비 중</span></p>
+      <div class="pill lang" role="group" aria-label="언어 선택" data-t-aria="langAria">
+        <button type="button" data-lang="ko" lang="ko" aria-pressed="true">한국어</button>
+        <button type="button" data-lang="en" lang="en" aria-pressed="false">English</button>
+        <button type="button" data-lang="ja" lang="ja" aria-pressed="false">日本語</button>
+      </div>
+    </header>
+
+    <main class="copy wrap" id="main">
+      <p class="wordmark wordmark-xl" role="img" aria-label="NEOCOLLAR">NEO<span class="wm-color">COLLAR</span></p>
+      <p class="tag"><span class="chips" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Skills for the People Who Build the World</span></p>
+      <h1 data-t-html="title">AI가 책상 일을 가져가도,<br>기술은 못 가져갑니다.</h1>
+      <p class="lead" data-t-html="lead">현장 사람들이 배우고 · 묻고 · 일하고 · 가르치는 곳.<br>NEOCOLLAR가 곧 문을 엽니다.</p>
+    </main>
+  </div>
+
+  <section class="peek" aria-labelledby="peekTitle">
+    <div class="wrap">
+      <h2 class="eyebrow" id="peekTitle" data-t="peek">이런 곳이 열립니다</h2>
+      <ul>
+        <li>
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9 9-4 9 4-9 4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/></svg>
+          <b data-t="learn">배우고</b><span data-t="learnD">공종별로 짧고 바로 써먹는 현장 강의</span>
+        </li>
+        <li>
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A1.5 1.5 0 0 1 4 14.5z"/></svg>
+          <b data-t="ask">묻고</b><span data-t="askD">남한테 묻기 애매했던 현장 노하우까지</span>
+        </li>
+        <li>
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7" width="17" height="12" rx="2"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3.5 12h17"/></svg>
+          <b data-t="work">일하고</b><span data-t="workD">구인·구직으로 현장과 사람을 잇는 인력사무소</span>
+        </li>
+        <li>
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="14.5" r="5.5"/><path d="M8 3h8l-2.5 6h-3z"/></svg>
+          <b data-t="teach">가르치고</b><span data-t="teachD">베테랑이 후배를 키우며 계속 일하는 곳</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="contact" aria-labelledby="contactTitle">
+    <div class="wrap">
+      <div class="contact-box">
+        <h2 id="contactTitle" data-t="cTitle">정식 오픈 전에도 편하게 연락 주세요</h2>
+        <p data-t="cSub">광고·기관 제휴·단체교육·베테랑 사전 신청 문의를 받고 있어요.</p>
+        <div class="cta">
+          <a class="btn btn-primary" id="mailBtn" href="mailto:lkysakana@naver.com"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4 7 8 6 8-6"/></svg><span data-t="mail">메일 보내기</span></a>
+          <a class="btn btn-ghost" href="tel:+821071392910"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4h3l1.5 4-2 1.5a10 10 0 0 0 5.5 5.5l1.5-2 4 1.5v3a2 2 0 0 1-2 2A15.5 15.5 0 0 1 4.5 6a2 2 0 0 1 2-2z"/></svg><span data-t="call">전화 걸기</span></a>
+        </div>
+        <dl class="lines">
+          <div><dt data-t="emailL">이메일</dt><dd><a class="email-text" href="mailto:lkysakana@naver.com">lkysakana@naver.com</a></dd></div>
+          <div><dt data-t="phoneL">전화</dt><dd><a class="phone-main" id="phoneMain" href="tel:+821071392910">010-7139-2910</a><small id="phoneSub">해외에서 걸 때 +82 10-7139-2910</small></dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap foot">
+      <p data-t="copy">© 2026 NEOCOLLAR · neo-collar.com · 정식 오픈 준비 중입니다.</p>
+      <a id="privacyLink" href="/privacy" data-t="privacy">개인정보처리방침</a>
+    </div>
+  </footer>
+
+  <script>
+  (() => {
+    "use strict";
+    const T = {
+      ko: {
+        soon: "정식 오픈 준비 중",
+        langAria: "언어 선택",
+        title: "AI가 책상 일을 가져가도,<br>기술은 못 가져갑니다.",
+        lead: "현장 사람들이 배우고 · 묻고 · 일하고 · 가르치는 곳.<br>NEOCOLLAR가 곧 문을 엽니다.",
+        peek: "이런 곳이 열립니다",
+        learn: "배우고", learnD: "공종별로 짧고 바로 써먹는 현장 강의",
+        ask: "묻고", askD: "남한테 묻기 애매했던 현장 노하우까지",
+        work: "일하고", workD: "구인·구직으로 현장과 사람을 잇는 인력사무소",
+        teach: "가르치고", teachD: "베테랑이 후배를 키우며 계속 일하는 곳",
+        cTitle: "정식 오픈 전에도 편하게 연락 주세요",
+        cSub: "광고·기관 제휴·단체교육·베테랑 사전 신청 문의를 받고 있어요.",
+        mail: "메일 보내기", call: "전화 걸기",
+        emailL: "이메일", phoneL: "전화",
+        other: "해외에서 걸 때 {n}",
+        subject: "[NEOCOLLAR] 문의",
+        copy: "© 2026 NEOCOLLAR · neo-collar.com · 정식 오픈 준비 중입니다.",
+        privacy: "개인정보처리방침"
+      },
+      en: {
+        soon: "Launching soon",
+        langAria: "Choose language",
+        title: "AI can take the desk job.<br>It can't take your skills.",
+        lead: "Where people who build learn, ask, work, and teach.<br>NEOCOLLAR opens soon.",
+        peek: "What's opening",
+        learn: "Learn", learnD: "Short, practical lessons for each trade",
+        ask: "Ask", askD: "Even the field know-how you'd never ask about",
+        work: "Work", workD: "A job center linking sites and people, for hiring and job seeking",
+        teach: "Teach", teachD: "Where veterans train the next crew and keep working",
+        cTitle: "Get in touch, even before launch",
+        cSub: "We welcome inquiries about advertising, partnerships, group training and becoming a Veteran.",
+        mail: "Send email", call: "Call",
+        emailL: "Email", phoneL: "Phone",
+        other: "Within Korea: {n}",
+        subject: "[NEOCOLLAR] Inquiry",
+        copy: "© 2026 NEOCOLLAR · neo-collar.com · Launching soon.",
+        privacy: "Privacy policy"
+      },
+      ja: {
+        soon: "オープン準備中",
+        langAria: "言語を選択",
+        title: "AIが机の仕事を奪っても、<br>技術は奪えません。",
+        lead: "現場で働く人が学び、聞き、働き、教える場所。<br>NEOCOLLARはまもなくオープンします。",
+        peek: "こんな場所がオープンします",
+        learn: "学ぶ", learnD: "工種ごとの、短くてすぐ使える現場講座",
+        ask: "聞く", askD: "今さら人に聞けない現場のノウハウまで",
+        work: "働く", workD: "求人・求職で現場と人をつなぐ人材センター",
+        teach: "教える", teachD: "ベテランが後輩を育てながら働き続ける場所",
+        cTitle: "正式オープン前でもお気軽にご連絡ください",
+        cSub: "広告・機関提携・団体研修・ベテランの事前申込のお問い合わせを受け付けています。",
+        mail: "メールを送る", call: "電話をかける",
+        emailL: "メール", phoneL: "電話",
+        other: "韓国国内から:{n}",
+        subject: "[NEOCOLLAR] お問い合わせ",
+        copy: "© 2026 NEOCOLLAR · neo-collar.com · 正式オープン準備中です。",
+        privacy: "個人情報処理方針"
+      }
+    };
+    // 연락처 (전체 사이트 data.js 의 contact 와 같은 값)
+    const C = { email: "lkysakana@naver.com", phone: "010-7139-2910", intl: "+82 10-7139-2910", tel: "+821071392910" };
+    const LANGS = ["ko", "en", "ja"];
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => Array.from(document.querySelectorAll(s));
+    const store = {
+      get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (_) { return d; } },
+      set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) { /* 저장이 안 돼도 화면은 그대로 */ } }
+    };
+    const session = {
+      get(k) { try { return sessionStorage.getItem(k); } catch (_) { return null; } },
+      set(k, v) { try { sessionStorage.setItem(k, v); } catch (_) { /* 무시 */ } }
+    };
+
+    /* ---------- 언어: 주소의 ?lang= → 지난번 선택 → 브라우저 언어 (전체 사이트와 같은 순서·같은 저장 이름) ---------- */
+    function detectLang() {
+      try {
+        const q = new URLSearchParams(location.search).get("lang");
+        if (LANGS.includes(q)) return q;
+      } catch (_) { /* 무시 */ }
+      const saved = store.get("neo.lang", null);
+      if (LANGS.includes(saved)) return saved;
+      const prefs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "ko"])
+        .map((s) => String(s).toLowerCase());
+      if (prefs.some((p) => p.startsWith("ko"))) return "ko";
+      if (prefs.some((p) => p.startsWith("ja"))) return "ja";
+      return "en";
+    }
+    let lang = detectLang();
+    function apply() {
+      const P = T[lang];
+      document.documentElement.lang = lang;
+      $$("[data-t]").forEach((el) => { el.textContent = P[el.dataset.t]; });
+      $$("[data-t-html]").forEach((el) => { el.innerHTML = P[el.dataset.tHtml]; });
+      $$("[data-t-aria]").forEach((el) => { el.setAttribute("aria-label", P[el.dataset.tAria]); });
+      $$(".lang [data-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+      // 한국어 화면은 010 번호를 크게, 영어·일본어 화면은 국제번호(+82)를 크게
+      $("#phoneMain").textContent = lang === "ko" ? C.phone : C.intl;
+      $("#phoneSub").textContent = P.other.replace("{n}", lang === "ko" ? C.intl : C.phone);
+      $("#mailBtn").href = `mailto:${C.email}?subject=${encodeURIComponent(P.subject)}`;
+      $("#privacyLink").href = `/privacy?lang=${lang}`;
+    }
+    $$(".lang [data-lang]").forEach((b) => b.addEventListener("click", () => {
+      const l = b.dataset.lang;
+      if (!LANGS.includes(l) || l === lang) return;
+      lang = l;
+      store.set("neo.lang", l);
+      try {
+        const u = new URL(location.href);
+        if (l === "ko") u.searchParams.delete("lang"); else u.searchParams.set("lang", l);
+        history.replaceState(null, "", u.pathname + u.search + u.hash);
+      } catch (_) { /* 무시 */ }
+      apply();
+    }));
+    apply();
+
+    // 움직임 줄이기를 켠 기기에서는 배경 영상을 멈춘다
+    try {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const v = $("#bgVideo");
+        v.removeAttribute("autoplay");
+        v.pause();
+      }
+    } catch (_) { /* 무시 */ }
+
+    /* ---------- 방문자 통계 ----------
+     * 전체 사이트(app.js)의 방문자 통계와 같은 카운터·같은 이름·같은 나라 목록으로 센다 → 비공개 사이트의 #/stats 화면에서 그대로 보인다
+     * app.js 의 STAT_COUNTRIES 를 바꾸면 여기도 같이 바꾼다
+     * - 같은 기기는 처음 한 번만, 오늘 방문자는 하루에 한 번만 (한국 시간). 검색 로봇·자동 브라우저는 세지 않는다. IP는 저장하지 않는다
+     * - 실서비스 주소에서만 센다 */
+    const COUNTER = "https://abacus.jasoncameron.dev";
+    const COUNTER_NS = "neo-collar-com-1";
+    const STAT_COUNTRIES = ["KR", "US", "JP", "CN", "VN", "PH", "ID", "TH", "IN", "MN", "UZ", "AU", "CA", "SA", "AE"];
+    const SEEN = "neo.seen2";
+    const SEEN_DAY = "neo.seenDay2";
+    const BOT_UA = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|scan|monitor|python|curl|wget|java\/|okhttp|axios|go-http|phantom|selenium|puppeteer|playwright/i;
+    const isBot = () => { try { return navigator.webdriver === true || BOT_UA.test(navigator.userAgent || ""); } catch (_) { return false; } };
+    const kstDay = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+    const isLive = () => location.protocol === "https:" && /^(www\.)?neo-collar\.com$|^neo-collar\.pages\.dev$/.test(location.hostname);
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    async function counterFetch(op, key) {
+      const url = `${COUNTER}/${op}/${COUNTER_NS}/${key}`;
+      let res = await fetch(url, { cache: "no-store", credentials: "omit" });
+      if (res.status === 429) {
+        await wait(Math.min(Number(res.headers.get("retry-after")) || 10, 15) * 1000 + 300);
+        res = await fetch(url, { cache: "no-store", credentials: "omit" });
+      }
+      return res;
+    }
+    async function traceCountry() {
+      try {
+        const txt = await (await fetch("/cdn-cgi/trace", { cache: "no-store" })).text();
+        return (txt.match(/^loc=([A-Z0-9]{2})$/m) || [])[1] || null;
+      } catch (_) { return null; }
+    }
+    async function countVisit() {
+      if (!isLive() || isBot()) return;
+      const today = kstDay();
+      try {
+        let seen = store.get(SEEN, false) === true || session.get(SEEN) === "1";
+        if (!seen) {
+          const cc = (await traceCountry()) || "XX";
+          const key = cc === "XX" || cc === "T1" ? "XX" : STAT_COUNTRIES.includes(cc) ? cc : "OT";
+          if ((await counterFetch("hit", "c-" + key)).ok) { seen = true; store.set(SEEN, true); session.set(SEEN, "1"); }
+        }
+        if (seen && store.get(SEEN_DAY, "") !== today && session.get(SEEN_DAY) !== today) {
+          if ((await counterFetch("hit", "d-" + today)).ok) { store.set(SEEN_DAY, today); session.set(SEEN_DAY, today); }
+        }
+      } catch (_) { /* 카운터가 안 되면 조용히 넘어간다 (다음 방문 때 다시 시도) */ }
+    }
+    countVisit();
+  })();
+  </script>
+</body>
+</html>
