@@ -767,18 +767,23 @@
     $("#vetSteps").innerHTML = [1, 2, 3, 4, 5].map((i) => `<li>${esc(t("vet.r" + i))}</li>`).join("");
     updateCalc();
   }
+  // 한 달 수입 계산기 (예시): 영상 제작비 + 국비 과정 몫. 구독 수익 나눔은 '볼수록 더해진다'고만 보여준다
+  // 기본값(소유자 요청 '혹할 금액'): 10분 이상 20분 미만 10편(80만) + 국비 수강생 10명 × 50만 × 30%(150만) = 월 230만 원
   function updateCalc() {
     const lenSel = $("#inLen");
-    const cur = lenSel.value || "long"; // 처음엔 20분 이상(편당 400원)으로 보여준다 (소유자 요청: 50편 · 100명 · 20분 이상)
-    lenSel.innerHTML = D.payRates.map((r) => `<option value="${r.id}">${esc(t("vet.len." + r.id))} · ${esc(t("vet.len.each", { p: money(r.price) }))}</option>`).join("");
+    const cur = lenSel.value || "mid";
+    lenSel.innerHTML = D.payRates.map((r) => `<option value="${r.id}">${esc(t("vet.len." + r.id))} · ${esc(t("vet.len.each", { p: money(r.fee) }))}</option>`).join("");
     lenSel.value = cur;
     const v = Number($("#inVideos").value);
-    const w = Number($("#inViewers").value);
-    const rate = (D.payRates.find((r) => r.id === lenSel.value) || D.payRates[0]).price;
+    const g = Number($("#inViewers").value);
+    const fee = (D.payRates.find((r) => r.id === lenSel.value) || D.payRates[1]).fee;
+    const feeSum = v * fee;
+    const govSum = Math.round(g * D.vetShare.govFeeExample * D.vetShare.gov);
     $("#outVideos").textContent = t("unit.videos", { n: fmt(v) });
-    $("#outViewers").textContent = t("unit.people", { n: fmt(w) });
-    const month = v * w * rate;
+    $("#outViewers").textContent = t("unit.people", { n: fmt(g) });
+    const month = feeSum + govSum;
     $("#calcMonth").textContent = money(month);
+    $("#calcBreak").textContent = `${t("vet.calc.feeLine", { a: money(feeSum) })} · ${t("vet.calc.govLine", { b: money(govSum) })}`;
     $("#calcYear").textContent = money(month * 12);
   }
 

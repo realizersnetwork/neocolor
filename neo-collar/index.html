@@ -17,7 +17,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="assets/style.css?v=26">
+  <link rel="stylesheet" href="assets/style.css?v=27">
 </head>
 <body data-mode="student" data-view="home">
   <a class="skip" href="#main" data-i18n="skip">본문으로 건너뛰기</a>
@@ -610,25 +610,27 @@
         </section>
 
         <section class="block-tight" id="vet-payout" aria-labelledby="payTitle">
-          <h2 class="sub-title" id="payTitle" data-i18n="vet.payTitle">수강한 만큼 매달 정산</h2>
+          <h2 class="sub-title" id="payTitle" data-i18n="vet.payTitle">찍으면 바로 받고, 볼수록 더 받아요</h2>
           <p class="sub-lead" data-i18n="vet.paySub">조회수가 아니라 실제로 배운 시간으로 나눠요.</p>
           <p class="prep-note"><span class="prep-badge" data-i18n="vet.lockBtn">서비스 준비 중</span><span data-i18n="vet.payLock">정산도 서비스 준비 중이에요. 아래 계산기는 예시일 뿐, 실제 정산은 아직 하지 않아요.</span></p>
           <div class="pay-grid" id="payGrid"></div>
           <div class="formula">
-            <p data-i18n="vet.formula">내 정산금 = 베테랑 정산 재원 × (내 강의 수강 시간 ÷ 전체 수강 시간)</p>
+            <p data-i18n="vet.formula">한 달 수입 = 영상 제작비 + 구독 수익 나눔 + 국비 과정 몫</p>
             <small data-i18n="vet.formulaNote">배분율과 정산일은 정식 오픈 때 알려드릴게요.</small>
           </div>
           <div class="calc">
-            <h3 data-i18n="vet.calcTitle">정산 계산기 (예시)</h3>
+            <h3 data-i18n="vet.calcTitle">한 달 수입 계산기 (예시)</h3>
             <div class="calc-grid">
               <div class="calc-inputs">
-                <label><span><span data-i18n="vet.calc.videos">올린 영상 수</span><output id="outVideos"></output></span><input type="range" id="inVideos" min="1" max="200" step="1" value="50"></label>
-                <label><span><span data-i18n="vet.calc.viewers">영상 1편을 끝까지 본 수강생 (한 달)</span><output id="outViewers"></output></span><input type="range" id="inViewers" min="1" max="500" step="1" value="100"></label>
+                <label><span><span data-i18n="vet.calc.videos">한 달에 올리는 짧은 강의 영상</span><output id="outVideos"></output></span><input type="range" id="inVideos" min="1" max="30" step="1" value="10"></label>
+                <label><span><span data-i18n="vet.calc.viewers">내 국비 과정 수강생 (한 달)</span><output id="outViewers"></output></span><input type="range" id="inViewers" min="0" max="100" step="1" value="10"></label>
                 <label class="calc-len"><span data-i18n="vet.calc.len">영상 길이</span><select id="inLen"></select></label>
               </div>
               <div class="calc-result">
                 <span data-i18n="vet.calc.month">한 달 예상</span>
                 <strong id="calcMonth">0</strong>
+                <small class="calc-break" id="calcBreak"></small>
+                <small class="calc-plus" data-i18n="vet.calc.plus">+ 학생이 볼수록 구독 수익 나눔이 더해져요</small>
                 <span class="calc-year"><span data-i18n="vet.calc.year">1년이면</span> <b id="calcYear">0</b></span>
               </div>
             </div>
@@ -787,9 +789,9 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <noscript><p class="noscript">이 사이트는 자바스크립트를 켜야 강의 목록이 보여요.</p></noscript>
-  <script src="assets/i18n.js?v=26"></script>
-  <script src="assets/data.js?v=26"></script>
-  <script src="assets/config.js?v=26"></script>
-  <script src="assets/app.js?v=26"></script>
+  <script src="assets/i18n.js?v=27"></script>
+  <script src="assets/data.js?v=27"></script>
+  <script src="assets/config.js?v=27"></script>
+  <script src="assets/app.js?v=27"></script>
 </body>
 </html>

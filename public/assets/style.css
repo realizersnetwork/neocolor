@@ -1258,3 +1258,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 .ads-contact { position: relative; z-index: 1; margin-top: 16px; font-size: 15px; }
 /* 이메일 주소: 소문자 l 과 대문자 I 가 똑같이 보이지 않게 구분되는 글꼴로 (lkysakana) */
 .email-text { font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Roboto Mono", "Noto Sans Mono", "DejaVu Sans Mono", monospace; letter-spacing: -0.02em; }
+
+/* 베테랑 수입 계산기: 제작비·국비 몫 나눠 보기 */
+.calc-break, .calc-plus { display: block; margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+.calc-plus { color: var(--ink-3); }

@@ -676,10 +676,11 @@ window.NEO = {
     { id: "CO", tier: "go", price: "COP 24,900", usd: 7.91 },
     { id: "AR", tier: "go", price: "$5.99", usd: 5.99 }
   ],
-  /* 베테랑 정산 단가 (영상 1편을 수강생 1명이 처음 끝까지 볼 때, 원)
-   * 길이: 3분 이상 10분 미만 200원 / 10분 이상 20분 미만 300원 / 20분 이상 400원 (아무리 길어도 400원), 3분 미만은 정산 없음
-   * 최악의 경우(가장 싼 이용권 회원이 한 달 인정 한도 20편을 모두 400원짜리로 끝까지 보고, 재생 60시간을 꽉 채움)에도
-   * 플랫폼에 순매출의 24%가 남는다. 해외 저가 요금 회원은 한 달 인정 5편 (내부 규칙, 화면에 쓰지 않음) */
+  /* 베테랑 수입 구조 (2026-11-06 소유자가 정함, Udemy·Skillshare·패스트캠퍼스 벤치마킹)
+   * ① 영상 제작비(fee): 우리가 요청하고 검수를 통과한 짧은 영상 1편마다. 3분 미만은 없음, 20분을 넘어도 12만 원
+   * ② 구독 수익 나눔: 구독·이용권 순매출의 30%를 모아, 끝까지 본 영상 수 × 길이 점수(points)대로 매달 나눔
+   * ③ 국비 전문과정: 승인 후 수강료의 30%를 수강생마다 (편당 제작비 없음, 촬영·편집은 플랫폼이 지원)
+   * 화면 예시: 10편(10~20분) + 국비 수강생 10명(수강료 50만 원 기준) = 월 230만 원 */
   /* 연락처 (2026-11-06 소유자). 고객센터 화면·푸터·광고 안내·개인정보처리방침(privacy.html은 따로 적혀 있음)에 쓰인다 */
   contact: {
     email: "lkysakana@naver.com",
@@ -688,10 +689,11 @@ window.NEO = {
     tel: "+821071392910"          // 전화 걸기 링크 (국내·해외 모두 됨)
   },
   payRates: [
-    { id: "short", price: 200 },
-    { id: "mid", price: 300 },
-    { id: "long", price: 400 }
+    { id: "short", fee: 50000, points: 2 },   // 3분 이상 10분 미만
+    { id: "mid", fee: 80000, points: 3 },     // 10분 이상 20분 미만
+    { id: "long", fee: 120000, points: 4 }    // 20분 이상
   ],
+  vetShare: { subscription: 0.3, gov: 0.3, govFeeExample: 500000 },
   // 환산용 환율 (ECB 기준 2026-11-02): 1달러 = 1,342.9원 = 157.9엔
   fx: { KRW: 1342.9, JPY: 157.9 },
 
@@ -923,7 +925,7 @@ window.NEO = {
     { q: { ko: "실습은 어디서 하나요?", en: "Where does hands-on practice happen?", ja: "実習はどこで行いますか?" },
       a: { ko: "NEOCOLOR가 직접 운영하지 않고, 각 지역 직업학교·인력사무소·현장 베테랑과 연계해 진행해요. 지역별 연계 기관은 정해지는 대로 알려드릴게요.", en: "We don't run it ourselves. Practice happens with local vocational schools, staffing offices, and veterans. We'll announce partners by region.", ja: "NEOCOLORは直接運営せず、各地域の職業学校・人材事務所・現場のベテランと提携して行います。地域ごとの提携先は決まり次第お知らせします。" } },
     { q: { ko: "베테랑은 어떻게 정산받나요?", en: "How do veterans get paid?", ja: "ベテランはどう精算されますか?" },
-      a: { ko: "영상을 올리면, 수강생이 처음 끝까지 볼 때마다 영상 길이별 단가로 매달 정산받아요. 30% 이상 보면 절반, 그 전에 끄거나 다시 보는 건 0원이에요. 단가와 정산일은 정식 오픈 때 확정해요.", en: "Upload your videos and get paid each month at a per-video rate by length, every time a learner finishes one for the first time. Watching 30%+ earns half; stopping earlier or rewatching earns nothing. Rates and payout dates will be set at launch.", ja: "動画をアップすると、受講生が初めて最後まで見るたびに、長さ別の単価で毎月精算されます。30%以上なら半額、それより前にやめた場合や見直しは0円です。単価と精算日は正式オープン時に確定します。" } },
+      a: { ko: "세 가지로 받아요. ① 저희가 요청드린 짧은 강의 영상이 검수를 통과하면 1편마다 제작비(길이별 5만·8만·12만 원), ② 구독·이용권 매출의 30%를 학생이 끝까지 본 영상 수와 길이대로 매달 나눠 드리고, ③ 국비 전문과정은 승인 후 수강료의 30%를 수강생마다 드려요(국비 과정 영상은 제작비 없음). 금액과 정산일은 정식 오픈 때 확정해요.", en: "Three ways. ① A production fee for each requested short lesson video that passes review (₩50,000 / ₩80,000 / ₩120,000 by length), ② 30% of subscription and voucher revenue, shared monthly by how many of your videos learners finish and their length, and ③ 30% of the course fee per learner for funded programs you make, once approved (no production fee for funded-program videos). Amounts and payout dates will be set at launch.", ja: "3つの方法で受け取れます。①こちらからお願いした短い講座動画が審査を通ると1本ごとに制作費(長さ別に5万・8万・12万ウォン)、②サブスク・利用券の売上の30%を、受講生が最後まで見た動画の本数と長さに応じて毎月分配、③国費専門コースは承認後、受講料の30%を受講生ごとにお支払いします(国費コースの動画に制作費はありません)。金額と精算日は正式オープン時に確定します。" } },
     { q: { ko: "나이가 많아도 베테랑이 될 수 있나요?", en: "Is there an age limit for veterans?", ja: "年齢が高くてもベテランになれますか?" },
       a: { ko: "나이 제한은 없어요. 오래 일한 경험이 곧 실력이에요. 맨 위 '글자 크게' 버튼으로 화면을 크게 볼 수 있어요.", en: "No age limit. Years on the job are what count. Use the 'Larger text' button at the top for bigger text.", ja: "年齢制限はありません。長年の経験こそが実力です。上の「文字を大きく」ボタンで画面を大きくできます。" } },
     { q: { ko: "경력자도 배울 게 있나요?", en: "Is there anything for experienced pros?", ja: "経験者にも学ぶことはありますか?" },
