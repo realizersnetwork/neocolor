@@ -123,7 +123,7 @@
 - 배포: neo-collar.com은 **소유자 본인 Cloudflare 계정**(형님 계정 아님)에 있다. GitHub(realizersnetwork)은 형님 계정의 neocolor 프로젝트에 이미 연결돼 있어서, 소유자 계정에 또 연결하면 neocolor.net 자동 반영이 끊길 수 있다 (Cloudflare 안내: 'A GitHub account should only point to one Cloudflare account'). **GitHub 연결 금지**
   - Pages 프로젝트 `neo-collar`는 **직접 올리기(Direct Upload)** 방식으로 만들었다 (2026-11-06 소유자가 첫 업로드와 neo-collar.com 연결 Active까지 마침)
   - **자동 배포: GitHub Actions `.github/workflows/neo-collar.yml`** — main에 올라올 때마다 스크립트로 neo-collar/를 다시 만들고 wrangler로 neo-collar.com에 올린다. 그래서 소유자 세션이든 형님 세션이든 **public/만 고치고 스크립트 돌려 main에 합치면 두 사이트가 같이 바뀐다**
-  - 열쇠: 저장소 Secrets `CLOUDFLARE_API_TOKEN`(소유자 계정, Cloudflare Pages: Edit), `CLOUDFLARE_ACCOUNT_ID`(3767ca5b370e0fea0921e5bdf5e95071). 소유자만 넣을 수 있다(저장소 관리자). 열쇠가 없으면 이 작업은 건너뛴다
+  - 열쇠: 저장소 Secrets `CLOUDFLARE_API_TOKEN` 하나(소유자 계정, Account · Cloudflare Pages · Edit). 소유자만 넣을 수 있다(저장소 관리자). 계정 ID 3767ca5b370e0fea0921e5bdf5e95071은 워크플로에 그대로 적혀 있다. 열쇠가 없으면 이 작업은 건너뛴다
   - 비상용: Actions가 안 될 때는 `cd neo-collar && zip -qr -X <임시폴더>/neo-collar.zip .`로 압축해서 소유자에게 보내고, 소유자가 프로젝트의 **Create deployment**로 올린다. zip은 저장소에 넣지 않는다
 
 ## 배포
