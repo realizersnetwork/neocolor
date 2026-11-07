@@ -1286,7 +1286,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
     grid-template-rows: auto auto;
     gap: 32px clamp(24px, 4vw, 64px);
     align-items: stretch;
@@ -1304,22 +1304,19 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     grid-column: 1;
     grid-row: 1;
     align-self: center;
-    justify-self: center; /* ← 수정: 칸 안에서 가운데로 */
+    justify-self: center;
     width: 100%;
-    max-width: 760px; /* ← 수정: 700px -> 760px, 좌우폭 크게 */
-    padding: 24px 0;
-    text-align: center; /* ← 수정: 안의 글씨 전부 가운데 */
-    display: flex; /* ← 수정 */
-    flex-direction: column; /* ← 수정 */
-    align-items: center; /* ← 수정: 로고, 슬로건, 버튼까지 가운데 */
+    max-width: 760px;
+    min-height: 560px;
+    padding: 48px 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
-  .hero-copy .wordmark-xl {
-    font-size: clamp(42px, 5vw, 76px);
-    text-align: center; /* ← 수정: NEOCOLOR 가운데 */
-  }
-
-    /* NEOCOLOR 전체 블록 가운데 */
+  /* NEOCOLOR 전체 블록 가운데 */
   .hero-copy .hero-brand {
     display: flex !important;
     flex-direction: column !important;
@@ -1332,6 +1329,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
   .hero-copy .wordmark-xl {
     font-size: clamp(64px, 7vw, 110px) !important;
     line-height: 1 !important;
+    text-align: center !important;
   }
 
   /* 색깔 6개 가운데 + 크게 */
@@ -1357,7 +1355,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     flex-shrink: 0 !important;
   }
 
-  /* 슬로건 더 크게 - 네 실제 태그는 .slogan이 아니라 이거야 */
+  /* 슬로건 - Skills for the People... 더 크게 */
   .hero-copy [data-i18n="hero.tag"] {
     display: block !important;
     font-size: clamp(18px, 1.6vw, 26px) !important;
@@ -1366,39 +1364,44 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     margin: 18px auto 0 !important;
   }
 
-  /* 슬로건 - Skills for the People... 부분 */
-  /* 네 코드에서 슬로건 클래스명이 다르면 여기 이름만 바꿔줘 */
-  .hero-copy .slogan {
-    text-align: center; /* ← 추가 */
-    margin-left: auto; /* ← 추가 */
-    margin-right: auto; /* ← 추가 */
+  /* 땀 흘린 만큼, 즐기면서 살자. 한 줄 + 가운데 */
+  .hero h1 {
+    font-size: clamp(28px, 2.8vw, 42px) !important;
+    margin-top: 24px;
+    text-align: center;
+    white-space: nowrap !important;
+    max-width: none !important;
+    width: max-content !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
-.hero h1 {
-  font-size: clamp(30px, 3vw, 46px);
-  margin-top: 24px;
-  text-align: center;
-  white-space: nowrap;
-  max-width: none;
-}
+  .hero h1 br,
+  .hero h1 wbr {
+    display: none !important;
+  }
 
-.hero h1 br {
-  display: none; /* ← 이거 추가: 강제 줄바꿈 제거 */
-}
-  
+  .hero h1 span,
+  .hero h1 div,
+  .hero h1 em,
+  .hero h1 strong {
+    display: inline !important;
+    white-space: nowrap !important;
+  }
+
   .hero .lead {
     font-size: clamp(15px, 1.2vw, 18px);
     max-width: 38em;
-    text-align: center; /* ← 수정 */
-    margin-left: auto; /* ← 수정 */
-    margin-right: auto; /* ← 수정 */
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  /* 버튼 영역 - 버튼 감싸는 div 클래스명이 다르면 여기만 바꿔줘 */
+  /* 버튼 영역 가운데 */
   .hero-copy .hero-actions {
-    display: flex; /* ← 추가 */
-    justify-content: center; /* ← 추가 */
-    gap: 12px; /* ← 추가 */
+    display: flex;
+    justify-content: center;
+    gap: 12px;
   }
 
   /* 오른쪽 상단: 메인 영상 */
