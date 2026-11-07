@@ -174,7 +174,8 @@
   function applyStatic() {
     document.documentElement.lang = lang;
     $$("[data-privacy]").forEach((a) => { a.href = `/privacy?lang=${lang}`; });
-    $$("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
+   const HTML_KEYS = new Set(['hero.lead', 'hero.photo_text']);
+$$("[data-i18n]").forEach((el) => { const k = el.dataset.i18n; if (HTML_KEYS.has(k)) el.innerHTML = t(k); else el.textContent = t(k); });
     $$("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
     $$("[data-i18n-attr]").forEach((el) => {
       el.dataset.i18nAttr.split(";").forEach((pair) => {
