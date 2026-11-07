@@ -1471,3 +1471,86 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
   }
 
 }
+/* ==================================================
+   NEOCOLOR 모바일 히어로 꽉 채우기
+   959px 이하만 적용
+================================================== */
+
+@media (max-width: 959px) {
+
+  .hero {
+    width: 100% !important;
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  /* 하단 사진 영역 - 왼쪽 치우침 수정 */
+  .hero-photo {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  .hero-photo picture {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .hero-photo img {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    aspect-ratio: 4 / 3 !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: 0 !important; /* 끝까지 꽉 채우려면 둥근 모서리 제거 */
+    margin: 0 !important;
+  }
+
+  /* 사진 아래 글씨도 꽉 채우기 */
+  .hero-photo figcaption {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 20px 20px 0 !important;
+    text-align: left !important;
+  }
+
+  .hero-photo strong {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* 혹시 위에 영상도 같이 왼쪽으로 치우쳐 있으면 */
+  .hero-video-wrap {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .hero-video-wrap video {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  /* 위에 브랜드 영역도 가운데로 맞추고 싶으면 */
+  .hero-copy {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 24px 20px !important;
+    text-align: center !important;
+  }
+
+}
