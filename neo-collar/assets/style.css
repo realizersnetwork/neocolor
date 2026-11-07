@@ -1284,10 +1284,9 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
   .site-header .logo .wordmark { font-size: 19px; }
   html:not([lang="ko"]) .site-header .logo .wordmark { font-size: 17px; }
 }
-/* 데스크톱: 원하는 배치 - 2단 그리드 */
+/* 데스크톱: 네가 보낸 사진처럼 배치 */
 @media (min-width: 769px) {
-  /* 페이지 전체 폭 넓히기 - 어떤 클래스든 */
-  body > * , main, [class*="wrap"], [class*="container"] {
+  .wrap {
     max-width: 1200px !important;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -1295,52 +1294,60 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     padding-right: 24px !important;
   }
 
-  /* 모든 큰 섹션을 2단으로 */
-  main > section, main > div {
+  /* 히어로: 왼쪽 글 / 오른쪽 사진 */
+  .hero {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 48px !important;
     align-items: center !important;
   }
-
-  /* 두 번째 섹션은 사진 왼쪽 / 글 오른쪽으로 뒤집기 */
-  main > section:nth-of-type(2),
-  main > div:nth-of-type(2) {
-    direction: ltr !important;
-  }
-  main > section:nth-of-type(2) > *:first-child {
-    order: 1 !important;
-  }
-  main > section:nth-of-type(2) > *:last-child {
-    order: 2 !important;
-  }
-
-  main img {
+  .hero-copy { order: 1 !important; }
+  .hero-photo { order: 2 !important; }
+  .hero-photo img {
     width: 100% !important;
     height: auto !important;
     object-fit: cover !important;
     border-radius: 16px !important;
-    display: block !important;
+  }
+
+  /* 두 번째 섹션: 왼쪽 사진 / 오른쪽 글 */
+  main > section:nth-of-type(2) {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 48px !important;
+    align-items: center !important;
+  }
+  main > section:nth-of-type(2) img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+    border-radius: 16px !important;
   }
 }
 
-/* 모바일: 1단으로 쌓기 + 두 번째 사진 꽉 차게 */
+/* 모바일: 두 번째 사진 꽉 차게 + 1단으로 쌓기 */
 @media (max-width: 768px) {
-  main > section, main > div {
-    display: flex !important;
-    flex-direction: column !important;
+  .wrap {
+    max-width: 100% !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
-    gap: 0 !important;
   }
-  main img {
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .hero-photo img,
+  main > section:nth-of-type(2) img {
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
     border-radius: 0 !important;
     object-fit: cover !important;
+    display: block !important;
   }
-  main h1, main h2, main h3, main p {
+  .hero-copy,
+  main > section:nth-of-type(2) p,
+  main > section:nth-of-type(2) h2 {
     padding-left: 20px !important;
     padding-right: 20px !important;
   }
