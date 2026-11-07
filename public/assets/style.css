@@ -1371,7 +1371,8 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
   }
 
   .hero-photo figcaption {
-    align-self: end;
+    align-self: center;
+    margin-left: 60px; 
     max-width: 540px;
     font-size: clamp(15px, 1.2vw, 18px);
     line-height: 1.8;
