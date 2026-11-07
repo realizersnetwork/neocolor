@@ -1276,35 +1276,3 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 /* 베테랑 수입 계산기: 제작비·국비 몫 나눠 보기 */
 .calc-break, .calc-plus { display: block; margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
 .calc-plus { color: var(--ink-3); }
-
-
-/* ==========================================
-   PC 전체 화면 너비 활용
-   모바일 기존 디자인 완전 유지
-========================================== */
-
-@media (min-width: 960px) {
-
-  /* 모든 페이지 공통 콘텐츠 폭 확장 */
-  .wrap {
-    width: calc(100% - clamp(48px, 8vw, 160px));
-    max-width: none;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  /* 메인 히어로 좌우 여백 제한 해제 */
-  .hero {
-    width: 100%;
-    padding-left: clamp(32px, 4vw, 100px);
-    padding-right: clamp(32px, 4vw, 100px);
-    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
-    column-gap: clamp(32px, 4vw, 80px);
-  }
-
-  /* 하단 사진 크기도 화면에 맞게 */
-  .hero-photo {
-    width: min(100%, 560px);
-  }
-
-}
