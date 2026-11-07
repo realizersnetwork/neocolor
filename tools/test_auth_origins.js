@@ -111,8 +111,10 @@ assert.ok(!css.includes("min-height: 78vh"), "mobile text is not laid over a tal
 assert.ok(/\.hero-photo figcaption \{[^}]*margin-top:/.test(css), "pc caption stays under the card");
 assert.ok(!/\.hero-photo figcaption \{[^}]*position:\s*absolute/.test(css), "caption is not an overlay");
 assert.ok(!css.includes("grid-template-columns: minmax(0, 1.25fr)"), "pc hero is not a row of small side cards");
-assert.ok(css.includes(".hero-stage { display: contents; }"), "pc text and hero share one canvas");
-assert.ok(css.includes("display: block; width: min(240px, 100%)"), "second card stays a small block under the hero");
+assert.ok(!css.includes("grid-template-columns: minmax(300px, 1fr) auto"), "video column cannot force a width past the viewport");
+assert.ok(!css.includes("min-height: calc(100svh - 118px)"), "hero is not stretched to the viewport height");
+assert.ok(css.includes("grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr)"), "pc text and hero share one canvas that can shrink");
+assert.ok(css.includes("width: min(400px, 100%)"), "second card stays readable under the copy");
 assert.ok(css.includes("prefers-reduced-motion"), "reduced motion hook remains");
 
 const html = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
