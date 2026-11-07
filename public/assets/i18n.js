@@ -61,7 +61,7 @@ window.NEO_I18N = {
 
     "hero.tag": "Skills for the People Who Build the World",
     "hero.title.html": "땀 흘린 만큼,  즐기면서 살자.",
-    "hero.lead": "처음 시작하는 분부터 30년차 소장님까지.<br>남한테 묻기 애매했던 현장 노하우를 베테랑에게 배우세요.<br>일한 만큼 벌고, 일 끝나면 제대로 쉬는 삶을<br>NEO-COLLAR가 함께합니다.",
+    "hero.lead": "처음 시작하는 분부터 30년차 소장님까지.<br>남한테 묻기 애매했던 현장 노하우를<br>베테랑에게 배우세요.<br>일한 만큼 벌고, 일 끝나면 제대로 쉬는 삶을<br>NEO-COLLAR가 함께합니다.",
     "hero.cta1": "강의 둘러보기",
     "hero.cta2": "수강권 보기",
     "hero.capTitle": "AI가 책상 일을 가져가도, 기술은 못 가져갑니다.",
