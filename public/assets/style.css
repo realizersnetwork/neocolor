@@ -1276,37 +1276,3 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 /* 베테랑 수입 계산기: 제작비·국비 몫 나눠 보기 */
 .calc-break, .calc-plus { display: block; margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
 .calc-plus { color: var(--ink-3); }
-
-
-/* PC 화면 전체 너비 활용 */
-@media (min-width: 960px) {
-
-  /* 메인 영역의 폭 제한 해제 */
-  #main {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-  }
-
-  /* 각 페이지 뷰의 폭 제한 해제 */
-  .view {
-    width: 100% !important;
-    max-width: none !important;
-    margin-inline: 0 !important;
-  }
-
-  /* 공통 콘텐츠 영역 확장 */
-  .view .wrap {
-    width: min(1440px, calc(100% - 64px));
-    max-width: 1440px;
-    margin-inline: auto;
-  }
-
-  /* 메인 히어로 */
-  .hero {
-    width: 100%;
-    max-width: none;
-    padding-left: max(32px, calc((100% - 1440px) / 2));
-    padding-right: max(32px, calc((100% - 1440px) / 2));
-  }
-}
