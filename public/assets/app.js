@@ -1414,11 +1414,11 @@
     }
 
     requestAnimationFrame(() => fillAd(r.view));
-    document.querySelectorAll("#heroVideo, #cardVideo").forEach((clip) => {
-      if (clip.dataset.broken) return;
-      if (r.view === "home") { if (!reducedMotion) clip.play().catch(() => {}); }
-      else clip.pause();
-    });
+    const heroClip = document.getElementById("heroVideo");
+    if (heroClip && !heroClip.dataset.broken) {
+      if (r.view === "home") { if (!reducedMotion && heroClip.querySelector("source[src]")) heroClip.play().catch(() => {}); }
+      else heroClip.pause();
+    }
 
     let target = null;
     if (r.view === "roadmaps" && rmById[r.a]) target = document.getElementById("rm-" + r.a);
@@ -1549,7 +1549,6 @@
 
   /* ---------- 메인 동영상 ---------- */
   const video = $("#heroVideo");
-  const cardVideo = $("#cardVideo");
   function armClip(clip) {
     if (!clip) return;
     const fail = () => {
@@ -1568,27 +1567,14 @@
     if (reducedMotion) { clip.removeAttribute("autoplay"); clip.pause(); }
   }
   armClip(video);
-  armClip(cardVideo);
-  // 새 영상에는 소리 트랙이 없다. 화면 밖이면 재생만 멈춘다.
-  if ("IntersectionObserver" in window) {
-    if (video) {
-      new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (video.dataset.broken) return;
-          if (!entry.isIntersecting) video.pause();
-          else if (state.view === "home" && !reducedMotion) video.play().catch(() => {});
-        });
-      }, { threshold: 0.15 }).observe(video);
-    }
-    if (cardVideo) {
-      new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (cardVideo.dataset.broken) return;
-          if (!entry.isIntersecting) cardVideo.pause();
-          else if (state.view === "home" && !reducedMotion) cardVideo.play().catch(() => {});
-        });
-      }, { threshold: 0.15 }).observe(cardVideo);
-    }
+  if ("IntersectionObserver" in window && video && video.querySelector("source[src]")) {
+    new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (video.dataset.broken) return;
+        if (!entry.isIntersecting) video.pause();
+        else if (state.view === "home" && !reducedMotion) video.play().catch(() => {});
+      });
+    }, { threshold: 0.15 }).observe(video);
   }
 
   /* ---------- 글자 크게 ---------- */

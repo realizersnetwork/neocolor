@@ -235,7 +235,7 @@ body[data-mode="student"] .vet-badge { display: none !important; }
 .hero { background: var(--dark); color: #fff; }
 /* 휴대폰: 영상은 위 9:8 칸, 문구는 그 아래. 문구 뒤에 별도 검은 상자는 두지 않는다. */
 .hero-stage { position: relative; display: flex; flex-direction: column; align-items: stretch; }
-.hero-video-wrap { position: relative; width: 100%; aspect-ratio: 9 / 8; background: #0b0d12; overflow: hidden; }
+.hero-video-wrap { position: relative; width: 100%; aspect-ratio: 768 / 682; background: transparent; overflow: hidden; }
 .hero-video-wrap video {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: contain; object-position: center center;
@@ -259,8 +259,7 @@ body[data-mode="student"] .vet-badge { display: none !important; }
 .btn-dark { background: var(--ink); color: #fff; }
 .btn-line { border: 1px solid var(--line); background: #fff; }
 .hero-photo { display: block; width: min(280px, calc(100% - 32px)); margin: 4px 16px 34px; padding: 0; }
-.hero-photo img,
-.hero-photo video { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; object-position: center center; border-radius: 14px; background: #10131a; }
+.hero-photo img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: contain; object-position: center center; border-radius: 14px; background: transparent; }
 .hero-photo figcaption { font-size: 14px; line-height: 1.65; color: rgba(255, 255, 255, 0.92); }
 .hero-photo strong { display: block; margin-bottom: 6px; font-size: 20px; color: #fff; letter-spacing: -0.02em; }
 
@@ -925,19 +924,25 @@ dialog.sheet[open] { animation: sheet-in 0.22s ease-out; }
   .bar-end { gap: 6px; margin-left: 4px; }
   body[data-mode="veteran"] .bar-end { margin-left: auto; }
 
-  /* PC: 히어로는 작은 옆 카드가 아니다. 9:8 장면을 넓게 두고, 문구는 그 아래 페이지 배경에 잇는다. */
+  /* PC 첫 화면: 문구와 9:8 장면이 한 칸에 같이 보인다. 장면은 자르지 않고, 문구는 영상 밖 배경에 둔다. */
   .hero {
-    display: block;
-    padding: 28px max(32px, calc((100% - 1040px) / 2)) 64px;
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) auto;
+    column-gap: 40px;
+    align-items: center;
+    min-height: calc(100svh - 118px);
+    padding: 20px max(28px, calc((100% - 1320px) / 2)) 40px;
     background:
       radial-gradient(1000px 520px at 82% 18%, rgba(47, 107, 255, 0.26), transparent 60%),
       radial-gradient(760px 460px at 8% 92%, rgba(255, 122, 26, 0.16), transparent 60%),
       var(--dark);
   }
-  .hero-stage { display: flex; flex-direction: column; align-items: stretch; }
+  .hero-stage { display: contents; }
+  .hero-copy { grid-column: 1; grid-row: 1; max-width: none; padding: 0 8px 0 0; background: transparent; }
   .hero-video-wrap {
-    position: relative; width: 100%; aspect-ratio: 9 / 8;
-    border-radius: 20px; overflow: hidden;
+    grid-column: 2; grid-row: 1;
+    position: relative; width: auto; height: min(68vh, 640px); aspect-ratio: 768 / 682;
+    border-radius: 0; overflow: hidden; background: transparent;
   }
   .hero-video-wrap video {
     position: absolute; inset: 0; width: 100%; height: 100%;
@@ -945,12 +950,11 @@ dialog.sheet[open] { animation: sheet-in 0.22s ease-out; }
     opacity: 1; filter: none; -webkit-mask-image: none; mask-image: none;
   }
   .hero-video-wrap::after { content: none; }
-  .hero-copy { max-width: 40rem; padding: 28px 0 0; background: transparent; }
   .hero-photo {
-    display: block; width: min(280px, 34%); margin-top: 36px; padding: 0;
+    grid-column: 1; grid-row: 2;
+    display: block; width: min(240px, 100%); margin-top: 28px; padding: 0;
   }
-  .hero-photo img,
-  .hero-photo video { border-radius: 16px; box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.55); }
+  .hero-photo img { border-radius: 16px; box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.55); }
   .hero-photo figcaption { margin-top: 12px; font-size: 14px; }
   .hero-photo strong { font-size: 18px; }
   .lead { font-size: 18px; }

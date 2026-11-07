@@ -101,7 +101,7 @@ function videoSize(file) {
 check(load("public/assets/origins.js"), "public");
 
 const css = fs.readFileSync(path.join(root, "public/assets/style.css"), "utf8");
-assert.ok(css.includes("aspect-ratio: 9 / 8"), "hero slot matches 720x640");
+assert.ok(css.includes("aspect-ratio: 768 / 682"), "hero slot matches the approved file");
 assert.ok(!css.includes("aspect-ratio: 9 / 16"), "old portrait hero slot removed");
 assert.ok(!css.includes("mask-image: linear-gradient"), "hero video has no dark fade mask");
 assert.ok(css.includes("object-fit: contain"), "hero shows the full frame without extra crop");
@@ -111,14 +111,19 @@ assert.ok(!css.includes("min-height: 78vh"), "mobile text is not laid over a tal
 assert.ok(/\.hero-photo figcaption \{[^}]*margin-top:/.test(css), "pc caption stays under the card");
 assert.ok(!/\.hero-photo figcaption \{[^}]*position:\s*absolute/.test(css), "caption is not an overlay");
 assert.ok(!css.includes("grid-template-columns: minmax(0, 1.25fr)"), "pc hero is not a row of small side cards");
-assert.ok(!css.includes(".hero-stage { display: contents; }"), "pc copy is not a side column beside the hero");
-assert.ok(css.includes(".hero-photo {\n    display: block;"), "second card stays its own block under the hero");
+assert.ok(css.includes(".hero-stage { display: contents; }"), "pc text and hero share one canvas");
+assert.ok(css.includes("display: block; width: min(240px, 100%)"), "second card stays a small block under the hero");
 assert.ok(css.includes("prefers-reduced-motion"), "reduced motion hook remains");
 
 const html = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
-assert.ok(html.includes('src="media/card.mp4?v=6"'), "card video wired");
-assert.ok(html.includes('src="media/hero.mp4?v=7"'), "hero video wired");
-assert.ok(html.includes('id="cardVideo"'), "card element");
+assert.ok(html.includes('src="media/hero.mp4?v=9"'), "approved hero video wired");
+assert.ok(html.includes("hero-poster.jpg?v=9"), "approved hero poster wired");
+assert.ok(html.includes("<picture>"), "card slot is a still picture");
+assert.ok(!html.includes("card.mp4"), "rejected card video is not used");
+assert.ok(!html.includes("card-poster"), "rejected card still is not used");
+assert.ok(html.includes('id="heroVideo"'), "hero video element remains");
+assert.ok(html.includes('id="cardStill"'), "card still element");
+assert.ok(html.includes("card-still.webp?v=9"), "card webp source");
 assert.ok(html.includes("muted"), "autoplay stays muted");
 assert.ok(html.includes("playsinline"), "playsinline");
 assert.ok(!html.includes("soundBtn"), "muted hero has no sound button");
@@ -153,20 +158,19 @@ assert.ok(redirects.includes("/index.html    /        302"), "index redirect rem
 assert.ok(redirects.includes("/assets/*      /        302"), "assets stay hidden on the public domain");
 
 const hero = videoSize(path.join(root, "public/media/hero.mp4"));
-const card = videoSize(path.join(root, "public/media/card.mp4"));
 const heroPoster = jpegSize(path.join(root, "public/media/hero-poster.jpg"));
-const cardPoster = jpegSize(path.join(root, "public/media/card-poster.jpg"));
-assert.deepStrictEqual(hero, { width: 720, height: 640 });
-assert.deepStrictEqual(card, { width: 786, height: 1048 });
-assert.deepStrictEqual(heroPoster, { width: 720, height: 640 });
-assert.deepStrictEqual(cardPoster, { width: 786, height: 1048 });
+assert.deepStrictEqual(hero, { width: 768, height: 682 });
+assert.deepStrictEqual(heroPoster, { width: 1024, height: 910 });
+assert.ok(!fs.existsSync(path.join(root, "public/media/card.mp4")), "rejected card video is not shipped");
+assert.ok(!fs.existsSync(path.join(root, "public/media/card-poster.jpg")), "rejected card still is not shipped");
 assert.ok(!fs.existsSync(path.join(root, "public/media/rooftop.jpg")), "old rooftop image is not shipped");
 
 const copyOrigins = path.join(root, "neo-collar/assets/origins.js");
 if (fs.existsSync(copyOrigins)) {
   check(load("neo-collar/assets/origins.js"), "neo-collar");
   const copyHtml = fs.readFileSync(path.join(root, "neo-collar/index.html"), "utf8");
-  assert.ok(copyHtml.includes('src="media/card.mp4?v=6"'), "copied card video");
+  assert.ok(copyHtml.includes('src="media/hero.mp4?v=9"'), "copied approved hero");
+  assert.ok(!copyHtml.includes("card.mp4"), "copied page has no rejected card video");
   assert.ok(!copyHtml.includes("rooftop"), "copied page dropped the old image");
   assert.strictEqual(
     fs.readFileSync(path.join(root, "neo-collar/_redirects"), "utf8"),

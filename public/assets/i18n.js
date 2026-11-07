@@ -66,7 +66,7 @@ window.NEO_I18N = {
     "hero.cta2": "수강권 보기",
     "hero.capTitle": "AI가 책상 일을 가져가도, 기술은 못 가져갑니다.",
     "hero.cap": "화이트칼라에서 블루칼라로, 새 길을 택하는 분들이 늘고 있습니다. 이 새로운 흐름을 '네오칼라'라고 부릅니다. 경력도 나이도 괜찮습니다. 현장 베테랑이 처음부터 알려드립니다.",
-    "hero.photoAlt": "푸른 뇌 신경망·로봇·컴퓨터와, 황금빛 현장에서 일하는 숙련공·풍력발전이 대각선으로 나뉜 영상",
+    "hero.photoAlt": "한쪽은 보안 서버와 로봇 장비, 다른 쪽은 철골을 정밀하게 시공하는 숙련공",
     "home.quickAria": "공종 바로가기",
     "home.suggest": "추천 검색어",
 
@@ -628,7 +628,7 @@ window.NEO_I18N = {
     "hero.cta2": "See plans",
     "hero.capTitle": "AI can take the desk job. It can't take your skills.",
     "hero.cap": "More and more white-collar professionals are choosing a new path in blue-collar work. We call this shift Neo-Collar. Your experience counts, and it's never too late. Field veterans teach you from the very start.",
-    "hero.photoAlt": "A video split on a diagonal: a blue neural brain, robot, and computer beside skilled workers and wind turbines in golden field light",
+    "hero.photoAlt": "Security servers and robot equipment on one side, and skilled workers doing precision steel-frame construction on the other",
     "home.quickAria": "Browse by trade",
     "home.suggest": "Try searching",
 
@@ -1190,7 +1190,7 @@ window.NEO_I18N = {
     "hero.cta2": "受講プランを見る",
     "hero.capTitle": "AIが机の仕事を奪っても、技術は奪えません。",
     "hero.cap": "ホワイトカラーからブルーカラーへ、新しい道を選ぶ人が増えています。この新しい流れを「ネオカラー」と呼びます。経験も年齢も関係ありません。現場のベテランが基礎から教えます。",
-    "hero.photoAlt": "青い脳の神経網・ロボット・コンピュータと、黄金色の現場で働く熟練工・風力発電が斜めに分かれた動画",
+    "hero.photoAlt": "一方はセキュリティのサーバーとロボット機器、もう一方は鉄骨を精密に施工する熟練工",
     "home.quickAria": "工種から探す",
     "home.suggest": "おすすめ検索",
 
