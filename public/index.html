@@ -19,6 +19,48 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="assets/style.css?v=36">
+  <style>
+@media (min-width: 769px) {
+  html body, html body .wrap, html body .util-inner {
+    max-width: 1200px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+  html body .hero {
+    display: grid !important;
+    grid-template-columns: 1.1fr 0.9fr !important;
+    gap: 48px !important;
+    align-items: center !important;
+  }
+  html body .hero-copy { order: 1 !important; }
+  html body .hero-photo { order: 2 !important; }
+  html body .hero-photo img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+    border-radius: 16px !important;
+  }
+}
+@media (max-width: 768px) {
+  html body, html body .wrap, html body .util-inner {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  html body .hero { display: flex !important; flex-direction: column !important; }
+  html body img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    object-fit: cover !important;
+  }
+}
+</style>
 </head>
 <body data-mode="student" data-view="home">
   <a class="skip" href="#main" data-i18n="skip">본문으로 건너뛰기</a>
