@@ -1472,28 +1472,181 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 
 }
 /* ==================================================
-   NEOCOLOR 모바일 히어로 꽉 채우기
+   NEO-COLLAR 모바일 전체 수정 - 통째로
    959px 이하만 적용
 ================================================== */
 
 @media (max-width: 959px) {
 
+  /* 전체 - 좌우 여백 제거, 가로 스크롤 방지 */
   .hero {
     width: 100% !important;
     max-width: none !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    padding-top: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
     overflow-x: hidden !important;
+    display: block !important;
   }
 
-  /* 하단 사진 영역 - 왼쪽 치우침 수정 */
-  .hero-photo {
+  /* ---------- 1. 맨 위 영상 - 양옆 검은 여백 제거, 꽉 채우기 ---------- */
+  .hero-video-wrap {
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
     padding: 0 !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
     display: block !important;
+    aspect-ratio: auto !important;
+  }
+
+  .hero-video-wrap video,
+  .hero-video-wrap img {
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9 !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    background: #000 !important;
+  }
+
+  /* ---------- 2. 브랜드 영역 - 전부 가운데 ---------- */
+  .hero-copy {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 auto !important;
+    padding: 28px 20px !important;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero-copy .hero-brand {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .hero-copy .wordmark-xl {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+  }
+
+  /* ---------- 3. 색깔 6개 - 왼쪽 치우침 수정, 가운데 ---------- */
+  .hero-copy .brand-sub {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 16px 0 0 !important;
+    padding: 0 !important;
+  }
+
+  .hero-copy .chips-mini {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    gap: 8px !important;
+    width: fit-content !important;
+  }
+
+  .hero-copy .chips-mini i {
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* ---------- 4. 슬로건 가운데 ---------- */
+  .hero-copy [data-i18n="hero.tag"] {
+    display: block !important;
+    text-align: center !important;
+    margin: 16px auto 0 !important;
+    width: 100% !important;
+  }
+
+  /* ---------- 5. 제목 + 설명 가운데 ---------- */
+  .hero h1 {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    word-break: keep-all !important;
+  }
+
+  .hero .lead {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    word-break: keep-all !important;
+  }
+
+  /* ---------- 6. 버튼 2개 - 왼쪽 치우침 수정, 가운데 + 꽉 채우기 ---------- */
+  .hero-copy .hero-actions,
+  .hero-copy .cta-group,
+  .hero-copy .cta,
+  .hero-copy .actions,
+  .hero-copy .btn-group,
+  .hero-copy .hero-cta,
+  .hero-copy > div:has(> a),
+  .hero-copy > div:has(> button) {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 24px auto 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero-copy .hero-actions a,
+  .hero-copy .hero-actions button,
+  .hero-copy .cta-group a,
+  .hero-copy .cta-group button,
+  .hero-copy .cta a,
+  .hero-copy .cta button,
+  .hero-copy .actions a,
+  .hero-copy .actions button,
+  .hero-copy > div:has(> a) > a,
+  .hero-copy > div:has(> button) > button {
+    flex: 1 !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ---------- 7. 두 번째 사진 - 꽉 채우기 ---------- */
+  .hero-photo {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 0 40px !important;
+    display: block !important;
+    background: #000 !important;
+    box-sizing: border-box !important;
   }
 
   .hero-photo picture {
@@ -1512,45 +1665,45 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     aspect-ratio: 4 / 3 !important;
     object-fit: cover !important;
     object-position: center !important;
-    border-radius: 0 !important; /* 끝까지 꽉 채우려면 둥근 모서리 제거 */
+    border-radius: 0 !important;
     margin: 0 !important;
   }
 
-  /* 사진 아래 글씨도 꽉 채우기 */
+  /* ---------- 8. 두 번째 사진 밑 글씨 - 정렬 + 밑 여백 ---------- */
   .hero-photo figcaption {
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
-    padding: 20px 20px 0 !important;
+    padding: 28px 20px 40px !important;
     text-align: left !important;
+    box-sizing: border-box !important;
   }
 
-  .hero-photo strong {
+  .hero-photo figcaption strong {
     display: block !important;
     width: 100% !important;
-    margin-bottom: 12px !important;
+    font-size: 26px !important;
+    line-height: 1.45 !important;
+    margin: 0 0 16px !important;
+    text-align: left !important;
+    word-break: keep-all !important;
+    overflow-wrap: break-word !important;
   }
 
-  /* 혹시 위에 영상도 같이 왼쪽으로 치우쳐 있으면 */
-  .hero-video-wrap {
-    width: 100% !important;
-    max-width: none !important;
+  .hero-photo figcaption p,
+  .hero-photo figcaption span,
+  .hero-photo figcaption div {
+    font-size: 16px !important;
+    line-height: 1.75 !important;
+    text-align: left !important;
     margin: 0 !important;
-    border-radius: 0 !important;
+    word-break: keep-all !important;
   }
 
-  .hero-video-wrap video {
-    width: 100% !important;
-    height: auto !important;
-    display: block !important;
-  }
-
-  /* 위에 브랜드 영역도 가운데로 맞추고 싶으면 */
-  .hero-copy {
-    width: 100% !important;
-    max-width: none !important;
-    padding: 24px 20px !important;
-    text-align: center !important;
+  /* 다음 섹션(하얀 아이콘 부분)이랑 간격 */
+  .hero-photo + * {
+    margin-top: 0 !important;
+    padding-top: 28px !important;
   }
 
 }
