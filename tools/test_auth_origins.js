@@ -110,9 +110,9 @@ assert.ok(css.includes(".hero-video-wrap::after { content: none; }"), "no overla
 assert.ok(!css.includes("min-height: 78vh"), "mobile text is not laid over a tall video stage");
 assert.ok(/\.hero-photo figcaption \{[^}]*margin-top:/.test(css), "pc caption stays under the card");
 assert.ok(!/\.hero-photo figcaption \{[^}]*position:\s*absolute/.test(css), "caption is not an overlay");
-assert.ok(css.includes("grid-column: 1"), "pc copy stays in the left column");
-assert.ok(css.includes("grid-column: 2"), "pc hero card stays in the middle");
-assert.ok(css.includes("grid-column: 3"), "pc second card stays on the right");
+assert.ok(!css.includes("grid-template-columns: minmax(0, 1.25fr)"), "pc hero is not a row of small side cards");
+assert.ok(!css.includes(".hero-stage { display: contents; }"), "pc copy is not a side column beside the hero");
+assert.ok(css.includes(".hero-photo {\n    display: block;"), "second card stays its own block under the hero");
 assert.ok(css.includes("prefers-reduced-motion"), "reduced motion hook remains");
 
 const html = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
