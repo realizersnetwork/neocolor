@@ -1327,14 +1327,18 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     margin-right: auto; /* ← 추가 */
   }
 
-  .hero h1 {
-    font-size: clamp(30px, 3vw, 46px); /* ← 수정: 한 줄에 들어가게 살짝 줄임 */
-    margin-top: 24px;
-    text-align: center; /* ← 수정 */
-    white-space: nowrap; /* ← 수정: 무조건 한 줄로 */
-    max-width: none; /* ← 수정 */
-  }
+.hero h1 {
+  font-size: clamp(30px, 3vw, 46px);
+  margin-top: 24px;
+  text-align: center;
+  white-space: nowrap;
+  max-width: none;
+}
 
+.hero h1 br {
+  display: none; /* ← 이거 추가: 강제 줄바꿈 제거 */
+}
+  
   .hero .lead {
     font-size: clamp(15px, 1.2vw, 18px);
     max-width: 38em;
