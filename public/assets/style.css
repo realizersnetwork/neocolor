@@ -1350,7 +1350,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
-    gap: clamp(24px, 4vw, 64px);
+    gap: clamp(16px, 2.5vw, 40px);
     width: 100%;
     max-width: none;
     margin: 0;
