@@ -937,8 +937,19 @@
     const first = $("#authBody input");
     if (first) setTimeout(() => first.focus(), 50);
   }
-  const homeUrl = () => location.origin + location.pathname + (lang === "ko" ? "" : "?lang=" + lang);
+  const homeUrl = () => (window.NEO_ORIGINS
+    ? window.NEO_ORIGINS.authReturnUrl(location, lang)
+    : location.origin + "/" + (lang === "ko" ? "" : "?lang=" + lang));
+  function leaveStaleOrigin() {
+    const api = window.NEO_ORIGINS;
+    if (!api) return false;
+    const bounce = api.authBounceUrl(location);
+    if (!bounce) return false;
+    location.replace(bounce);
+    return true;
+  }
   async function authSocial(provider) {
+    if (leaveStaleOrigin()) return;
     if (!sb) return;
     if (!socialOn[provider]) { toast(t("auth.notReady")); return; }
     session.set("neo.afterLogin", location.hash || "#/");
@@ -954,6 +965,7 @@
   // 구글 화면에서 뒤로 돌아왔을 때 버튼이 잠긴 채 남지 않게
   window.addEventListener("pageshow", (e) => { if (e.persisted && authBusy) { authBusy = false; if (authDlg.open) renderAuth(); } });
   async function submitAuth() {
+    if (leaveStaleOrigin()) return;
     if (!sb || authBusy) return;
     const v = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
     if (authMode === "delete") { await deleteAccount(); return; }
@@ -1402,9 +1414,10 @@
     }
 
     requestAnimationFrame(() => fillAd(r.view));
-    if (video) {
-      if (r.view === "home") { if (!reducedMotion) video.play().catch(() => {}); }
-      else video.pause();
+    const heroClip = document.getElementById("heroVideo");
+    if (heroClip && !heroClip.dataset.broken) {
+      if (r.view === "home") { if (!reducedMotion && heroClip.querySelector("source[src]")) heroClip.play().catch(() => {}); }
+      else heroClip.pause();
     }
 
     let target = null;
@@ -1536,33 +1549,32 @@
 
   /* ---------- 메인 동영상 ---------- */
   const video = $("#heroVideo");
-  const soundBtn = $("#soundBtn");
-  const soundLabel = $("#soundLabel");
-  if (video && reducedMotion) { video.removeAttribute("autoplay"); video.pause(); }
-  function updateSoundLabel() {
-    if (!video || !soundBtn) return;
-    const on = !video.muted;
-    soundBtn.classList.toggle("on", on);
-    soundBtn.setAttribute("aria-pressed", String(on));
-    soundBtn.setAttribute("aria-label", t(on ? "sound.offAria" : "sound.onAria"));
-    soundLabel.textContent = t(on ? "sound.off" : "sound.on");
+  function armClip(clip) {
+    if (!clip) return;
+    const fail = () => {
+      if (clip.dataset.broken) return;
+      clip.dataset.broken = "1";
+      clip.removeAttribute("autoplay");
+      try { clip.pause(); } catch (_) { /* 무시 */ }
+      const source = clip.querySelector("source");
+      if (source) source.removeAttribute("src");
+      clip.removeAttribute("src");
+      try { clip.load(); } catch (_) { /* 포스터만 남긴다 */ }
+    };
+    clip.addEventListener("error", fail);
+    const source = clip.querySelector("source");
+    if (source) source.addEventListener("error", fail);
+    if (reducedMotion) { clip.removeAttribute("autoplay"); clip.pause(); }
   }
-  if (video && soundBtn) {
-    // 브라우저는 소리 나는 자동재생을 막는다: 무음으로 시작하고, 버튼을 누르면 소리를 켠다
-    soundBtn.addEventListener("click", () => {
-      video.muted = !video.muted;
-      if (!video.muted) { video.volume = 1; video.play().catch(() => {}); }
-      updateSoundLabel();
-    });
-    // 화면에서 안 보이면 멈춤 (소리가 계속 나지 않게)
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) video.pause();
-          else if (state.view === "home" && (!reducedMotion || !video.muted)) video.play().catch(() => {});
-        });
-      }, { threshold: 0.15 }).observe(video);
-    }
+  armClip(video);
+  if ("IntersectionObserver" in window && video && video.querySelector("source[src]")) {
+    new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (video.dataset.broken) return;
+        if (!entry.isIntersecting) video.pause();
+        else if (state.view === "home" && !reducedMotion) video.play().catch(() => {});
+      });
+    }, { threshold: 0.15 }).observe(video);
   }
 
   /* ---------- 글자 크게 ---------- */
@@ -1633,7 +1645,6 @@
     renderStats();
     renderContact();
     updateSavedCount();
-    updateSoundLabel();
     if (courseDlg.open) renderCourseDialog();
     if (quizDlg.open) renderQuiz();
     if (authDlg.open) renderAuth();
@@ -1644,7 +1655,8 @@
   applyStatic();
   renderAll();
   visitDone = countVisit();
-  initAuth();
+  if (leaveStaleOrigin()) { /* 끊긴 주소에서는 로그인을 시작하지 않고 허용된 주소로 옮긴다 */ }
+  else initAuth();
   applyTraceCountry();
   handleRoute();
   window.addEventListener("hashchange", handleRoute);

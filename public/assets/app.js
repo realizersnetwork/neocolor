@@ -937,8 +937,19 @@
     const first = $("#authBody input");
     if (first) setTimeout(() => first.focus(), 50);
   }
-  const homeUrl = () => location.origin + location.pathname + (lang === "ko" ? "" : "?lang=" + lang);
+  const homeUrl = () => (window.NEO_ORIGINS
+    ? window.NEO_ORIGINS.authReturnUrl(location, lang)
+    : location.origin + "/" + (lang === "ko" ? "" : "?lang=" + lang));
+  function leaveStaleOrigin() {
+    const api = window.NEO_ORIGINS;
+    if (!api) return false;
+    const bounce = api.authBounceUrl(location);
+    if (!bounce) return false;
+    location.replace(bounce);
+    return true;
+  }
   async function authSocial(provider) {
+    if (leaveStaleOrigin()) return;
     if (!sb) return;
     if (!socialOn[provider]) { toast(t("auth.notReady")); return; }
     session.set("neo.afterLogin", location.hash || "#/");
@@ -954,6 +965,7 @@
   // 구글 화면에서 뒤로 돌아왔을 때 버튼이 잠긴 채 남지 않게
   window.addEventListener("pageshow", (e) => { if (e.persisted && authBusy) { authBusy = false; if (authDlg.open) renderAuth(); } });
   async function submitAuth() {
+    if (leaveStaleOrigin()) return;
     if (!sb || authBusy) return;
     const v = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
     if (authMode === "delete") { await deleteAccount(); return; }
@@ -1094,7 +1106,7 @@
    * - 오늘 방문자는 누적에 잡힌 기기만 센다 → 오늘이 누적보다 많아질 수 없다
    * - 검색 로봇·자동 프로그램(headless 브라우저 등)은 세지 않는다
    * - IP 주소는 어디에도 저장하지 않는다
-   * - 실서비스 주소(neocolor.net)에서만 센다. 미리보기 주소에서는 세지 않는다
+   * - 실서비스 주소(neo-collar.com)에서만 센다. 미리보기 주소에서는 세지 않는다
    * - 아래 목록에 없는 나라는 '기타 나라'(OT), 모르는 나라는 '알 수 없음'(XX)
    * - 2026-11-05 숫자가 꼬인 것을 고치면서 새 이름공간(neocolor-net-2)으로 0부터 다시 셈
    */
@@ -1106,7 +1118,7 @@
   const BOT_UA = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|scan|monitor|python|curl|wget|java\/|okhttp|axios|go-http|phantom|selenium|puppeteer|playwright/i;
   const isBot = () => { try { return navigator.webdriver === true || BOT_UA.test(navigator.userAgent || ""); } catch (_) { return false; } };
   const kstDay = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
-  const isLive = () => location.protocol === "https:" && /^(www\.)?neocolor\.net$|^neocolor\.pages\.dev$/.test(location.hostname);
+  const isLive = () => location.protocol === "https:" && /^(www\.)?neo-collar\.com$|^neo-collar\.pages\.dev$/.test(location.hostname);
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   // 카운터는 10초에 30번까지만 받는다. 바쁘다고(429) 하면 한 번만 잠깐 기다렸다가 다시
   async function counterFetch(op, key) {
@@ -1402,9 +1414,10 @@
     }
 
     requestAnimationFrame(() => fillAd(r.view));
-    if (video) {
-      if (r.view === "home") { if (!reducedMotion) video.play().catch(() => {}); }
-      else video.pause();
+    const heroClip = document.getElementById("heroVideo");
+    if (heroClip && !heroClip.dataset.broken) {
+      if (r.view === "home") { if (!reducedMotion && heroClip.querySelector("source[src]")) heroClip.play().catch(() => {}); }
+      else heroClip.pause();
     }
 
     let target = null;
@@ -1536,33 +1549,32 @@
 
   /* ---------- 메인 동영상 ---------- */
   const video = $("#heroVideo");
-  const soundBtn = $("#soundBtn");
-  const soundLabel = $("#soundLabel");
-  if (video && reducedMotion) { video.removeAttribute("autoplay"); video.pause(); }
-  function updateSoundLabel() {
-    if (!video || !soundBtn) return;
-    const on = !video.muted;
-    soundBtn.classList.toggle("on", on);
-    soundBtn.setAttribute("aria-pressed", String(on));
-    soundBtn.setAttribute("aria-label", t(on ? "sound.offAria" : "sound.onAria"));
-    soundLabel.textContent = t(on ? "sound.off" : "sound.on");
+  function armClip(clip) {
+    if (!clip) return;
+    const fail = () => {
+      if (clip.dataset.broken) return;
+      clip.dataset.broken = "1";
+      clip.removeAttribute("autoplay");
+      try { clip.pause(); } catch (_) { /* 무시 */ }
+      const source = clip.querySelector("source");
+      if (source) source.removeAttribute("src");
+      clip.removeAttribute("src");
+      try { clip.load(); } catch (_) { /* 포스터만 남긴다 */ }
+    };
+    clip.addEventListener("error", fail);
+    const source = clip.querySelector("source");
+    if (source) source.addEventListener("error", fail);
+    if (reducedMotion) { clip.removeAttribute("autoplay"); clip.pause(); }
   }
-  if (video && soundBtn) {
-    // 브라우저는 소리 나는 자동재생을 막는다: 무음으로 시작하고, 버튼을 누르면 소리를 켠다
-    soundBtn.addEventListener("click", () => {
-      video.muted = !video.muted;
-      if (!video.muted) { video.volume = 1; video.play().catch(() => {}); }
-      updateSoundLabel();
-    });
-    // 화면에서 안 보이면 멈춤 (소리가 계속 나지 않게)
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) video.pause();
-          else if (state.view === "home" && (!reducedMotion || !video.muted)) video.play().catch(() => {});
-        });
-      }, { threshold: 0.15 }).observe(video);
-    }
+  armClip(video);
+  if ("IntersectionObserver" in window && video && video.querySelector("source[src]")) {
+    new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (video.dataset.broken) return;
+        if (!entry.isIntersecting) video.pause();
+        else if (state.view === "home" && !reducedMotion) video.play().catch(() => {});
+      });
+    }, { threshold: 0.15 }).observe(video);
   }
 
   /* ---------- 글자 크게 ---------- */
@@ -1633,7 +1645,6 @@
     renderStats();
     renderContact();
     updateSavedCount();
-    updateSoundLabel();
     if (courseDlg.open) renderCourseDialog();
     if (quizDlg.open) renderQuiz();
     if (authDlg.open) renderAuth();
@@ -1644,7 +1655,8 @@
   applyStatic();
   renderAll();
   visitDone = countVisit();
-  initAuth();
+  if (leaveStaleOrigin()) { /* 끊긴 주소에서는 로그인을 시작하지 않고 허용된 주소로 옮긴다 */ }
+  else initAuth();
   applyTraceCountry();
   handleRoute();
   window.addEventListener("hashchange", handleRoute);
