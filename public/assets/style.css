@@ -1359,7 +1359,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
   .hero-photo picture {
     display: block;
     width: 100%;
-    max-width: 480px;
+    max-width: 640px;
   }
 
   .hero-photo img {
