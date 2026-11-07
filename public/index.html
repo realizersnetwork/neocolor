@@ -18,10 +18,10 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="assets/style.css?v=37">
-  <style>
+  <link rel="stylesheet" href="assets/style.css?v=38">
+ <style>
 @media (min-width: 769px) {
-  html body, html body .wrap, html body .util-inner {
+  html body .home, html body main .home, html body .wrap, html body .util-inner {
     max-width: 1200px !important;
     width: 100% !important;
     margin-left: auto !important;
@@ -29,15 +29,15 @@
     padding-left: 24px !important;
     padding-right: 24px !important;
   }
-  html body .hero {
+  html body .home .hero {
     display: grid !important;
     grid-template-columns: 1.1fr 0.9fr !important;
     gap: 48px !important;
     align-items: center !important;
   }
-  html body .hero-copy { order: 1 !important; }
-  html body .hero-photo { order: 2 !important; }
-  html body .hero-photo img {
+  html body .home .hero-copy { order: 1 !important; }
+  html body .home .hero-photo { order: 2 !important; }
+  html body .home .hero-photo img {
     width: 100% !important;
     height: auto !important;
     object-fit: cover !important;
@@ -45,13 +45,13 @@
   }
 }
 @media (max-width: 768px) {
-  html body, html body .wrap, html body .util-inner {
+  html body .home, html body .wrap, html body .util-inner {
     max-width: 100% !important;
     width: 100% !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
-  html body .hero { display: flex !important; flex-direction: column !important; }
+  html body .home .hero { display: flex !important; flex-direction: column !important; }
   html body img {
     width: 100% !important;
     max-width: 100% !important;
