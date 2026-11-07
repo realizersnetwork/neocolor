@@ -101,10 +101,12 @@ function videoSize(file) {
 check(load("public/assets/origins.js"), "public");
 
 const css = fs.readFileSync(path.join(root, "public/assets/style.css"), "utf8");
-assert.ok(css.includes("aspect-ratio: 9 / 8"), "pc hero slot matches 720x640");
+assert.ok(css.includes("aspect-ratio: 9 / 8"), "hero slot matches 720x640");
 assert.ok(!css.includes("aspect-ratio: 9 / 16"), "old portrait hero slot removed");
-assert.ok(css.includes("mask-image: linear-gradient"), "mobile text sits on a soft fade");
-assert.ok(css.includes("object-fit: cover"), "matched 9/8 slot covers without extra crop");
+assert.ok(!css.includes("mask-image: linear-gradient"), "hero video has no dark fade mask");
+assert.ok(css.includes("object-fit: contain"), "hero shows the full crane and sunset");
+assert.ok(css.includes(".hero-video-wrap::after { content: none; }"), "no overlay on the hero video");
+assert.ok(!css.includes("min-height: 78vh"), "mobile text is not laid over a tall video stage");
 assert.ok(/\.hero-photo figcaption \{[^}]*margin-top:/.test(css), "pc caption stays under the card");
 assert.ok(!/\.hero-photo figcaption \{[^}]*position:\s*absolute/.test(css), "caption is not an overlay");
 assert.ok(css.includes("grid-column: 1"), "pc copy stays in the left column");
@@ -114,7 +116,7 @@ assert.ok(css.includes("prefers-reduced-motion"), "reduced motion hook remains")
 
 const html = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
 assert.ok(html.includes('src="media/card.mp4?v=6"'), "card video wired");
-assert.ok(html.includes('src="media/hero.mp4?v=6"'), "hero video wired");
+assert.ok(html.includes('src="media/hero.mp4?v=7"'), "hero video wired");
 assert.ok(html.includes('id="cardVideo"'), "card element");
 assert.ok(html.includes("muted"), "autoplay stays muted");
 assert.ok(html.includes("playsinline"), "playsinline");
