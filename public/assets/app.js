@@ -174,7 +174,7 @@
   function applyStatic() {
     document.documentElement.lang = lang;
     $$("[data-privacy]").forEach((a) => { a.href = `/privacy?lang=${lang}`; });
-   const HTML_KEYS = new Set(['hero.lead', 'hero.photo_text', '밑문장_키']);
+   const HTML_KEYS = new Set(['hero.lead', 'hero.photo_text', 'hero.cap']);
 $$("[data-i18n]").forEach((el) => { const k = el.dataset.i18n; if (HTML_KEYS.has(k)) el.innerHTML = t(k); else el.textContent = t(k); });
     $$("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
     $$("[data-i18n-attr]").forEach((el) => {
