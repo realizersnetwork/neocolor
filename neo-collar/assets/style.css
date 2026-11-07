@@ -1274,29 +1274,3 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
   .site-header .logo .wordmark { font-size: 19px; }
   html:not([lang="ko"]) .site-header .logo .wordmark { font-size: 17px; }
 }
-/* === 모바일 + 데스크톱 레이아웃 수정 === */
-
-@media (min-width: 769px) {
-  .container, .wrap, main, .page {
-    max-width: 1200px !important;
-    width: 100% !important;
-    padding-left: 24px !important;
-    padding-right: 24px !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .container, .wrap, main, .page {
-    max-width: 100% !important;
-    width: 100% !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-  img {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-    border-radius: 0 !important;
-    object-fit: cover !important;
-  }
-}
