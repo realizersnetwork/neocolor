@@ -1284,3 +1284,45 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
   .site-header .logo .wordmark { font-size: 19px; }
   html:not([lang="ko"]) .site-header .logo .wordmark { font-size: 17px; }
 }
+/* 데스크톱: 좁게 몰린 거 넓게 펴기 */
+@media (min-width: 769px) {
+  .container, .wrap, main, .page {
+    max-width: 1200px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+  .hero, .hero-section {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 48px !important;
+    align-items: center !important;
+  }
+}
+
+/* 모바일: 두 번째 사진 꽉 차게 + 깨지는 레이아웃 1단으로 쌓기 */
+@media (max-width: 768px) {
+  .container, .wrap, main, .page,
+  .hero, .hero-section, .section {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+  h1, h2, h3, p {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}
