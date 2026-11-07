@@ -1707,3 +1707,64 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
   }
 
 }
+/* ==================================================
+   모바일 영상 사라짐 복구 - 맨 아래에 붙여넣기
+================================================== */
+
+@media (max-width: 959px) {
+
+  /* 영상 감싸는 박스부터 다시 살리기 */
+  .hero-side {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .hero-video-wrap {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 56.25vw !important; /* 16:9 비율로 높이 강제 확보 */
+    min-height: 220px !important;
+    max-height: 360px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    background: #000 !important;
+  }
+
+  /* 영상 자체 - absolute든 뭐든 무조건 보이게 */
+  .hero-video-wrap video {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+
+  /* 혹시 영상이 img 태그로 돼 있으면 */
+  .hero-video-wrap img {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+}
