@@ -1286,12 +1286,13 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-rows: auto auto;
     gap: 32px clamp(24px, 4vw, 64px);
     align-items: stretch;
     width: 100%;
     padding: 48px max(32px, calc((100% - 1320px) / 2)) 52px;
+    overflow: hidden;
   }
 
   /* 내부 요소를 메인 그리드에 배치 */
@@ -1366,7 +1367,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 
   /* 땀 흘린 만큼, 즐기면서 살자. 한 줄 + 가운데 */
   .hero h1 {
-    font-size: clamp(28px, 2.8vw, 42px) !important;
+    font-size: clamp(26px, 2.6vw, 38px) !important;
     margin-top: 24px;
     text-align: center;
     white-space: nowrap !important;
@@ -1404,17 +1405,21 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     gap: 12px;
   }
 
-  /* 오른쪽 상단: 메인 영상 */
+  /* 오른쪽 상단: 메인 영상 - 오른쪽으로 밀림 수정 */
   .hero-video-wrap {
     grid-column: 2;
     grid-row: 1;
-    width: 100%;
-    max-width: none;
+    justify-self: stretch;
+    align-self: stretch;
+    width: 100% !important;
+    max-width: none !important;
     height: 100%;
     min-height: 320px;
     aspect-ratio: auto;
     border-radius: 16px;
     overflow: hidden;
+    margin: 0 !important;
+    transform: none !important;
   }
 
   .hero-video-wrap video {
@@ -1422,6 +1427,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     height: 100%;
     object-fit: cover;
     object-position: center;
+    display: block;
   }
 
   /* 하단: 사진과 설명을 좌우로 분리 */
@@ -1463,7 +1469,5 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     font-size: clamp(22px, 2vw, 30px);
     margin-bottom: 16px;
   }
-
-}
 
 }
