@@ -20,13 +20,50 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="assets/style.css?v=38">
 <style>
-  .home, .wrap, .util-inner {
+@media (min-width: 769px) {
+  .view {
     width: 100vw !important;
     max-width: 100vw !important;
     margin: 0 !important;
+  }
+  .wrap {
+    max-width: 1280px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+  .hero-side {
+    display: grid !important;
+    grid-template-columns: 1.05fr 0.95fr !important;
+    gap: 48px !important;
+    align-items: center !important;
+  }
+  .hero-copy { order: 1 !important; }
+  .hero-photo { order: 2 !important; }
+  .hero-photo img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+    border-radius: 16px !important;
+  }
+}
+@media (max-width: 768px) {
+  .view, .wrap {
+    width: 100% !important;
+    max-width: 100% !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
+  .hero-side { display: flex !important; flex-direction: column !important; }
+  img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    object-fit: cover !important;
+  }
+}
 </style>
 </head>
 <body data-mode="student" data-view="home">
