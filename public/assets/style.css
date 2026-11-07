@@ -1319,6 +1319,53 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     text-align: center; /* ← 수정: NEOCOLOR 가운데 */
   }
 
+    /* NEOCOLOR 전체 블록 가운데 */
+  .hero-copy .hero-brand {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  /* NEOCOLOR 더 크게 */
+  .hero-copy .wordmark-xl {
+    font-size: clamp(64px, 7vw, 110px) !important;
+    line-height: 1 !important;
+  }
+
+  /* 색깔 6개 가운데 + 크게 */
+  .hero-copy .brand-sub {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin: 18px 0 0 !important;
+  }
+
+  .hero-copy .chips-mini {
+    display: flex !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+    gap: 10px !important;
+    width: fit-content !important;
+  }
+
+  .hero-copy .chips-mini i {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 5px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 슬로건 더 크게 - 네 실제 태그는 .slogan이 아니라 이거야 */
+  .hero-copy [data-i18n="hero.tag"] {
+    display: block !important;
+    font-size: clamp(18px, 1.6vw, 26px) !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    margin: 18px auto 0 !important;
+  }
+
   /* 슬로건 - Skills for the People... 부분 */
   /* 네 코드에서 슬로건 클래스명이 다르면 여기 이름만 바꿔줘 */
   .hero-copy .slogan {
