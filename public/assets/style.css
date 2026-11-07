@@ -1729,9 +1729,9 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     position: relative !important;
     width: 100% !important;
     max-width: none !important;
-    height: 78vw !important; /* 16:9 비율로 높이 강제 확보 */
-    min-height: 340px !important;
-    max-height: 560px !important;
+    height: 80vw !important; /* 16:9 비율로 높이 강제 확보 */
+    min-height: 350px !important;
+    max-height: 570px !important;
     margin: 0 !important;
     padding: 0 !important;
     border-radius: 0 !important;
