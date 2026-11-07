@@ -1,4 +1,4 @@
-# NEOCOLOR
+# NEO-COLLAR
 
 [neocolor.net](https://neocolor.net) 웹사이트 소스입니다. 현장(건축 공종별) 사람들이 배우고 · 묻고 · 일하고 · 가르치는 플랫폼으로, 지금은 정식 오픈 전이라 강의는 모두 '오픈 예정'으로 보입니다. 한국어 · English · 日本語를 지원합니다.
 

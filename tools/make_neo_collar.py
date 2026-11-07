@@ -6,7 +6,7 @@ public/ (neocolor.net) 을 통째로 neo-collar/ 로 복사하면서 이름·주
 
     python3 tools/make_neo_collar.py
 
-- NEOCOLOR → NEO-COLLAR, 로고 NEO+COLOR → NEO-+COLLAR (2026-11-07 소유자: 하이픈 넣은 NEO-COLLAR)
+- NEO-COLLAR → NEO-COLLAR, 로고 NEO+COLOR → NEO-+COLLAR (2026-11-07 소유자: 하이픈 넣은 NEO-COLLAR)
 - neocolor.net → neo-collar.com, neocolor.pages.dev → neo-collar.pages.dev
 - 방문자 통계는 따로 센다 (Abacus 이름공간 neocolor-net-2 → neo-collar-com-1)
 - 영상·사진 같은 파일은 그대로 복사
@@ -26,7 +26,7 @@ TEXT = {".html", ".js", ".css", ".txt", ".json", ".xml", ".svg", ".webmanifest",
 RULES = [
     # 로고: NEO<span class="...">COLOR</span> → NEO-<span class="...">COLLAR</span> (하이픈은 흰 글자 NEO 쪽)
     (re.compile(r'NEO(<span class="[^"]*">)COLOR(</span>)'), r"NEO-\1COLLAR\2"),
-    (re.compile(r"NEOCOLOR"), "NEO-COLLAR"),
+    (re.compile(r"NEO-COLLAR"), "NEO-COLLAR"),
     # 방문자 통계 이름공간 (neocolor.net 숫자와 섞이지 않게)
     (re.compile(r"neocolor-net-2"), "neo-collar-com-1"),
     # 주소 (정규식 안에 쓰인 neocolor\.net 도)
@@ -37,7 +37,7 @@ RULES = [
 ]
 
 
-# NEO-COLLAR 로고가 NEOCOLOR보다 두 글자 길어서, 휴대폰 머리줄이 두 줄로 밀리지 않게 로고만 조금 작게
+# NEO-COLLAR 로고가 NEO-COLLAR보다 두 글자 길어서, 휴대폰 머리줄이 두 줄로 밀리지 않게 로고만 조금 작게
 EXTRA_CSS = """
 /* (neo-collar 전용) 로고 NEO-COLLAR 가 길어서 휴대폰에서는 조금 작게 → 머리줄 한 줄 유지 */
 @media (max-width: 719px) { .site-header .logo .wordmark { font-size: 20px; } }
@@ -97,7 +97,7 @@ def main() -> int:
     for f in DST.rglob("*"):
         if f.is_file() and f.suffix.lower() in TEXT:
             for i, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
-                if re.search(r"neocolor|NEOCOLOR|>COLOR<", line, re.I):
+                if re.search(r"neocolor|NEO-COLLAR|>COLOR<", line, re.I):
                     left.append(f"{f.relative_to(ROOT)}:{i}: {line.strip()[:90]}")
     print(f"neo-collar/ 만듦: 파일 {sum(1 for f in DST.rglob('*') if f.is_file())}개")
     if left:

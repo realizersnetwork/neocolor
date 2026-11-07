@@ -1,4 +1,4 @@
-/* NEOCOLOR — 현장 실무 강의 · 인력사무소 · 베테랑 스튜디오 */
+/* NEO-COLLAR — 현장 실무 강의 · 인력사무소 · 베테랑 스튜디오 */
 
 :root {
   --ink: #111318;
@@ -1278,7 +1278,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
 .calc-plus { color: var(--ink-3); }
 
 /* ==================================================
-   NEOCOLOR PC 메인 히어로 레이아웃 개선
+   NEO-COLLAR PC 메인 히어로 레이아웃 개선
    모바일 레이아웃 변경 없음
 ================================================== */
 
@@ -1317,7 +1317,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     justify-content: center;
   }
 
-  /* NEOCOLOR 전체 블록 가운데 */
+  /* NEO-COLLAR 전체 블록 가운데 */
   .hero-copy .hero-brand {
     display: flex !important;
     flex-direction: column !important;
@@ -1326,7 +1326,7 @@ body[data-mode="veteran"] .user-btn { background: rgba(255, 255, 255, 0.1); bord
     width: 100% !important;
   }
 
-  /* NEOCOLOR 더 크게 */
+  /* NEO-COLLAR 더 크게 */
   .hero-copy .wordmark-xl {
     font-size: clamp(64px, 7vw, 110px) !important;
     line-height: 1 !important;
